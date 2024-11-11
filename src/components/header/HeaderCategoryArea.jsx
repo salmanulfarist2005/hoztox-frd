@@ -55,7 +55,11 @@ const HeaderCategoryArea = ({ header, title }) => {
               <ul className="fz-category-list">
                 {chunk.map((category, index) => (
                   <li key={index}>
-                    <Link to={`/shop/${category.slug}`}>{category.category_name}</Link>
+                    <div>
+                    {/* <Link to={`/shop/${category.slug}`}> */}
+                    {category.category_name}
+                    {/* </Link> */}
+                    </div>
                   </li>
                 ))}
               </ul>

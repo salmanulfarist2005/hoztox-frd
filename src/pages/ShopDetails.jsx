@@ -6,7 +6,8 @@ const ShopDetails = () => {
   return (
     <Layout>
         <ShopDetailsMain/>
-    </Layout> 
+    </Layout>
+     
   )
 }
 

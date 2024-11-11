@@ -54,7 +54,7 @@ function Order() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setNormalOrders(response.data);
-            console.log("response.data", response.data);
+            console.log("response.dataSSSSSSSSSSSSSSSSSS", response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
             toast.error("Failed to load orders");

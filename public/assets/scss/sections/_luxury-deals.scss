@@ -280,3 +280,33 @@ text-align: center;
         }
     }
 }
+
+@media only screen and (max-width: 600px) {
+
+.inf_gm ul li {
+    font-size: 12px; 
+    width: 111px;
+   
+}
+}
+
+@media only screen and (max-width: 510px) {
+    .inf_gm ul {
+        width: max-content;
+        display: block;
+        text-align: center;
+    }
+
+    .inf_gm ul li {
+        font-size: 12px; 
+        width: 135px;
+        text-align: center;
+       
+    }
+    }
+
+    @media screen and (max-width: 575px) {
+        .fz-2-single-product-title {
+          font-size: 13px;
+        }
+      }

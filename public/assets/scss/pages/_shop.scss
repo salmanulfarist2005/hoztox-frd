@@ -55,7 +55,7 @@
 
                 a {
                     display: block;
-
+                  
                     &.has-sub {
                         position: relative;
 
@@ -851,6 +851,10 @@
             color: $white;
         }
     }
+}
+@media (max-width: 520px) {
+.product-categories li { font-size: 13px;}
+.fz-2-footer-section .fz-footer-top{ padding-top: 15px !important; padding-bottom: 20px !important;}
 }
 
 /*----- SHOP PAGE STYLES ENDS HERE -----*/

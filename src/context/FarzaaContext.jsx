@@ -15,7 +15,7 @@ const FarzaaContext = createContext();
 const FarzaaContextProvider = ({ children }) => {
   // Wishlist Modal
   const [showWishlist, setShowWishlist] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const handleWishlistClose = () => setShowWishlist(false);
   const handleWishlistShow = () => setShowWishlist(true);
 

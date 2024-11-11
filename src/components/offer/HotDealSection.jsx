@@ -50,15 +50,15 @@ const HotDealSection = () => {
                 <div className="col-xl-3 col-md-4 col-6 col-xxs-6" key={product.id}>
                     <div className="fz-2-single-product">
                         <div className="fz-2-single-product-img">
-                        <Link to={`/customized-products/${product.id}`}>
+                        <Link to={`/customized-products/${product.SKU}`}>
                                 <img src={BASE_URL + product.product_image} alt={product.product_name} />
                             </Link>
                             <div className='color_text'>
                                 <h5 className="fz-2-single-product-title">
-                                    <Link to={`/shop/${product.id}`}>{product.SKU}</Link>
+                                <Link to={`/customized-products/${product.SKU}`}>{product.SKU}</Link>
                                 </h5>
                             </div>
-                            <div className="fz-2-single-product-actions">
+                            {/* <div className="fz-2-single-product-actions">
                                 <button
                                     className="fz-add-to-cart-btn"
                                     onClick={() => addToJeweleryCart(product.id)}
@@ -88,7 +88,7 @@ const HotDealSection = () => {
                                 </div>
 
 
-                            </div>
+                            </div>   */}
 
                         </div>
                         <div className="fz-2-single-product-txt">
@@ -99,7 +99,7 @@ const HotDealSection = () => {
                                 <span className="color_span">&nbsp;&nbsp;( {product.color} )</span>
                             </div>
                             <h5 className="fz-2-single-product-title mb-555">
-                                <Link to={`/shop/${product.id}`}>{product.product_name}</Link>
+                            <Link to={`/customized-products/${product.SKU}`}>{product.product_name}</Link>
                             </h5>
                          
 

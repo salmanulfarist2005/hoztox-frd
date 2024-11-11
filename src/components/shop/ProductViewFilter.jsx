@@ -65,7 +65,9 @@ const ProductViewFilter = () => {
                         <div className="col-xl-4 col-md-4 col-6 col-xxs-6" key={item.id}>
                             <div className="fz-2-single-product">
                                 <div className="fz-2-single-product-img">
+                                <Link to={`/products/${item.SKU}`}>
                                     <img src={BASE_URL + item.product_image} alt={item.product_name} />
+                                    </Link>
                                     <div className="fz-2-single-product-actions">
                                 <button
                                     className="fz-add-to-cart-btn"
@@ -99,9 +101,9 @@ const ProductViewFilter = () => {
                             </div>
                                 </div>
                                 <div className="fz-2-single-product-txt">
-                                    <h5 className="fz-2-single-product-title"><Link to="#">{item.product_name}</Link></h5>
+                                    <h5 className="fz-2-single-product-title">  <Link to={`/products/${item.SKU}`}>{item.product_name}</Link></h5>
                                     <span className="fz-2-single-product-category"><Link to="#">{item.category_name}</Link></span>
-                                    <h5 className="fz-2-single-product-title"><Link to="#">SKU: {item.SKU}</Link></h5>
+                                    <h5 className="fz-2-single-product-title">  <Link to={`/products/${item.SKU}`}>SKU: {item.SKU}</Link></h5>
                                 </div>
                             </div>
                         </div>

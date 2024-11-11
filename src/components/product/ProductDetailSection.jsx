@@ -6,7 +6,7 @@ import ProductDetailTextSection from './ProductDetailTextSection';
 import { BASE_URL } from '../helpers/config';
 
 const ProductDetailSection = () => {
-    const { id } = useParams();  
+    const { SKU } = useParams();  
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,18 +14,24 @@ const ProductDetailSection = () => {
     useEffect(() => {
         const fetchProductDetails = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/products/products/${id}/`);  
-                setProduct(response.data);
+  
+                const response = await axios.get(`${BASE_URL}/products/products/${SKU}/`, {
+                    headers: {
+                   
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                setProduct(response.data);  
             } catch (error) {
                 console.error('Error fetching product details:', error);
                 setError('Could not fetch product details. Please try again later.');
             } finally {
-                setLoading(false);  
+                setLoading(false);   
             }
         };
 
         fetchProductDetails();
-    }, [id]);
+    }, [SKU]);
 
     if (loading) {
         return <div>Loading...</div>; 

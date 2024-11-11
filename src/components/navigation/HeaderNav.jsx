@@ -25,6 +25,7 @@ const HeaderNav = ({ position, downArrow }) => {
           
         </li>
         </Link>
+        <Link to="/custom-shop">
         <li className="fz-dropdown fz-nav-item">
           <a role="button" className="fz-nav-link">
             <span>Customized Products</span>{" "}
@@ -33,6 +34,9 @@ const HeaderNav = ({ position, downArrow }) => {
 
           
         </li>
+        </Link>
+
+        <Link to="/contact">
         <li className="fz-dropdown fz-nav-item">
           <a role="button" className="fz-nav-link">
             <span>Contact</span>{" "}
@@ -41,6 +45,7 @@ const HeaderNav = ({ position, downArrow }) => {
 
           
         </li>
+        </Link>
       </ul>
     </nav>
   );

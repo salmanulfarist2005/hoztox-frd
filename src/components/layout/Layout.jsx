@@ -1,15 +1,16 @@
 import React from "react";
-import HeaderSection3 from "../header/HeaderSection3";
-import FooterSection from "../footer/FooterSection";
+import HeaderSection4 from "../header/HeaderSection4";
+import FooterSectioninner from "../footer/FooterSection-inner";
 import RightSideBar from "../sidebar/RightSideBar";
 
 const Layout = ({ children }) => {
   return (
     <>
-      <HeaderSection3 />
+      <HeaderSection4 />
+      
       {children}
       <RightSideBar />
-      <FooterSection logo="assets/images/logo-1.png" />
+      <FooterSectioninner />
     </>
   );
 };

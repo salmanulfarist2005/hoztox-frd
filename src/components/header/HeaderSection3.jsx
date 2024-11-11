@@ -46,7 +46,9 @@ const HeaderSection3 = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setJeweleryCartItemAmount(response.data.cart_items.length); 
+      setJeweleryCartItemAmount(response.data); 
+      console.error('response.data', response.data);
+      // fetchCartItems(); 
     } catch (error) {
       console.error('Error fetching cart items:', error);
     }
@@ -67,7 +69,7 @@ const HeaderSection3 = () => {
           <div className="fz-header-left-content d-flex align-items-center">
             <div className="fz-logo-container logo-top">
               <Link to="/">
-                <img src="assets/images/logo-2.png" alt="logo" className="fz-logo" />
+                <img src="../assets/images/logo-2.png" alt="logo" className="fz-logo" />
               </Link>
             </div>
             <HeaderCategoryArea header={""} title={""} />

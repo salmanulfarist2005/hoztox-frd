@@ -115,6 +115,8 @@ TABLE OF CONTENTS:
     padding-top: 50px;
 }
 
+
+
 .bg-gry-1 {
     background-color: #fafafa;
 }
@@ -239,6 +241,9 @@ TABLE OF CONTENTS:
     border-radius: 6px;
 }
 
+.slider-thumb-img {line-height: normal;}
+
+
 .fz-product-details__img-nav {
     border-radius: 6px;
     padding: 5px;
@@ -246,6 +251,7 @@ TABLE OF CONTENTS:
 
 .fz-product-details__img-nav .slick-current {
     border-radius: 6px;
+    line-height: 0;
 }
 
 .br-01 { border: 1px solid #b0784c61; border-radius: 10px;}
@@ -270,5 +276,21 @@ TABLE OF CONTENTS:
     .header-nav-container {
         display: none;
     }
+    .ptop-50 {
+        padding-top: 30px;
+    }
 }
+@media (max-width: 520px) {
+    .ptop-50 {
+        padding-top: 20px;
+    }
+    .fz-2-section-heading .fz-section-title {
+        font-size: 34px;
+    }
+    .fz-special-offer-title {
+        font-size: 32px;
+      }
+      .fz-2-footer-section .fz-footer-bottom p{ font-size: 13px;}
+}
+ 
  

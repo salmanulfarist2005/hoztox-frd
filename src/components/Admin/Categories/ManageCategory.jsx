@@ -3,7 +3,9 @@ import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBo
 // import Breadcrumbs from "../../Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL } from '../../../components/helpers/config';
+import Breadcrumbs from "../../../components/Admin/Breadcrumb";
+
+import { BASE_URL } from '../../helpers/config';
 
 const ManageCategory = () => {
     const [images, setImages] = useState([]);
@@ -11,7 +13,7 @@ const ManageCategory = () => {
     const [modal_list, setmodal_list] = useState(false);
     const [modal_delete, setmodal_delete] = useState(false);
     const [category, setCategory] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState([]); // Changed from null to []
+    const [selectedCategory, setSelectedCategory] = useState([]);
 
     const [currentImage, setCurrentImage] = useState(null);
     const [newImage, setNewImage] = useState(null);
@@ -33,7 +35,7 @@ const ManageCategory = () => {
     const fetchCategory = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/categories/`);
-            const category = response;
+            const category = response.data;
 
             if (Array.isArray(category)) {
                 setCategory(category);
@@ -207,196 +209,197 @@ const ManageCategory = () => {
     };
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
- 
+
     const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
 
- 
+
     const indexOfLastCategory = currentPage * itemsPerPage;
     const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
     const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
 
- 
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-          setCurrentPage(currentPage + 1);
+            setCurrentPage(currentPage + 1);
         }
-      };
-      
-      const handlePreviousPage = () => {
-        if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
-        }
-      };
+    };
 
- 
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+
 
     return (
         <React.Fragment>
-            <div className="page-content">
-                <Container fluid>
-                    {/* <Breadcrumbs title="Product Categories" breadcrumbItem="Manage Categories" /> */}
-                    <Row>
-                        <Col lg={12}>
-                            <Card>
-                                <CardBody>
-                                    <div id="customerList">
-                                        <Row className="g-4 mb-3">
-                                            <Col className="col-sm-auto">
-                                                <div className="d-flex gap-1">
+            <div className="main-content">
+                <div className="page-content ">
+                    <Container fluid={true}>
+                        <Breadcrumbs title="Product Categories" breadcrumbItem="Manage Categories" />
+                        <Row>
+                            <Col lg={12}>
+                                <Card>
+                                    <CardBody>
+                                        <div id="customerList">
+                                            <Row className="g-4 mb-3">
+                                                <Col className="col-sm-auto">
+                                                    <div className="d-flex gap-1">
 
-                                                    <Button color="soft-danger" onClick={deleteMultipleCategories}><i className="ri-delete-bin-2-line"></i></Button>
-                                                </div>
-                                            </Col>
-                                            <Col className="col-sm">
-                                                <div className="d-flex justify-content-sm-end">
-                                                    <div className="search-box ms-2" style={{ position: 'relative' }}>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control search"
-                                                            placeholder="Search..."
-                                                            style={{ paddingRight: '30px' }}
-                                                            value={searchTerm}
-                                                            onChange={handleSearchChange}
-                                                        />
-                                                        <i className="ri-search-line search-icon" style={{
-                                                            position: 'absolute',
-                                                            right: '10px',
-                                                            top: '50%',
-                                                            transform: 'translateY(-50%)',
-                                                            pointerEvents: 'none'
-                                                        }}></i>
+                                                        <Button color="soft-danger" onClick={deleteMultipleCategories}><i className="ri-delete-bin-2-line"></i></Button>
                                                     </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        <div className="table-responsive table-card mt-3 mb-1">
-                                            <table className="table align-middle table-nowrap" id="customerTable">
-                                                <thead className="table-light">
-                                                    <tr>
-                                                        <th scope="col" style={{ width: "50px" }}>
-                                                            <div className="form-check">
-                                                                <input
-                                                                    className="form-check-input"
-                                                                    type="checkbox"
-                                                                    id="checkAll"
-                                                                    checked={isAllSelected}
-                                                                    onChange={handleSelectAllChange}
-                                                                />
-                                                            </div>
-                                                        </th>
-                                                        <th className="sort" data-sort="customer_name">Category Name</th>
-                                                        <th className="sort" data-sort="customer_email">Image</th>
-                                                        <th className="sort" data-sort="customer_status">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {currentCategories.map((cat, index) => (
-                                                        <tr key={index}>
-                                                            <td>
+                                                </Col>
+                                                <Col className="col-sm">
+                                                    <div className="d-flex justify-content-sm-end">
+                                                        <div className="search-box ms-2" style={{ position: 'relative' }}>
+                                                            <input
+                                                                type="text"
+                                                                className="form-control search"
+                                                                placeholder="Search..."
+                                                                style={{ paddingRight: '30px' }}
+                                                                value={searchTerm}
+                                                                onChange={handleSearchChange}
+                                                            />
+                                                            <i className="ri-search-line search-icon" style={{
+                                                                position: 'absolute',
+                                                                right: '10px',
+                                                                top: '50%',
+                                                                transform: 'translateY(-50%)',
+                                                                pointerEvents: 'none'
+                                                            }}></i>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <div className="table-responsive table-card mt-3 mb-1">
+                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                    <thead className="table-light">
+                                                        <tr>
+                                                            <th scope="col" style={{ width: "50px" }}>
                                                                 <div className="form-check">
                                                                     <input
                                                                         className="form-check-input"
                                                                         type="checkbox"
-                                                                        value={cat.id}
-                                                                        checked={selectedIds.includes(cat.id)} // Check if the category is selected
-                                                                        onChange={(e) => handleCheckboxChange(cat.id)}
+                                                                        id="checkAll"
+                                                                        checked={isAllSelected}
+                                                                        onChange={handleSelectAllChange}
                                                                     />
                                                                 </div>
-                                                            </td>
-                                                            <td>{cat.category_name}</td>
-                                                            <td>
-                                                                <img
-                                                                    src={BASE_URL + cat.image}
-                                                                    alt={cat.category_name}
-                                                                    style={{ maxWidth: '100px' }}
-                                                                />
-                                                            </td>
-
-
-
-                                                            <td>
-                                                                <div className="d-flex gap-2">
-                                                                    <div className="edit">
-                                                                        <button onClick={() => handleEdit(cat)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
-                                                                    </div>
-                                                                    <div className="remove">
-                                                                        <button onClick={() => deleteCategory(cat.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
+                                                            </th>
+                                                            <th className="sort" data-sort="customer_name">Category Name</th>
+                                                            <th className="sort" data-sort="customer_email">Image</th>
+                                                            <th className="sort" data-sort="customer_status">Actions</th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        
+                                                    </thead>
+                                                    <tbody>
+                                                        {currentCategories.map((cat, index) => (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    <div className="form-check">
+                                                                        <input
+                                                                            className="form-check-input"
+                                                                            type="checkbox"
+                                                                            value={cat.id}
+                                                                            checked={selectedIds.includes(cat.id)} // Check if the category is selected
+                                                                            onChange={(e) => handleCheckboxChange(cat.id)}
+                                                                        />
+                                                                    </div>
+                                                                </td>
+                                                                <td>{cat.category_name}</td>
+                                                                <td>
+                                                                    <img
+                                                                        src={BASE_URL + cat.image}
+                                                                        alt={cat.category_name}
+                                                                        style={{ maxWidth: '100px' }}
+                                                                    />
+                                                                </td>
 
 
-                                        <div className="d-flex justify-content-end">
-                                            <div className="pagination-wrap hstack gap-2">
-                                                <Link  onClick={() =>  handlePreviousPage(currentPage - 1)}
+
+                                                                <td>
+                                                                    <div className="d-flex gap-2">
+                                                                        <div className="edit">
+                                                                            <button onClick={() => handleEdit(cat)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
+                                                                        </div>
+                                                                        <div className="remove">
+                                                                            <button onClick={() => deleteCategory(cat.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+
+
+                                            <div className="d-flex justify-content-end">
+                                                <div className="pagination-wrap hstack gap-2">
+                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
                                                         disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                    Previous
-                                                </Link>
-                                                <ul className="pagination listjs-pagination mb-0"></ul>
-                                                <Link onClick={() => handleNextPage(currentPage + 1)}
+                                                        Previous
+                                                    </Link>
+                                                    <ul className="pagination listjs-pagination mb-0"></ul>
+                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
                                                         disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                    Next
-                                                </Link>
+                                                        Next
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
-
-            <Modal
-                isOpen={modal_list}
-                toggle={() => setmodal_list(!modal_list)}
-                centered
-                style={{ maxWidth: '900px', width: '90%' }}
-            >
-                <ModalHeader className="bg-light p-3" toggle={() => setmodal_list(false)}> Edit Category </ModalHeader>
-                <form onSubmit={updateCategory}>
-                    <CardBody style={{ padding: '20px' }}>
-                        <Row className="mb-3">
-                            <label htmlFor="category_name" className="col-md-2 col-form-label">Category Name</label>
-                            <div className="col-md-10">
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    name="category_name"
-                                    placeholder="Category Name"
-                                    value={formData.category_name || ''}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                                    </CardBody>
+                                </Card>
+                            </Col>
                         </Row>
-                        <Row className="mb-3">
-                            <label htmlFor="example-image-input" className="col-md-2 col-form-label">Category Logo /Image</label>
-                            <div className="col-md-10">
-                                <input
-                                    className="form-control"
-                                    type="file"
-                                    id="example-image-input"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                />
-                                {renderImagePreviews()}
+                    </Container>
+                </div>
+                </div>
+                <Modal
+                    isOpen={modal_list}
+                    toggle={() => setmodal_list(!modal_list)}
+                    centered
+                    style={{ maxWidth: '900px', width: '90%' }}
+                >
+                    <ModalHeader className="bg-light p-3" toggle={() => setmodal_list(false)}> Edit Category </ModalHeader>
+                    <form onSubmit={updateCategory}>
+                        <CardBody style={{ padding: '20px' }}>
+                            <Row className="mb-3">
+                                <label htmlFor="category_name" className="col-md-2 col-form-label">Category Name</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="category_name"
+                                        placeholder="Category Name"
+                                        value={formData.category_name || ''}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label htmlFor="example-image-input" className="col-md-2 col-form-label">Category Logo /Image</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="file"
+                                        id="example-image-input"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                    />
+                                    {renderImagePreviews()}
+                                </div>
+                            </Row>
+                        </CardBody>
+                        <ModalFooter>
+                            <div className="hstack gap-2 justify-content-end">
+                                <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button>
+                                <button type="submit" className="btn btn-success">Update</button>
                             </div>
-                        </Row>
-                    </CardBody>
-                    <ModalFooter>
-                        <div className="hstack gap-2 justify-content-end">
-                            <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button>
-                            <button type="submit" className="btn btn-success">Update</button>
-                        </div>
-                    </ModalFooter>
-                </form>
-            </Modal>
+                        </ModalFooter>
+                    </form>
+                </Modal>
 
 
         </React.Fragment>

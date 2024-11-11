@@ -6,12 +6,12 @@ import { BASE_URL } from '../helpers/config';
 
 const ProductDetailSlider = () => {
     const mainImageRef = useRef(null);
-    const navImageRef = useRef(null); // Create a separate ref for the navigation slider
+    const navImageRef = useRef(null);
     const [imgNavSettings, setImgNavSettings] = useState({
         slidesToShow: 4,
         slidesToScroll: 1,
         asNavFor: null,
-        infinite: true,
+        infinite: false, // Disable infinite scrolling for row effect
         dots: false,
         focusOnSelect: true,
     });
@@ -22,43 +22,47 @@ const ProductDetailSlider = () => {
         infinite: true,
         arrows: false,
         fade: true,
-        asNavFor: navImageRef.current, // Link to the nav slider
+        asNavFor: navImageRef.current,
     };
 
-    useEffect(() => {
-        setImgNavSettings((prevSettings) => ({
-            ...prevSettings,
-            asNavFor: navImageRef.current,
-        }));
-    }, []);
-
-    const { id } = useParams();
+    const { SKU } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        setImgNavSettings((prevSettings) => ({
+            ...prevSettings,
+            asNavFor: mainImageRef.current,
+        }));
+    }, []);
+
+    useEffect(() => {
         const fetchProductDetails = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/products/products/${id}/`);
-                setProduct(response.data);
+                const response = await axios.get(`${BASE_URL}/products/products/${SKU}/`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                setProduct(response.data);  
             } catch (error) {
                 console.error('Error fetching product details:', error);
                 setError('Could not fetch product details. Please try again later.');
             } finally {
-                setLoading(false);
+                setLoading(false);   
             }
         };
 
         fetchProductDetails();
-    }, [id]);
+    }, [SKU]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    // Destructure main image and additional images
     const mainImage = product.product_image ? `${BASE_URL}${product.product_image}` : null;
     const additionalImages = product.additional_images || [];
+    const slidesToShow = Math.min(additionalImages.length + 1, 4);
 
     return (
         <>
@@ -77,16 +81,16 @@ const ProductDetailSlider = () => {
 
             <Slider
                 className="fz-product-details__img-nav"
-                {...imgNavSettings}
+                {...{ ...imgNavSettings, slidesToShow }}
                 ref={navImageRef}  
             >
                 {mainImage && (
-                    <div onClick={() => mainImageRef.current.slickGoTo(0)}>
+                    <div  onClick={() => mainImageRef.current.slickGoTo(0)}>
                         <img src={mainImage} alt="Thumbnail Image" />
                     </div>
                 )}
                 {additionalImages.map((image, index) => (
-                    <div key={index} onClick={() => mainImageRef.current.slickGoTo(index + 1)}>
+                    <div  key={index} onClick={() => mainImageRef.current.slickGoTo(index + 1)}>
                         <img src={`${BASE_URL}${image.image}`} alt={`Thumbnail Image ${index + 1}`} />
                     </div>
                 ))}

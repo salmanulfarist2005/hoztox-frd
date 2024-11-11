@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
- 
+
 import JewelleryShop from "./pages/JewelleryShop";
- 
+
 import Shop from "./pages/Shop";
 import ShopDetails from "./pages/ShopDetails";
 import About from "./pages/About";
@@ -10,64 +10,127 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Account from "./pages/Account";
 import Checkout from "./pages/Checkout";
- 
+
 import Contact from "./pages/Contact";
 import Error from "./pages/Error";
 import UserProfile from "./pages/UserProfilepage/profile";
- 
- 
- 
- 
- 
- 
-
 
 
 
 import Login from "./components/Admin/Adminlogin/Login";
 import Dashboard from "./pages/Dashboard/Dashboard"
-import AddCategory from "./components/Admin/Categories/AddCategory"
-import ManageCategory from "./components/Admin/Categories/ManageCategory"
-import OrderPage from "./pages/OrderPage/OrderPage";
-import CustomePage from "./pages/CustomeproductPage/CustomePage";
- 
-import CustomeFullPage from "./pages/CustomeproductPage/CustomFullPage"
+import AddCategoryPage from "./pages/Dashboard/Addcategory"
+import ManageCategoryPage from "./pages/Dashboard/manageCategory"
+import AddProductPage from "./pages/Dashboard/AddProducts"
+import ManageProductPage from "./pages/Dashboard/Manageproducts"
+import ProductCSVUploadPageoductPage from "./pages/Dashboard/AddProductCsv"
+import AddCustomizedProductsPage from "./pages/Dashboard/AddCustomizedProducts"
+import ManageCustomizedProductsPage from "./pages/Dashboard/ManageCustomizedProducts"
+import AddUserPage from "./pages/Dashboard/AddUser"
+import ManageUserPage from "./pages/Dashboard/ManageUser"
+import UserTypePage from "./pages/Dashboard/UserType"
+import AddColorPage from "./pages/Dashboard/AddColor"
+import ViewOrdersPage from "./pages/Dashboard/ViewOrders"
+import MnageOrdersPage from "./pages/Dashboard/MnageOrders"
+import OrderPage from "./pages/OrderPage/OrderPage"
+import ViewCustumOrdersPage from "./pages/Dashboard/ViewOrder"
+import CustomePage from "./pages/CustomeproductPage/CustomePage"
+import PendingCustumOrdersPage from "./pages/Dashboard/PendingOrder"
+import CustomeFullPage from "./pages/CustomeproductPage/CustomFullPage";
+import ManageCustumOrdersPage from "./pages/Dashboard/ManageOrder"
+import StatusCustumOrdersPage from "./pages/Dashboard/UploadCsvStatus"
+import PendingFullOrdersPage from "./pages/Dashboard/FullPendingorder"
+import ViewFullOrdersPage from "./pages/Dashboard/FullVieworder"
+import ManageFullCustumOrdersPage from "./pages/Dashboard/fullManageOrder"
+import StatusFullOrdersPage from "./pages/Dashboard/FullStataus"
+import AddImagePage from "./pages/Dashboard/AddImages"
+import ManagemagePage from "./pages/Dashboard/ManageImages"
+import ChangepasswordPage from "./pages/Dashboard/Changepassword"
+import CustomShop from "./pages/Customshop";
+
 function App() {
   return (
     <Router>
       <Routes>
-    
-        <Route path="/" element={<JewelleryShop />} />   
- 
-      
-    
-      
-    
+
+        <Route path="/" element={<JewelleryShop />} />
+
+
+
+
+
         <Route path="/shop" element={<Shop />} />
- 
-        <Route path="/products/:id" element={<ShopDetails />} />
-        <Route path="/customized-products/:id" element={<CustomePage />} />
+        <Route path="/custom-shop" element={<CustomShop />} />
+        
+        <Route path="/products/:SKU" element={<ShopDetails />} />
+
+        <Route path="/customized-products/:SKU" element={<CustomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/account" element={<Account />} />
         <Route path="/checkout" element={<Checkout />} />
-   
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<Error />} />
-        <Route path="/profile" element={<UserProfile/>} />
-        <Route path="/my-orders" element={<OrderPage/>} />
-        <Route path="/custom-full" element={< CustomeFullPage/>} />
-      
-{/* .............................................................................................................. */}
-        <Route path="/login" element={<Login/>} /> 
-        <Route path="/dashboard" element={<Dashboard/>} /> 
-        <Route path="/add-category" element={<AddCategory/>} /> 
-        <Route path="/manage-category" element={<ManageCategory/>} /> 
-        
+        <Route path="/profile" element={<UserProfile />} />
+        <Route path="/my-orders" element={<OrderPage />} />
+        <Route path="/custom-full" element={< CustomeFullPage />} />
 
-        
+        {/* .............................................................................................................. */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        {/* ............................................................... */}
+        <Route path="/add-category" element={<AddCategoryPage />} />
+        <Route path="/manage-category" element={<ManageCategoryPage />} />
+
+        {/* .................................................................. */}
+        <Route path="/add-product" element={<AddProductPage />} />
+        <Route path="/manage-products" element={<ManageProductPage />} />
+        <Route path="/add-product-csv" element={<ProductCSVUploadPageoductPage />} />
+        {/* ................................................................ */}
+
+        <Route path="/add-custom-product" element={<AddCustomizedProductsPage />} />
+        <Route path="/manage-custom-products" element={<ManageCustomizedProductsPage />} />
+
+        {/* ................................................................ */}
+        <Route path="/color" element={< AddColorPage />} />
+
+        {/* ............................ */}
+        {/* ................................................................ */}
+        <Route path="/view-order" element={< ViewOrdersPage />} />
+        <Route path="//manage-order" element={< MnageOrdersPage />} />
+        {/* ............................ */}
+
+        <Route path="/add-user" element={<AddUserPage />} />
+        <Route path="/manage-user" element={<ManageUserPage />} />
+        <Route path="/user-type" element={<UserTypePage />} />
+        {/* ............................ */}
+
+        <Route path="/custom-view-order" element={<ViewCustumOrdersPage />} />
+        <Route path="/custom-pending-order" element={<PendingCustumOrdersPage />} />
+        <Route path="/custom-manage-order" element={<ManageCustumOrdersPage />} />
+        <Route path="/status-csv" element={<StatusCustumOrdersPage />} />
+
+        {/* ............................ */}
+
+        <Route path="/full-custom-pending-order" element={<PendingFullOrdersPage />} />
+        <Route path="/full-custom-view-order" element={<ViewFullOrdersPage />} />
+        <Route path="/full-custom-manage-order" element={<ManageFullCustumOrdersPage />} />
+        <Route path="/status-full-csv" element={<StatusFullOrdersPage />} />
+
+        {/* ............................ */}
+
+        <Route path="/media" element={<AddImagePage />} />
+        <Route path="/manage-images" element={<ManagemagePage />} />
+        {/* ............................ */}
+
+        <Route path="/password-chanage" element={<ChangepasswordPage />} />
+   
+
+
+
+
       </Routes>
 
 

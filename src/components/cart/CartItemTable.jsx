@@ -13,7 +13,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
   const fetchCartDetails = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await axios.get(`${BASE_URL}/products/cart/items/`, {
+      const response = await axios.get(`${BASE_URL}/products/cart-items/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -6,7 +6,8 @@ import {
     Row,
     Container,
 } from "reactstrap";
-// import Breadcrumbs from "../../components/Common/Breadcrumb";
+import Breadcrumbs from "../../../components/Admin/Breadcrumb";
+
 import { BASE_URL } from '../../helpers/config';
 import axios from 'axios';
 
@@ -51,9 +52,10 @@ const AddCategory = () => {
     };
     return (
         <React.Fragment>
+            <div className="main-content">
             <div className="page-content ">
                 <Container fluid={true}>
-                    {/* <Breadcrumbs title="Product Categories" breadcrumbItem="Add Category" /> */}
+                    <Breadcrumbs title="Product Categories" breadcrumbItem="Add Category" />
 
                     <Row>
                         <Col>
@@ -110,6 +112,7 @@ const AddCategory = () => {
                         </Col>
                     </Row>
                 </Container>
+            </div>
             </div>
         </React.Fragment>
     );

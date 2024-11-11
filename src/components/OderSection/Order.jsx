@@ -19,6 +19,7 @@ function Order() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setOrders(response.data);
+           
         } catch (error) {
             console.error("Error fetching orders:", error);
             setError("Failed to load orders");
@@ -38,7 +39,7 @@ function Order() {
             const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
             const data = response.data;
             setfullOrders(data || []);
-            console.log("response", response);
+            console.log("response.data..............", response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -54,7 +55,7 @@ function Order() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setNormalOrders(response.data);
-            console.log("response.data", response.data);
+            
         } catch (error) {
             console.error("Error fetching orders:", error);
             toast.error("Failed to load orders");
@@ -102,9 +103,10 @@ function Order() {
             <div className="orders-section">
                 <h2 className='my-order-head'>My Orders</h2>
                 
-                <div className="orders-section-div">
+               
                    
                     {orders.length > 0 ? (
+                         <div className="orders-section-div ">
                         <div className=''>
                             {orders.map(order => (
                                 <div className='row mb-order-30'>
@@ -212,14 +214,16 @@ function Order() {
                                 </div>
                             ))}
                         </div>
+                        </div>
                     ) : null}
-                </div>
-
-
                
-                    <div className="orders-section-div">
+
+             
+               
+                   
                        
                         {fullorders.length > 0 && (
+                             <div className="orders-section-div ">
                             <div>
                                 {fullorders.map(order => (
                                     <div className='row mb-order-30'>
@@ -319,58 +323,59 @@ function Order() {
                                     </div>
                                 ))}
                             </div>
+                            </div>
                         )}
-                    </div>
+                   
                 
-
+                  
 
                 
-                    <div className="orders-section-div">
+                    
                        
                         {Normalorders.length > 0 && (
+                            <div className="orders-section-div  ">
                             <div>
                                 {Normalorders.map(order => (
                                      <div className='row mb-order-30'>
+
+                   
+
                                     <ul className="orders-list-normal" key={order.id}>                                       
-                                        <li className="order-item">                                            
+                                        <li className="order-item width100">                                            
                                             <div className="order-items-list">
                                                 {order.order_items.map(item => (
-                                                    <div key={item.id} className="order-item-details">
+                                                    <div key={item.id} className="order-item-details normal-order-item">
                                                         <div className="order-img order-img-200">
                                                             <img src={BASE_URL + item.product.product_image} alt="" />
-                                                        </div>                                                        
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </li>
-
-                                        <li className="order-item no-mtb-20">                                            
-                                            <div className="order-items-list">
-                                                {order.order_items.map(item => (
-                                                    <div key={item.id} className="order-item-details">                                                       
+                                                        </div>
+                                                        
                                                         <div className="order-description">
                                                             <h5>{item.product.product_name}</h5>
                                                             <p>SKU: {item.product.SKU}</p>
                                                             <p>Color: {item.product.color}</p>
-                                                            <p>Gross Weight: {item.total_gross_weight} gm</p>
-                                                            <p>Diamond Weight: {item.diamond_weight} gm</p>
-                                                            <p>Net Weight: {item.net_weight} gm</p>
-                                                            <p>Color Stone: {item.color_stones} gm</p>
+                                                            <p>Gross Weight: {item.product.gross_weight} gm</p>
+                                                            <p>Diamond Weight: {item.product.diamond_weight} gm</p>
+                                                            <p>Net Weight: {item.product.net_weight} gm</p>
+                                                            <p>Color Stone: {item.product.colour_stones} gm</p>
                                                             <p>Product Size: {item.product.product_size}</p>
                                                             <p>Quantity: {item.quantity}</p>
                                                         </div>
+
                                                     </div>
                                                 ))}
                                             </div>
                                         </li>
+
+                                      
 
                                     </ul>
                                     </div>
                                 ))}
                             </div>
+                            </div>
                         )}
-                    </div>
-                
+                   
+                 
 
 
             </div>

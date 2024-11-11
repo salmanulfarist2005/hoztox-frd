@@ -674,6 +674,7 @@
             font-family: $poppins;
             font-weight: 600;
             margin-bottom: 15px;
+            color: #fff;
 
             @include lg {
                 font-size: 30px;
@@ -703,6 +704,7 @@
         font-weight: 400;
         line-height: 1;
         text-transform: capitalize;
+        color: #fff;
 
         li.current-page {
             padding-left: 10px;

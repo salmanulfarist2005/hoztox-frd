@@ -17,7 +17,7 @@ const CheckoutSection = () => {
     const fetchCartItems = async () => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await axios.get(`${BASE_URL}/products/cart-items/`, {
+            const response = await axios.get(`${BASE_URL}/products/cart/items/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -43,7 +43,7 @@ const CheckoutSection = () => {
         const token = localStorage.getItem('authToken');
         const uniqueCartItems = [];
         const seenSKUs = new Set();
-
+    
         cartItems.forEach(item => {
             if (!seenSKUs.has(item.product.SKU)) {
                 seenSKUs.add(item.product.SKU);
@@ -54,24 +54,28 @@ const CheckoutSection = () => {
                 });
             }
         });
-
+    
         try {
             const response = await axios.post(`${BASE_URL}/products/orders/`, { order_items: uniqueCartItems }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+    
+            console.log(response);   
+    
             if (response.status === 201) {
-                setShowConfirmation(true);  
+             
+                setShowConfirmation(true);
                 setTimeout(() => {
                     setShowConfirmation(false);
                     navigate('/checkout');
-                }, 3000);  
+                }, 3000);
             } else {
                 alert("Failed to place order: Unexpected response");
             }
         } catch (error) {
+            console.error("Error placing order:", error);  // Log error
             if (error.response) {
                 alert("Failed to place order: " + (error.response.data.detail || "An error occurred."));
             } else {
@@ -79,7 +83,7 @@ const CheckoutSection = () => {
             }
         }
     };
-
+    
     return (
         <div className="checkout-container">
             <h3 className="checkout-title">Order Items</h3>

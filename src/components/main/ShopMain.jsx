@@ -5,7 +5,7 @@ import ShopAreaSection from '../shop/ShopAreaSection'
 const ShopMain = () => {
   return (
     <>
-        <BreadcrumbSection title={"Shop Page"} current={"Products"}/>
+        <BreadcrumbSection title={"Products"} current={"Products"}/>
         <ShopAreaSection/>
     </>
   )

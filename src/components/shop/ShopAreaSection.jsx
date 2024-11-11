@@ -1,7 +1,7 @@
 import React from 'react'
 import SearchFilter from './SearchFilter'
 import ProductCategoryList from './ProductCategoryList'
-import ProductPriceFilter from './ProductPriceFilter'
+// import ProductPriceFilter from './ProductPriceFilter'
  
 import ProductViewFilter from './ProductViewFilter'
  
@@ -10,7 +10,7 @@ import ProductPagination from './ProductPagination'
 const ShopAreaSection = () => {
   return (
     <div className='bg-gry-1'>
-'
+
     <div className="shop-area">
         <div className="container">
             <div className="row gy-5 justify-content-center">
@@ -20,7 +20,7 @@ const ShopAreaSection = () => {
 
                         <ProductCategoryList/>
 
-                        <ProductPriceFilter/>
+                        {/* <ProductPriceFilter/> */}
  
                     </div>
                 </div>

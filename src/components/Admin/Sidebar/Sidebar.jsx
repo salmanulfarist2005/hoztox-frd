@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import sidebarData from "./SidebarData";
+import logosm from "../../../assets/images/images/logo-2.png";
 // Simple bar
  
  
@@ -150,6 +151,7 @@ const Sidebar = (props) => {
       <div className="vertical-menu">
         <SimpleBar className="h-100" ref={ref}>
           <div id="sidebar-menu">
+        <div className="dash-boradimg"> <img src={logosm} alt="logo-dark" height="24" /></div>
             <ul className="metismenu list-unstyled" id="side-menu-item">
               {(sidebarData || []).map((item, key) => (
                 <React.Fragment key={key}>
@@ -214,7 +216,7 @@ const Sidebar = (props) => {
               ))}
             </ul>
          
-            <button onClick={handleLogout} className="btn btn-danger">
+            <button onClick={handleLogout} className="btn btn-danger d-logout">
               Logout
             </button>
           </div>

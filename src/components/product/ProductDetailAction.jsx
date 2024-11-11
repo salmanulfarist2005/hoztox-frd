@@ -10,7 +10,7 @@ const ProductDetailAction = () => {
     } = useContext(FarzaaContext);
     const defaultQuantity = 1;
     const [quantity, setQuantity] = useState(defaultQuantity);
-    const { id } = useParams();
+    const { SKU } = useParams();
     const [product, setProduct] = useState(null);
 
     const handleQuantityChange = (newQuantity) => {
@@ -22,15 +22,24 @@ const ProductDetailAction = () => {
     useEffect(() => {
         const fetchProductDetails = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/products/products/${id}/`);
-                setProduct(response.data);
+  
+                const response = await axios.get(`${BASE_URL}/products/products/${SKU}/`, {
+                    headers: {
+                   
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                setProduct(response.data);  
             } catch (error) {
                 console.error('Error fetching product details:', error);
+                setError('Could not fetch product details. Please try again later.');
+            } finally {
+                setLoading(false);   
             }
         };
 
         fetchProductDetails();
-    }, [id]);
+    }, [SKU]);
 
     return (
         <div className="fz-product-details__actions">

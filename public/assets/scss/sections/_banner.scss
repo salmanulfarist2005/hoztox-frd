@@ -334,12 +334,12 @@
         }
 
         @include md {
-            padding: 50px 0;
+            padding: 20px 0;
             padding-right: 50px;
         }
 
         @include xxs {
-            padding-right: 35px;
+            padding-right: 10px;
         }
 
         h1 {
@@ -529,6 +529,7 @@
             position: absolute;
             left: calc(0% - 150px);
             bottom: calc(150px + 55px);
+            display: none;
 
             @include xl {
                 left: calc(0% - 90px);

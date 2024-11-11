@@ -21,17 +21,25 @@ const  BestSellerTabContent = () => {
 
     const [products, setProducts] = useState([]);
 
-    // Fetch products from the API
+
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/products_list/`);
+            // const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/products_list/`, {
+                // headers: {
+                //     Authorization: `Bearer ${token}`,
+                // },
+            });
             const data = response.data;
             setProducts(data);
+            console.log("products..................", response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
+    
 
+ 
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -42,12 +50,13 @@ const  BestSellerTabContent = () => {
                 <div className="col-xl-3 col-md-4 col-6 col-xxs-6" key={product.id}>
                     <div className="fz-2-single-product">
                         <div className="fz-2-single-product-img">
-                            <Link to={`/shop/${product.id}`}>
+                        <Link to={`/products/${product.SKU}`}> 
+
                                 <img src={BASE_URL + product.product_image} alt={product.product_name} />
                             </Link>
                             <div className='color_text'>
                                 <h5 className="fz-2-single-product-title">
-                                    <Link to={`/shop/${product.id}`}>{product.SKU}</Link>
+                                <Link to={`/products/${product.id}`}>{product.SKU}</Link>
                                 </h5>
                             </div>
                             <div className="fz-2-single-product-actions">
