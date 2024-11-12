@@ -14,7 +14,9 @@ import { OverViewData } from './dashboard';
 const OverView = () => {
     return (
         <React.Fragment>
+           
             <Col xl={8}>
+            <div className='mt-3'>
                 <Card>
                     <CardBody>
                         <div className="d-flex align-items-center">
@@ -55,7 +57,9 @@ const OverView = () => {
                         </div>
                     </CardBody>
                 </Card>
+                </div>
             </Col>
+           
         </React.Fragment>
     );
 };

@@ -377,3 +377,6 @@ body[data-sidebar="dark"] .menu-title {
 body[data-layout="horizontal"] .main-content {
     margin-left: 0 !important;
 }
+@media (max-width: 991.9px) {
+.page-content{ padding:20px 0px !important; padding-top: 90px !important;}
+}

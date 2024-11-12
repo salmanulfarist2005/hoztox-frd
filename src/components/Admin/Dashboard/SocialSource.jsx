@@ -9,6 +9,7 @@ const SocialSource = () => {
   return (
     <React.Fragment>
       <Col xl={4}>
+      <div className='mt-3'>
         <Card>
           <CardBody>
             <div className="d-flex  align-items-center">
@@ -56,6 +57,7 @@ const SocialSource = () => {
             </Row>
           </CardBody>
         </Card>
+        </div>
       </Col>
     </React.Fragment>
   );
