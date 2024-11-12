@@ -1,14 +1,17 @@
 import React from "react";
 import Layout from "../../components/layout/Layout";
-// import BreadcrumbSection from '../../components/breadcrumb/BreadcrumbSection'
+import BreadcrumbSection from '../../components/breadcrumb/BreadcrumbSection'
 import CustomeDetail from "../../components/offer/Customedetail";   
+
 
 const CustomePage = () => {
   return (
     <Layout>
-       {/* <BreadcrumbSection title={"Custom Products"} current={"Custom Products"}/> */}
-      <CustomeDetail/>
-    </Layout>
+      <div></div>
+    <BreadcrumbSection title={"Product Details"} current={"Product Details"}/>
+    <CustomeDetail/>
+  </Layout>
+  
   );
 };
 

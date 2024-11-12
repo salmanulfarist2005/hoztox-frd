@@ -74,6 +74,14 @@ const FarzaaContextProvider = ({ children }) => {
     setInterval(() => setNewTime(), 1000);
   }, []);
 
+  
+  const setCartItemAmount = () => {
+    const totalAmount = cartItems.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
+    return totalAmount;
+  };
   const setNewTime = () => {
     if (countdownDate) {
       const currentTime = new Date().getTime();
@@ -1108,7 +1116,8 @@ const FarzaaContextProvider = ({ children }) => {
         setFilteredProduct,
         setJeweleryAddToCart,
         ornamentList,
-        
+        cartItemAmount,
+        setCartItemAmount,
       }}
       
     >

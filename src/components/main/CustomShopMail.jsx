@@ -6,7 +6,7 @@ import CustomShopAreaSection from '../shop/CustomShopAreaSection'
 const CustomShopMain = () => {
   return (
     <>
-        <BreadcrumbSection title={"Shop Page"} current={"Custom Products"}/>
+        <BreadcrumbSection title={"Custom Products "} current={"Custom Products"}/>
         <CustomShopAreaSection />
     </>
   )

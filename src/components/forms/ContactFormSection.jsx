@@ -1,29 +1,60 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-
+import axios from 'axios';   
+ 
+import { BASE_URL } from '../helpers/config';
 const ContactFormSection = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [comment, setComment] = useState('');
-
-  const handleFormSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const authToken = localStorage.getItem('authToken');
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+    if (!authToken) {
+      alert("You need to be logged in to send a message.");
+      setIsSubmitting(false);
+      return;
+    }
     if (!firstName || !lastName || !email || !phoneNumber || !comment) {
       toast.error('Please fill out all fields.', { position: 'top-right' });
     } else if (!isValidEmail(email)) {
       toast.warning('Please provide a valid email address.', { position: 'top-right' });
     } else {
+      try {
+        setLoading(true);  
 
-      // If the form is successfully submitted, show a success toast
-      toast.success('Form submitted successfully!', { position: 'top-right' });
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPhoneNumber('');
-      setComment('');
+        const formData = {
+          full_name: `${firstName} ${lastName}`,
+          email,
+          phone: phoneNumber,
+          message: comment,
+        };
+
+        
+       
+        const response = await axios.post( `${BASE_URL}/products/contact/`, formData, {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        });
+
+        if (response.status === 201) {
+          toast.success('Form submitted successfully!', { position: 'top-right' });
+          setFirstName('');
+          setLastName('');
+          setEmail('');
+          setPhoneNumber('');
+          setComment('');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        toast.error('Failed to submit the form. Please try again later.', { position: 'top-right' });
+      } finally {
+        setLoading(false);  // Set loading state to false after the request
+      }
     }
   };
 
@@ -87,8 +118,8 @@ const ContactFormSection = () => {
         </div>
       </div>
 
-      <button type="submit" className="fz-1-banner-btn fz-comment-form__btn">
-        Send Message
+      <button type="submit" className="fz-1-banner-btn fz-comment-form__btn" disabled={loading}>
+        {loading ? 'Sending...' : 'Send Message'}
       </button>
     </form>
   );

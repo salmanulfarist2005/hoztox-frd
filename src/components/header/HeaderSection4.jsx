@@ -9,7 +9,7 @@ import { BASE_URL } from '../helpers/config';
 import "./header.css";
 
 const HeaderSection4 = () => {
-  const { handleCartShow, isHeaderFixed, handleSidebarOpen } = useContext(FarzaaContext);
+  const { handleCartShow, isHeaderFixed, handleSidebarOpen, setCartItemAmount } = useContext(FarzaaContext);
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("authToken"));
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -28,6 +28,7 @@ const HeaderSection4 = () => {
     
       setJeweleryCartItemAmount(response.data.length);  
       // fetchCartItems();
+      setCartItemAmount(cartItemCount);  
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -49,7 +50,7 @@ const HeaderSection4 = () => {
     if (isLoggedIn) {
       fetchCartItems();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn,]);
   return (
     <header className={`fz-header-section fz-2-header-section to-be-fixed ${isHeaderFixed ? "fixed" : ""}`}>
       <div className="row m-0 align-items-center">

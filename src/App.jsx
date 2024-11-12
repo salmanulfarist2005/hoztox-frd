@@ -32,7 +32,7 @@ import UserTypePage from "./pages/Dashboard/UserType"
 import AddColorPage from "./pages/Dashboard/AddColor"
 import ViewOrdersPage from "./pages/Dashboard/ViewOrders"
 import MnageOrdersPage from "./pages/Dashboard/MnageOrders"
-import OrderPage from "./pages/OrderPage/OrderPage"
+import Orderprofile from "./pages/orderprofile"
 import ViewCustumOrdersPage from "./pages/Dashboard/ViewOrder"
 import CustomePage from "./pages/CustomeproductPage/CustomePage"
 import PendingCustumOrdersPage from "./pages/Dashboard/PendingOrder"
@@ -74,7 +74,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<Error />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/my-orders" element={<OrderPage />} />
+        <Route path="/my-orders" element={<Orderprofile />} />
         <Route path="/custom-full" element={< CustomeFullPage />} />
 
         {/* .............................................................................................................. */}

@@ -6,7 +6,7 @@ import ProductDetailSection from '../product/ProductDetailSection'
 const ShopDetailsMain = () => {
   return (
     <>
-        <BreadcrumbSection title={"Shop Details"} current={"Shop Details"}/>
+        <BreadcrumbSection title={"products Details"} current={"products Detail"}/>
         <ProductDetailSection/>
         {/* <RelatedProductSection/> */}
     </>

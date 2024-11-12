@@ -67,6 +67,7 @@ const CheckoutSection = () => {
             if (response.status === 201) {
              
                 setShowConfirmation(true);
+                fetchCartItems();
                 setTimeout(() => {
                     setShowConfirmation(false);
                     navigate('/checkout');
@@ -75,7 +76,7 @@ const CheckoutSection = () => {
                 alert("Failed to place order: Unexpected response");
             }
         } catch (error) {
-            console.error("Error placing order:", error);  // Log error
+            console.error("Error placing order:", error);   
             if (error.response) {
                 alert("Failed to place order: " + (error.response.data.detail || "An error occurred."));
             } else {
