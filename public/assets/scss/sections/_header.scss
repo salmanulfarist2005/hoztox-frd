@@ -858,6 +858,7 @@ a.fz-hamburger {
     aspect-ratio: 1;
     text-align: center;
     line-height: 40px;
+    margin: 0px 3px ;
 }
 
 // INDEX-2 HEADER STYLES
@@ -871,7 +872,7 @@ a.fz-hamburger {
     }
 
     @include lg {
-        padding: 20px 0;
+        padding: 10px 0;
     }
 
     &.fixed {

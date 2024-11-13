@@ -3,11 +3,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import HeaderNav from "../navigation/HeaderNav";
 import { FarzaaContext } from "../../context/FarzaaContext";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from '../helpers/config';
 import "./header.css";
-
+import { Link, useNavigate } from "react-router-dom";
 const HeaderSection4 = () => {
   const { handleCartShow, isHeaderFixed, handleSidebarOpen, setCartItemAmount } = useContext(FarzaaContext);
 
@@ -15,7 +14,14 @@ const HeaderSection4 = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [jeweleryCartItemAmount, setJeweleryCartItemAmount] = useState(0);
 
- 
+  const { isSidebarOpen, handleSidebarClose } = useContext(FarzaaContext);
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
+  // Function to close the modal and navigate
+  const closeAndNavigate = (path) => {
+    handleSidebarClose();
+    navigate(path);
+  };
 
   const fetchCartItems = async () => {
     try {
@@ -81,10 +87,19 @@ const HeaderSection4 = () => {
               <li className="dropdown">
                 {isLoggedIn ? (
                   <>
-                    <button onClick={toggleDropdown} className="d-none d-lg-block" aria-expanded={dropdownOpen}>
+                    <a className="d-lg-none fz-hamburger">
+                    <button onClick={toggleDropdown} className=" d-lg-flex" aria-expanded={dropdownOpen}>
                       <i className="fa-light fa-user"></i>
-                      <span>Profile</span>
+                      <span className="d-none d-lg-block" >Profile</span>
                     </button>
+                    </a>
+
+                    <a className="d-none d-lg-block">
+                    <button onClick={toggleDropdown} className=" d-lg-flex" aria-expanded={dropdownOpen}>
+                      <i className="fa-light fa-user"></i>
+                      <span className="d-none d-lg-block" >Profile</span>
+                    </button>
+                    </a>
 
                     {dropdownOpen && (
                       <div className="dropdown-menu show">
@@ -104,11 +119,22 @@ const HeaderSection4 = () => {
                     )}
                   </>
                 ) : (
-                  <Link to="/account" className="d-none d-lg-block">
+                  <Link to="/account" className="d-lg-block">
                     <i className="fa-light fa-user"></i>
                     <span>Login</span>
                   </Link>
                 )}
+              </li>
+
+               <li>
+               <Link to="/cart" className="d-lg-none">
+               <a className="fz-hamburger" role="button" onClick={() => closeAndNavigate("/cart")}>
+                <span className="fz-off-actions-icon">
+                  <i className="fa-thin fa-bag-shopping"></i>
+                </span>
+                
+              </a>
+              </Link>
               </li>
 
               <li>

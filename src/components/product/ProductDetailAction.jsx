@@ -64,7 +64,7 @@ const ProductDetailAction = () => {
                 className="fz-add-to-cart-btn"
                 onClick={() => addToJeweleryCart(product.id, quantity)}  
             >
-                Add to cart
+                Add to Cart
             </button>
         </div>
     );

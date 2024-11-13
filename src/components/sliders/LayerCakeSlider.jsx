@@ -92,7 +92,7 @@ const LayerCakeSlider = () => {
                       className="fz-3-add-to-cart"
                       onClick={() => addToCakeCart(item.id)}
                     >
-                      Add to cart
+                      Add to Cart
                     </button>
                     <button
                       className="fz-3-quick-view"

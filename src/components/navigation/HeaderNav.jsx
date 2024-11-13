@@ -6,7 +6,7 @@ const HeaderNav = ({ position, downArrow }) => {
     <nav className="fz-header-nav">
       <ul className={`align-items-center ${position}`}>
       <Link to="/">
-        <li className="fz-dropdown fz-nav-item">
+        <li className="fz-dropdown fz-nav-item" >
           <a role="button" className="fz-nav-link">
             <span>home</span>{" "}
             

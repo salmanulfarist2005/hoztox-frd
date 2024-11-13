@@ -105,7 +105,7 @@
 .mb-555{ margin-bottom: 10px !important;}
 .inf_gm { display: flex; justify-content:center; align-items: center; text-align: center;}
 
-.color_text { position: absolute; z-index: 999; top: 20px; left: 20px;}
+.color_text { position: absolute; z-index: 9; top: 20px; left: 20px;}
 .inf_gm ul{
 width: max-content;
 display: flex;
@@ -182,9 +182,7 @@ text-align: center;
         gap: 10px;
         justify-content: center;
 
-        @include sm {
-            bottom: 15px;
-        }
+     
 
         button.fz-add-to-cart-btn,
         button.fz-add-to-wishlist {
@@ -207,7 +205,8 @@ text-align: center;
             }
 
             @include sm {
-                padding: 0 20px;
+                padding: 6px 12px;
+                font-size: 12px;
             }
 
             &:hover {
@@ -236,6 +235,7 @@ text-align: center;
 
     &-txt {
         padding: 14px 0 15px;
+        background-color: white;
     }
 
     &-category {
@@ -309,4 +309,10 @@ text-align: center;
         .fz-2-single-product-title {
           font-size: 13px;
         }
+
+        .cart-product__plus i { font-size: 12px;}
+        .cart-product__minus i { font-size: 12px;}
+        .cart-product__quantity input { font-size: 12px;}
+        
       }
+      

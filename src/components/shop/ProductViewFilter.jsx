@@ -9,9 +9,9 @@ const ProductViewFilter = () => {
         handleCategoryFilter,
         addToJeweleryWishlist,
         addToJeweleryCart,
-        searchedProducts,  
-        searchTerm,  
-        activeCategory  
+        searchedProducts,
+        searchTerm,
+        activeCategory
     } = useContext(FarzaaContext);
 
     const defaultQuantity = 1;
@@ -20,9 +20,9 @@ const ProductViewFilter = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     // Pagination States
-    const productsPerPage = 9;  
+    const productsPerPage = 9;
     const [currentPage, setCurrentPage] = useState(1);
 
     const handleQuantityChange = (newQuantity) => {
@@ -58,7 +58,7 @@ const ProductViewFilter = () => {
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
-        scrollToTop();  
+        scrollToTop();
     };
 
     const scrollToTop = () => {
@@ -68,7 +68,7 @@ const ProductViewFilter = () => {
         });
     };
 
- 
+
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = currentPage * productsPerPage;
     const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
@@ -92,21 +92,57 @@ const ProductViewFilter = () => {
                                             className="fz-add-to-cart-btn"
                                             onClick={() => addToJeweleryCart(item.id, quantity)}
                                         >
-                                            Add to cart
+                                            Add to Cart
                                         </button>
+                                        <div className="btnactions">
+                                            <div className="fz-product-details__quantity cart-product__quantity">
+                                                <button className="minus-btn cart-product__minus" onClick={() => handleQuantityChange(quantity - 1)}>
+                                                    <i className="fa-light fa-minus"></i>
+                                                </button>
+                                                <input
+                                                    type="number"
+                                                    name="product-quantity"
+                                                    className="cart-product-quantity-input"
+                                                    value={quantity}
+                                                    onChange={(e) => handleQuantityChange(Math.max(1, parseInt(e.target.value)))}
+                                                    min="1"
+                                                />
+                                                <button className="plus-btn cart-product__plus" onClick={() => handleQuantityChange(quantity + 1)}>
+                                                    <i className="fa-light fa-plus"></i>
+                                                </button>
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
+                                
+                             
                                 <div className="fz-2-single-product-txt">
-                                    <h5 className="fz-2-single-product-title">
-                                        <Link to={`/products/${item.SKU}`}>{item.product_name}</Link>
-                                    </h5>
-                                    <span className="fz-2-single-product-category">
-                                        <Link to="#">{item.category_name}</Link>
-                                    </span>
-                                    <h5 className="fz-2-single-product-title">
-                                        <Link to={`/products/${item.SKU}`}>SKU: {item.SKU}</Link>
-                                    </h5>
-                                </div>
+                            <div className=''>
+
+                                <span className="fz-2-single-product-category">   {item.category_name} </span>
+
+                                <span className="color_span">&nbsp;&nbsp;( {item.color} )</span>
+                            </div>
+                            <h5 className="fz-2-single-product-title mb-555">
+                            <Link to={`/products/${item.id}`}>{item.product_name}</Link>
+
+                            </h5>
+                            <div className='inf_gm'>
+                                <ul>
+                                    <li>GW:<span>{item.gross_weight} gm</span></li>
+                                    <li>D:<span>{item.diamond_weight} gm</span></li>
+                                </ul>
+                            </div>
+
+                            <div className='inf_gm'>
+                                <ul>
+                                    <li>CS:<span>{item.colour_stones} gm</span></li>
+                                    <li>NW:<span>{item.net_weight} gm</span></li>
+                                </ul>
+                            </div>
+
+                        </div>
                             </div>
                         </div>
                     ))
@@ -115,7 +151,7 @@ const ProductViewFilter = () => {
                 )}
             </div>
 
-           
+
             <nav className="fz-shop-pagination">
                 <ul className="page-numbers">
                     <li>

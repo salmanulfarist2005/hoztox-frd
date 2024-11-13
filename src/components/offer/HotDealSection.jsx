@@ -15,7 +15,7 @@ const HotDealSection = () => {
     const fetchProducts = async () => {
         try {
             // const token = localStorage.getItem('authToken');
-            const response = await axios.get(`${BASE_URL}/products/custom_products_list/`, {
+            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`, {
                 // headers: {
                 //     Authorization: `Bearer ${token}`,
                 // },

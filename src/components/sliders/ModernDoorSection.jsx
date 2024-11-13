@@ -69,7 +69,7 @@ const ModernDoorSection = () => {
                       className="fz-add-to-cart-btn"
                       onClick={() => addToCart(item.id)}
                     >
-                      <span className="btn-txt">add To cart</span>
+                      <span className="btn-txt">add To Cart</span>
                       <span className="btn-icon">
                         <i className="fa-light fa-cart-shopping"></i>
                       </span>
