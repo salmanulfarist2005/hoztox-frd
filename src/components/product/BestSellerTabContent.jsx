@@ -47,7 +47,7 @@ const  BestSellerTabContent = () => {
     return (
         <div className="row gy-4 gx-3 justify-content-center">
             {products.slice(0, 12).map((product) => (
-                <div className="col-xl-3 col-md-4 col-6 col-xxs-6" key={product.id}>
+                <div className="col-xl-3 col-md-4 col-6 col-xxs-6 m-p-1" key={product.id}>
                     <div className="fz-2-single-product">
                         <div className="fz-2-single-product-img">
                         <Link to={`/products/${product.SKU}`}> 
@@ -105,15 +105,15 @@ const  BestSellerTabContent = () => {
                             </h5>
                             <div className='inf_gm'>
                                 <ul>
-                                    <li>GW:<span>{product.gross_weight} gm</span></li>
-                                    <li>D:<span>{product.diamond_weight} gm</span></li>
+                                    <li>GW:<span>{product.gross_weight} </span></li>
+                                    <li>D:<span>{product.diamond_weight} </span></li>
                                 </ul>
                             </div>
 
                             <div className='inf_gm'>
                                 <ul>
-                                    <li>CS:<span>{product.colour_stones} gm</span></li>
-                                    <li>NW:<span>{product.net_weight} gm</span></li>
+                                    <li>CS:<span>{product.colour_stones} </span></li>
+                                    <li>NW:<span>{product.net_weight} </span></li>
                                 </ul>
                             </div>
 

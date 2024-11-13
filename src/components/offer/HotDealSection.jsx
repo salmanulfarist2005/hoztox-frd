@@ -62,50 +62,19 @@ const HotDealSection = () => {
             <div className="row gy-4 gx-3 justify-content-center">
             {products.slice(0, 8).map((product) => (
                 <div className="col-xl-3 col-md-4 col-6 col-xxs-6" key={product.id}>
-                    <div className="fz-2-single-product">
-                        <div className="fz-2-single-product-img">
+                    <div className="fz-2-single-product br-12">
+                        <div className="fz-2-single-product-img br-0">
                         <Link to={`/customized-products/${product.SKU}`}>
-                                <img src={BASE_URL + product.product_image} alt={product.product_name} />
+                                <img className='br-0' src={BASE_URL + product.product_image} alt={product.product_name} />
                             </Link>
                             <div className='color_text'>
                                 <h5 className="fz-2-single-product-title">
                                 <Link to={`/customized-products/${product.SKU}`}>{product.SKU}</Link>
                                 </h5>
-                            </div>
-                            {/* <div className="fz-2-single-product-actions">
-                                <button
-                                    className="fz-add-to-cart-btn"
-                                    onClick={() => addToJeweleryCart(product.id)}
-                                >
-                                    Add to cart
-                                </button>
-
-
-                                <div className="btnactions">
-                                    <div className="fz-product-details__quantity cart-product__quantity">
-                                        <button className="minus-btn cart-product__minus" onClick={() => handleQuantityChange(quantity - 1)}>
-                                            <i className="fa-light fa-minus"></i>
-                                        </button>
-                                        <input
-                                            type="number"
-                                            name="product-quantity"
-                                            className="cart-product-quantity-input"
-                                            value={quantity}
-                                            onChange={(e) => handleQuantityChange(Math.max(1, parseInt(e.target.value)))}
-                                            min="1"
-                                        />
-                                        <button className="plus-btn cart-product__plus" onClick={() => handleQuantityChange(quantity + 1)}>
-                                            <i className="fa-light fa-plus"></i>
-                                        </button>
-                                    </div>
-
-                                </div>
-
-
-                            </div>   */}
+                            </div>                            
 
                         </div>
-                        <div className="fz-2-single-product-txt">
+                        <div className="fz-2-single-product-txt br-0">
                             <div className=''>
 
                                 <span className="fz-2-single-product-category">   {product.category_name} </span>
