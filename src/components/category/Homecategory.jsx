@@ -52,8 +52,8 @@ const Category = () => {
         <Container>
           <section className="section-b-space border-section border-top-0">
             <Row className="justify-content-center g-4">  
-              {categories.slice(0,8).map((category, i) => (
-                <Col key={i} xs="6" sm="6" md="4" lg="3" className="d-flex justify-content-center">
+              {categories.map((category, i) => (
+                <Col key={i} xs="4" sm="4" md="4" lg="3" className="d-flex justify-content-center">
                   <MasterCategory
                     img={BASE_URL + category.image}  
              

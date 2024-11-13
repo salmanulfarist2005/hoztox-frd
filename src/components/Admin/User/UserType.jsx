@@ -308,7 +308,7 @@ const UserType = () => {
             <Modal isOpen={modal_list} toggle={() => tog_list()} centered>
                 <ModalHeader className="bg-light p-3" toggle={() => tog_list()}>Add User Type</ModalHeader>
                 <form onSubmit={addUserType}>
-                    <ModalBody>
+                <ModalBody style={{ padding: '20px' }}> 
                         <div className="mb-3">
                             <label htmlFor="usertype-field" className="form-label">User Type</label>
                             <input type="text" name="usertype" value={formData.usertype} onChange={handleInputChange} id="usertype-field" className="form-control" placeholder="Enter User Type" required />
