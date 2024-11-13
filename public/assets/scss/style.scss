@@ -312,7 +312,7 @@ TABLE OF CONTENTS:
 @media (min-width: 992px) {.mob-cart{ display: none;} }
 @media (max-width: 992px) {
 .mob-cart{ padding: 10px; display: flex; align-items: center; gap: 1rem; text-align: center; justify-content: center;}
-.mob-cart .fz-add-to-cart-btn{ font-size: 12px; background-color: #10494a; color: #fff; padding: 4px 10px;}
+.mob-cart .fz-add-to-cart-btn{ font-size: 12px; background-color: #10494a; color: #fff; padding: 6px 12px;}
 .mob-cart-number .cart-product__minus i { font-size: 12px;}
 .mob-cart-number .cart-product__plus i { font-size: 12px;}
 .mob-cart-number .cart-product-quantity-input { font-size: 12px;}
@@ -325,7 +325,7 @@ TABLE OF CONTENTS:
 
 @media (max-width: 480px) {
     .mob-cart{ padding: 5px; display: flex; align-items: center; gap: 1rem; text-align: center; justify-content: center;}
-    .mob-cart .fz-add-to-cart-btn{ font-size: 11px; background-color: #10494a; border-radius: 5px; color: #fff; padding: 3px 6px;}
+    .mob-cart .fz-add-to-cart-btn{ font-size: 11px; background-color: #10494a; border-radius: 5px; color: #fff; padding: 5px 7px;}
     .mob-cart-number .cart-product__minus i { font-size: 10px;}
     .mob-cart-number .cart-product__plus i { font-size: 10px;}
     .mob-cart-number .cart-product-quantity-input { font-size: 10px;}
