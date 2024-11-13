@@ -18,7 +18,7 @@ const HeaderSection2 = () => {
               <div className="fz-logo-container">
                 <Link to="/">
                   <img
-                    src="assets/images/logo-2.png"
+                    src="assets/images/logo-2.svg"
                     alt="logo"
                     className="fz-logo"
                   />

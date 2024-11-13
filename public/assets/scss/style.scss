@@ -220,8 +220,17 @@ TABLE OF CONTENTS:
 .fz-2-banner-section .fz-def-btn span {
     background-color: #155759;
     border-radius: 0;
+   
 }
+// .fz-2-banner-section{
+//     padding-top: 0 !important;
+// }
 
+@media (max-width: 768px) {
+    .fz-2-banner-section {
+        padding-top: 0 !important;  
+    }
+}
 .fz-inner-page-breadcrumb {
     background-image: url(../images/breadcrumb-bg.png);
 }

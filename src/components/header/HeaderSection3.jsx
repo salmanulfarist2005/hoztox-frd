@@ -69,7 +69,7 @@ const HeaderSection3 = () => {
           <div className="fz-header-left-content d-flex align-items-center">
             <div className="fz-logo-container logo-top">
               <Link to="/">
-                <img src="../assets/images/logo-2.png" alt="logo" className="fz-logo" />
+                <img src="../assets/images/logo-2.svg" alt="logo" className="fz-logo" />
               </Link>
             </div>
             <HeaderCategoryArea header={""} title={""} />

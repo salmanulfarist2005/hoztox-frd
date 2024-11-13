@@ -1,0 +1,5 @@
+.fz-2-banner-section img {
+    width: 100%;
+    height: 400px; /* Adjust the height as needed */
+    object-fit: cover; /* Ensures the images fill the container without distorting */
+}

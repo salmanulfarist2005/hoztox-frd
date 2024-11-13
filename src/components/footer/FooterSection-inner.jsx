@@ -12,7 +12,7 @@ const FooterSectioninner = ({ logo }) => {
             <div className="fz-footer-about">
               <div className="fz-logo">
                 <Link to="/">
-                  <img src="../assets/images/logo-2.png" alt="logo" />
+                  <img src="../assets/images/logo-2.svg" alt="logo" />
                 </Link>
               </div> 
                </div>

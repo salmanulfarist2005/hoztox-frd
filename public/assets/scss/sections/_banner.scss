@@ -395,7 +395,8 @@
 
     .fz-banner-vid {
         position: relative;
-        width: fit-content;
+        width:  750px;
+   
 
         @include md {
             width: 100%;
@@ -424,7 +425,7 @@
             }
 
             @include xxs {
-                height: 190px;
+                height: 390px;
             }
         }
 

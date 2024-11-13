@@ -50,14 +50,14 @@ const HeaderSection4 = () => {
     if (isLoggedIn) {
       fetchCartItems();
     }
-  }, [isLoggedIn,]);
+  }, [isLoggedIn]);
   return (
     <header className={`fz-header-section fz-2-header-section to-be-fixed ${isHeaderFixed ? "fixed" : ""}`}>
       <div className="row m-0 align-items-center">
         <div className="col-lg-4 col-md-6 col-9">
-          <div className="fz-header-left-content d-flex align-items-center">
+        <div className="fz-header-left-content d-flex align-items-center" style={{ width: '150px' }}>
             <Link to="/">
-              <img src="../assets/images/logo-2.png" alt="logo" className="fz-logo" />
+              <img src="../assets/images/logo-2.svg" alt="logo" className="fz-logo" />
             </Link>
           </div>
         </div>
