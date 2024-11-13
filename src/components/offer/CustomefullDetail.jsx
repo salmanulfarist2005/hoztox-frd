@@ -191,20 +191,7 @@ const CustomFull = () => {
                       </button>
                     </div>
                     
-                    <Row className="mb-3 mt-2">
-                      <label htmlFor="design_number" className="col-md-2 col-form-label">Design Number</label>
-                      <div className="col-md-10">
-                        <input
-                          className="form-control"
-                          type="text"
-                          name="design_number"
-                          placeholder="Design Number"
-                          value={formData.design_number}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </Row>
+                   
                    
                     <Row className="mb-3">
                       <label htmlFor="category" className="col-md-2 col-form-label">Product Category</label>

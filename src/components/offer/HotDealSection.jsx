@@ -14,17 +14,31 @@ const HotDealSection = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`);
-            const data = response.data ;  
+            // const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/custom_products_list/`, {
+                // headers: {
+                //     Authorization: `Bearer ${token}`,
+                // },
+            });
+            
+            const data = response.data;
             setProducts(data);
             console.log("products", data);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
+    
     useEffect(() => {
         fetchProducts();
     }, []);
+    
+
+    
+
+ 
+  
+
     const defaultQuantity = 1;
     const [quantity, setQuantity] = useState(defaultQuantity);
 
