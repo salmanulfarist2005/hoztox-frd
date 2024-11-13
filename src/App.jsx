@@ -47,7 +47,7 @@ import AddImagePage from "./pages/Dashboard/AddImages"
 import ManagemagePage from "./pages/Dashboard/ManageImages"
 import ChangepasswordPage from "./pages/Dashboard/Changepassword"
 import CustomShop from "./pages/Customshop";
-
+// import ProductCategoryList from "./components/shop/ProductCategoryList"
 function App() {
   return (
     <Router>
@@ -63,7 +63,7 @@ function App() {
         <Route path="/custom-shop" element={<CustomShop />} />
         
         <Route path="/products/:SKU" element={<ShopDetails />} />
-
+        <Route path="/shop/:categoryName" element={<Shop />} />
         <Route path="/customized-products/:SKU" element={<CustomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />

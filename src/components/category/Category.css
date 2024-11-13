@@ -38947,6 +38947,15 @@
 .custom-row-gap {
     row-gap: 30px;  
   }
+
+  @media only screen and (max-width:480px) {
+  .category-details h5 {
+    margin-top: 10px;
+    font-size: calc(11px + 2*(100vw - 320px)/1600);
+    height: 30px;
+    }
+  }
+
  
 
  

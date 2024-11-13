@@ -30,7 +30,7 @@ const CustomShopAreaSection = () => {
 
                   
 
-                    <ProductPagination/>
+                    {/* <ProductPagination/> */}
                 </div>
             </div>
         </div>

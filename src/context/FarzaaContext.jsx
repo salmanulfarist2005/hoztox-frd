@@ -74,7 +74,7 @@ const FarzaaContextProvider = ({ children }) => {
     setInterval(() => setNewTime(), 1000);
   }, []);
 
-  
+
   const setCartItemAmount = () => {
     const totalAmount = cartItems.reduce(
       (total, item) => total + item.quantity,
@@ -266,7 +266,7 @@ const FarzaaContextProvider = ({ children }) => {
   }, [selectedTags]);
 
   // Pagination
-  const productsPerPage = 9;
+  const productsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalProducts = filteredProducts.length;
@@ -297,10 +297,12 @@ const FarzaaContextProvider = ({ children }) => {
     setPaginatedProducts(paginatedSlice);
 
     // Scroll to the top whenever the page changes
+    scrollToTop();
   }, [currentPage, filteredProducts]);
 
   // Use this state to store the paginated products
   const [paginatedProducts, setPaginatedProducts] = useState([]);
+
 
   // Cart Item Table
   const initialCartItems = allProductList.slice(0, 2);
@@ -721,88 +723,88 @@ const FarzaaContextProvider = ({ children }) => {
   const addToJeweleryCart = async (itemId, quantity = 1) => {
     console.log("Adding item with ID:", itemId, "with quantity:", quantity);
 
-   
+
     if (!ornamentList || ornamentList.length === 0) {
-        console.error("Ornament list is not available.");
-        toast.warning("No items available in the ornament list.");
-        return;
+      console.error("Ornament list is not available.");
+      toast.warning("No items available in the ornament list.");
+      return;
     }
 
- 
+
     const itemToAdd = ornamentList.find((item) => item.id === itemId);
     console.log("Item found:", itemToAdd);
 
     if (itemToAdd) {
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                toast.error("Please log in to add items to your cart.");
-                return;
-            }
-
-           
-            const response = await axios.post(`${BASE_URL}/products/cart/add/`, {
-                product_id: itemId,
-                quantity: quantity,
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const updatedCartItem = response.data;
-            console.log("Cart item saved to backend:", updatedCartItem);
-
-            // Check if the item already exists in the cart
-            setJeweleryAddToCart((prevAddToCartItems) => {
-                // Debug: Log the current state before updating
-                console.log("Current cart items before update:", prevAddToCartItems);
-
-                const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId);
-                let updatedAddToCartItems;
-
-                if (existingItemIndex === -1) {
-                    // If the item doesn't exist, add it as a new item
-                    const newItem = {
-                        ...itemToAdd,
-                        quantity: quantity,
-                        total: itemToAdd.price * quantity,
-                    };
-
-                    updatedAddToCartItems = [...prevAddToCartItems, newItem];
-                    console.log("New item added. Updated cart items:", updatedAddToCartItems);
-                    toast.success("Item added to cart!");
-                } else {
-                    // If the item exists, update its quantity and total
-                    updatedAddToCartItems = [...prevAddToCartItems]; // Create a new array to avoid mutating state
-                    updatedAddToCartItems[existingItemIndex].quantity += quantity; // Increment quantity
-                    updatedAddToCartItems[existingItemIndex].total = 
-                        updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price; // Update total
-
-                    console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
-                    toast.success("Item quantity updated in cart!");
-                }
-
-                // Return the updated cart
-                return updatedAddToCartItems;
-            });
-        } catch (error) {
-            console.error("Error saving cart item to backend:", error);
-
-            if (error.response && error.response.status === 401) {
-                toast.error("Unauthorized. Please log in to add items to your cart.");
-            } else {
-                toast.error("Failed to add item to cart. Please try again.");
-            }
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          toast.error("Please log in to add items to your cart.");
+          return;
         }
-    } else {
-        console.warn("Item not found in ornament list.");
-        toast.warning("Item not found in ornament list.");
-    }
-};
 
-  
-  
+
+        const response = await axios.post(`${BASE_URL}/products/cart/add/`, {
+          product_id: itemId,
+          quantity: quantity,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const updatedCartItem = response.data;
+        console.log("Cart item saved to backend:", updatedCartItem);
+
+        // Check if the item already exists in the cart
+        setJeweleryAddToCart((prevAddToCartItems) => {
+          // Debug: Log the current state before updating
+          console.log("Current cart items before update:", prevAddToCartItems);
+
+          const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId);
+          let updatedAddToCartItems;
+
+          if (existingItemIndex === -1) {
+            // If the item doesn't exist, add it as a new item
+            const newItem = {
+              ...itemToAdd,
+              quantity: quantity,
+              total: itemToAdd.price * quantity,
+            };
+
+            updatedAddToCartItems = [...prevAddToCartItems, newItem];
+            console.log("New item added. Updated cart items:", updatedAddToCartItems);
+            toast.success("Item added to cart!");
+          } else {
+            // If the item exists, update its quantity and total
+            updatedAddToCartItems = [...prevAddToCartItems]; // Create a new array to avoid mutating state
+            updatedAddToCartItems[existingItemIndex].quantity += quantity; // Increment quantity
+            updatedAddToCartItems[existingItemIndex].total =
+              updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price; // Update total
+
+            console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
+            toast.success("Item quantity updated in cart!");
+          }
+
+          // Return the updated cart
+          return updatedAddToCartItems;
+        });
+      } catch (error) {
+        console.error("Error saving cart item to backend:", error);
+
+        if (error.response && error.response.status === 401) {
+          toast.error("Unauthorized. Please log in to add items to your cart.");
+        } else {
+          toast.error("Failed to add item to cart. Please try again.");
+        }
+      }
+    } else {
+      console.warn("Item not found in ornament list.");
+      toast.warning("Item not found in ornament list.");
+    }
+  };
+
+
+
 
 
 
@@ -1119,12 +1121,12 @@ const FarzaaContextProvider = ({ children }) => {
         cartItemAmount,
         setCartItemAmount,
       }}
-      
+
     >
       {children}
       <ToastContainer />
     </FarzaaContext.Provider>
-    
+
   );
 };
 
