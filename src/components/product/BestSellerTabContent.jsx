@@ -117,6 +117,37 @@ const  BestSellerTabContent = () => {
                                 </ul>
                             </div>
 
+                            <div className='mob-cart'>
+                                <div className='m-cart'>
+                                <button
+                                    className="fz-add-to-cart-btn"
+                                    onClick={() => addToJeweleryCart(product.id, quantity)} >
+                                    Add to Cart
+                                </button>
+                                </div>
+
+                                <div className="mob-cart-number">
+                                    <div className="fz-product-details__quantity cart-product__quantity">
+                                        <button className="minus-btn cart-product__minus" onClick={() => handleQuantityChange(quantity - 1)}>
+                                            <i className="fa-light fa-minus"></i>
+                                        </button>
+                                        <input
+                                            type="number"
+                                            name="product-quantity"
+                                            className="cart-product-quantity-input"
+                                            value={quantity}
+                                            onChange={(e) => handleQuantityChange(Math.max(1, parseInt(e.target.value)))}
+                                            min="1"
+                                        />
+                                        <button className="plus-btn cart-product__plus" onClick={() => handleQuantityChange(quantity + 1)}>
+                                            <i className="fa-light fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
