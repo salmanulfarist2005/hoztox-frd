@@ -128,13 +128,17 @@ const HeaderSection4 = () => {
 
                <li>
                <Link to="/cart" className="d-lg-none">
-               <a className="fz-hamburger" role="button" onClick={() => closeAndNavigate("/cart")}>
+               <a className="fz-hamburger relative fz-header-cart-btn1" role="button"  onClick={handleCartShow}>
+             
                 <span className="fz-off-actions-icon">
                   <i className="fa-thin fa-bag-shopping"></i>
                 </span>
+                <span className="count">{jeweleryCartItemAmount}</span>
                 
               </a>
               </Link>
+             
+
               </li>
 
               <li>

@@ -2385,3 +2385,18 @@ a.fz-hamburger {
     backdrop-filter: blur(0px);
   
   }
+
+  .fz-header-cart-btn1 .count {
+    position: absolute;
+    top: calc(0% - 7px);
+    right: calc(0% - 7px);
+    background: #0d5558;
+    line-height: 1.7;
+    border-radius: 30px;
+    font-size: 12px;
+    font-family: "Futura PT", sans-serif;
+    color: #ffffff;
+    min-width: 20px;
+    min-height: 20px;
+    text-align: center;
+  }
