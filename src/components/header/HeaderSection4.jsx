@@ -120,8 +120,8 @@ const HeaderSection4 = () => {
                   </>
                 ) : (
                   <Link to="/account" className="d-lg-block">
-                    <i className="fa-light fa-user"></i>
-                    <span className="d-m-none">Login</span>
+                    <a className="fz-hamburger"> <i className="fa-light fa-user"></i>
+                   <span className="d-m-none">Login</span></a>
                   </Link>
                 )}
               </li>
