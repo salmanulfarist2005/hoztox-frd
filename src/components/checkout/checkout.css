@@ -165,3 +165,9 @@
     font-size: 1.2rem;
     color: #333;
 }
+
+@media (max-width: 768px) {
+.check-cart-div { display: block;}
+.cart-list { width: 100%;}
+.total-weights { width: 100%;}
+}

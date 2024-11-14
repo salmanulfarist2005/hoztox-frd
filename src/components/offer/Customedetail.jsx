@@ -155,17 +155,21 @@ function CustomeDetail() {
                     <>
                         <div className="row align-items-start justify-content-center">
                             <div className="col-lg-5 col-md-6 col-12 col-xxs-12">
+                          
                                 <Slider className="fz-product-details__img-slider br-01" {...imgSliderSettings} ref={mainImageRef}>
+                               
                                     {mainImage && (
                                         <div>
+                                        
                                             <img src={BASE_URL + mainImage} alt="Product Image" />
                                         </div>
                                     )}
                                     {additionalImages.map((image, index) => (
-                                        <div key={index}>
+                                        <div key={index}>                                            
                                             <img src={BASE_URL + image.image} alt={`Product Additional Image ${index + 1}`} />
                                         </div>
                                     ))}
+                                     
                                 </Slider>
                                 <Slider
                                     className="fz-product-details__img-nav"
@@ -185,10 +189,12 @@ function CustomeDetail() {
                                 </Slider>
                             </div>
                             <div className="col-lg-7 col-md-6">
+                                <div className='p-name-details'>
                                 <h2>{product.product_name}</h2>
 
                                 <p>SKU: {product.SKU}</p>
                                 <p>Category: {product.category_name}</p>
+                                </div>
                                 <div className="fz-product-details__quantity cart-product__quantity">
                                     <button className="minus-btn cart-product__minus" onClick={() => handleQuantityChange(quantity - 1)}>
                                         <i className="fa-light fa-minus"></i>
@@ -205,7 +211,10 @@ function CustomeDetail() {
                                         <i className="fa-light fa-plus"></i>
                                     </button>
                                 </div>
+
                                 <form className="customization-form" onSubmit={handleSubmit}>
+                                    <div className='row'>
+                                    <div className='col-sm-6 mb-m2'>
                                     <label>
                                         Size:
                                         <input
@@ -216,7 +225,11 @@ function CustomeDetail() {
                                             required
                                         />
                                     </label>
-                                    <label>
+                                    </div>
+
+                                    <div className='col-sm-6 mb-m2'>
+
+                                    <label >
                                         Gram:
                                         <input
                                             type="number"
@@ -226,6 +239,9 @@ function CustomeDetail() {
                                             required
                                         />
                                     </label>
+                                    </div>
+
+                                    <div className='col-sm-6 mb-m2'>
                                     <label>
                                         Cent:
                                         <input
@@ -236,8 +252,10 @@ function CustomeDetail() {
                                             required
                                         />
                                     </label>
+                                    </div>
 
-                                    <label htmlFor="color" className=" ">Color</label>
+                                    <div className='col-sm-6 mb-m2'>
+                                    <label htmlFor="color" className="">Color</label>
                                     <div className=" ">
                                         <select className="form-control" value={formData.color} name="color" onChange={handleChange} required>
                                             <option value="" disabled>Select a Color</option>
@@ -246,8 +264,11 @@ function CustomeDetail() {
                                             ))}
                                         </select>
                                     </div>
+                                    </div>
 
-                                    <label>
+                                    <div className='col-sm-12 mb-m2'>
+
+                                    <label >
                                         Description:
                                         <textarea
                                             name="description"
@@ -256,7 +277,11 @@ function CustomeDetail() {
                                             required
                                         />
                                     </label>
+                                    </div>
+                                    <div className='col-sm-6'>
                                     <button type="submit">Place Order</button>
+                                    </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
