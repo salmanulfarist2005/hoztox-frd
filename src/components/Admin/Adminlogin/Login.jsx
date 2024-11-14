@@ -71,11 +71,11 @@ const Login = () => {
                                             </Link>
                                         </div>
                                         <h4 className="font-size-18 text-muted mt-2 text-center">
-                                            Welcome Back!
+                                            Welcome to Caratree Admin 
                                         </h4>
-                                        <p className="mb-5 text-center">
+                                        {/* <p className="mb-5 text-center">
                                             Sign in to continue to Upzet.
-                                        </p>
+                                        </p> */}
                                         <Form className="form-horizontal" onSubmit={handleSubmit}>
                                             <Row>
                                                 <Col md={12}>
@@ -124,7 +124,7 @@ const Login = () => {
                                                         </Col>
                                                         <Col className="col-7">
                                                             <div className="text-md-end mt-3 mt-md-0">
-                                                                <Link to="/auth-recoverpw" className="text-muted">
+                                                                <Link to="" className="text-muted">
                                                                     <i className="mdi mdi-lock"></i> Forgot your password?
                                                                 </Link>
                                                             </div>
