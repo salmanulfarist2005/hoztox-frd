@@ -30,4 +30,7 @@
   .dropdown-item i {
     margin-right: 10px; 
   }
+  @media (max-width: 768px) {
+  .d-m-none{ display: none;}
+  }
   
