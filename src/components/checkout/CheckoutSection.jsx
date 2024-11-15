@@ -50,6 +50,7 @@ const CheckoutSection = () => {
                 uniqueCartItems.push({
                     product: item.product.SKU,
                     quantity: item.quantity,
+                    color: item.color,
                     additional_notes: notes[item.product.SKU] || '',
                 });
             }
@@ -101,6 +102,7 @@ const CheckoutSection = () => {
                                 <h4 className="cart-title">{item.product?.product_name}</h4>
                                 <ul className="cart-summary">
                                     <li><span className="cart-key">Quantity:</span> <span className="cart-value">{item.quantity}</span></li>
+                                    <li><span className="cart-key">Color:</span> <span className="cart-value">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span></li>
                                     <li><span className="cart-key">Gross Weight:</span> <span className="cart-value">{item.gross_weight} gm</span></li>
                                     <li><span className="cart-key">Diamond Weight:</span> <span className="cart-value">{item.diamond_weight} gm</span></li>
                                     <li><span className="cart-key">Color Stones:</span> <span className="cart-value">{item.colour_stones} gm</span></li>

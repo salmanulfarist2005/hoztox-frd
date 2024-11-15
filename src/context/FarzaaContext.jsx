@@ -720,16 +720,14 @@ const FarzaaContextProvider = ({ children }) => {
   useEffect(() => {
     fetchData();
   }, []);
-  const addToJeweleryCart = async (itemId, quantity = 1) => {
-    console.log("Adding item with ID:", itemId, "with quantity:", quantity);
-
+  const addToJeweleryCart = async (itemId, quantity = 1, color = '') => {
+    console.log("Adding item with ID:", itemId, "with quantity:", quantity, "and color:", color);
 
     if (!ornamentList || ornamentList.length === 0) {
       console.error("Ornament list is not available.");
       toast.warning("No items available in the ornament list.");
       return;
     }
-
 
     const itemToAdd = ornamentList.find((item) => item.id === itemId);
     console.log("Item found:", itemToAdd);
@@ -742,10 +740,10 @@ const FarzaaContextProvider = ({ children }) => {
           return;
         }
 
-
         const response = await axios.post(`${BASE_URL}/products/cart/add/`, {
           product_id: itemId,
           quantity: quantity,
+          color: color,  
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -755,19 +753,20 @@ const FarzaaContextProvider = ({ children }) => {
         const updatedCartItem = response.data;
         console.log("Cart item saved to backend:", updatedCartItem);
 
-        // Check if the item already exists in the cart
+    
         setJeweleryAddToCart((prevAddToCartItems) => {
-          // Debug: Log the current state before updating
+ 
           console.log("Current cart items before update:", prevAddToCartItems);
 
-          const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId);
+          const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId && item.color === color);  
           let updatedAddToCartItems;
 
           if (existingItemIndex === -1) {
-            // If the item doesn't exist, add it as a new item
+        
             const newItem = {
               ...itemToAdd,
               quantity: quantity,
+              color: color,  
               total: itemToAdd.price * quantity,
             };
 
@@ -775,17 +774,17 @@ const FarzaaContextProvider = ({ children }) => {
             console.log("New item added. Updated cart items:", updatedAddToCartItems);
             toast.success("Item added to cart!");
           } else {
-            // If the item exists, update its quantity and total
-            updatedAddToCartItems = [...prevAddToCartItems]; // Create a new array to avoid mutating state
-            updatedAddToCartItems[existingItemIndex].quantity += quantity; // Increment quantity
+        
+            updatedAddToCartItems = [...prevAddToCartItems];  
+            updatedAddToCartItems[existingItemIndex].quantity += quantity; 
             updatedAddToCartItems[existingItemIndex].total =
-              updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price; // Update total
+              updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price; 
 
             console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
             toast.success("Item quantity updated in cart!");
           }
 
-          // Return the updated cart
+ 
           return updatedAddToCartItems;
         });
       } catch (error) {
@@ -801,10 +800,7 @@ const FarzaaContextProvider = ({ children }) => {
       console.warn("Item not found in ornament list.");
       toast.warning("Item not found in ornament list.");
     }
-  };
-
-
-
+};
 
 
 

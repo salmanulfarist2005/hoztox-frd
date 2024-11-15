@@ -19,6 +19,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
         },
       });
       setCart(response.data);
+      console.log("response.data", response.data)
     } catch (error) {
       console.error('Error fetching cart details:', error);
       setError('Failed to load cart items.');
@@ -31,15 +32,14 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
     fetchCartDetails();
   }, []);
 
-
-  const handleQuantityChange = async (SKU, newQuantity) => {
+  const handleQuantityChange = async (SKU, newQuantity, color) => {
     if (newQuantity < 1) return;
-  
+
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.patch(
         `${BASE_URL}/products/cart/update/${SKU}/`,
-        { quantity: newQuantity },
+        { quantity: newQuantity, color: color },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,8 +47,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
           },
         }
       );
-  
-      // Update the cart in the state with the new data
+
       setCart((prevCart) =>
         prevCart.map((item) =>
           item.product.SKU === SKU ? { ...item, ...response.data } : item
@@ -59,7 +58,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       alert("Failed to update cart quantity.");
     }
   };
-  
+
 
   const handleRemoveItem = async (SKU) => {
     try {
@@ -77,7 +76,32 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       alert("Failed to remove item from cart.");
     }
   };
- 
+
+  const handleColorChange = async (SKU, newColor) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await axios.patch(
+        `${BASE_URL}/products/cart/update/${SKU}/`,
+        { color: newColor, quantity: 1 }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.product.SKU === SKU ? { ...item, color: newColor } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating product color:', error);
+      alert('Failed to update product color.');
+    }
+  };
+  
 
 
   return (
@@ -121,16 +145,17 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
                     <div className="cart-product__quantity-btns">
                       <button
                         className="cart-product__minus"
-                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity - 1)}
+                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity - 1, item.color)}
                       >
                         <i className="fa-light fa-minus"></i>
                       </button>
                       <button
                         className="cart-product__plus"
-                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity + 1)}
+                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity + 1, item.color)}
                       >
                         <i className="fa-light fa-plus"></i>
                       </button>
+
                     </div>
                     <input
                       type="number"
@@ -145,14 +170,26 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
                     />
                   </div>
                 </td>
-                <td>{item.product.color}</td>
+                <td>
+                  {item.color && (
+                    <select
+                      value={item.color || "yellow"}
+                      onChange={(e) => handleColorChange(item.product.SKU, e.target.value)}
+                    >
+                      <option value="yellow">Yellow</option>
+                      <option value="rose">Rose</option>
+
+                    </select>
+                  )}
+                </td>
+
                 <td>
                   {item.gross_weight} gm<br />
-                 ( {item.product.gross_weight} gm)
+                  ({item.product.gross_weight} gm)
                 </td>
                 <td>
                   {item.diamond_weight} gm<br />
-                 ( {item.product.diamond_weight} gm)
+                  ({item.product.diamond_weight} gm)
                 </td>
                 <td>
                   {item.colour_stones} gm<br />
@@ -172,20 +209,16 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
                   </button>
                 </td>
               </tr>
-             
             </React.Fragment>
           ))
         )}
-
       </tbody>
       <Link to="/checkout">
-      <button className="fz-1-banner-btn cart-checkout-btn " >
-        Proceed to checkout
-      </button>
+        <button className="fz-1-banner-btn cart-checkout-btn">
+          Proceed to checkout
+        </button>
       </Link>
-   
-
-    </table>
+    </table >
   );
 };
 

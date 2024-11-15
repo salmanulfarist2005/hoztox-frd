@@ -352,7 +352,8 @@ function Order() {
                                                         <div className="order-description">
                                                             <h5>{item.product.product_name}</h5>
                                                             <p>SKU: {item.product.SKU}</p>
-                                                            <p>Color: {item.product.color}</p>
+                                                            <p>Color: {item.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
+
                                                             <p>Gross Weight: {item.product.gross_weight} gm</p>
                                                             <p>Diamond Weight: {item.product.diamond_weight} gm</p>
                                                             <p>Net Weight: {item.product.net_weight} gm</p>

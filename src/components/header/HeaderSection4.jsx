@@ -56,7 +56,7 @@ const HeaderSection4 = () => {
     if (isLoggedIn) {
       fetchCartItems();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn,setCartItemAmount]);
   return (
     <header className={`fz-header-section fz-2-header-section to-be-fixed ${isHeaderFixed ? "fixed" : ""}`}>
       <div className="row m-0 align-items-center">

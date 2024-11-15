@@ -19,7 +19,7 @@ const AddCustomeProduct = () => {
     SKU: "",
     product_name: "",
     category: "",
-    color: "",
+ 
     gross_weight: "",
     diamond_weight: "",
     colour_stones: "",
@@ -159,7 +159,7 @@ const AddCustomeProduct = () => {
         SKU: "",
         product_name: "",
         category: "",
-        color: "",
+   
         gross_weight: "",
         diamond_weight: "",
         colour_stones: "",
@@ -252,20 +252,7 @@ const AddCustomeProduct = () => {
                       </Row>
 
 
-                      <Row className="mb-3">
-                        <label htmlFor="color" className="col-md-2 col-form-label">Product Color</label>
-                        <div className="col-md-10">
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="color"
-                            placeholder="Product Color"
-                            value={formData.color}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                      </Row>
+                      
                       <Row className="mb-3">
                         <label htmlFor="gross_weight" className="col-md-2 col-form-label">Gross Weight</label>
                         <div className="col-md-10">

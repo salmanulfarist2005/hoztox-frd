@@ -4,11 +4,11 @@ import './Category.css';
 import { Container, Row, Col } from "reactstrap";
 import { FarzaaContext } from '../../context/FarzaaContext';
 import { BASE_URL } from '../helpers/config';
-import { useNavigate } from "react-router-dom";  // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";  
 
 const MasterCategory = ({ img, title, link, onCategoryClick }) => {
   return (
-    <div className="category-block" onClick={onCategoryClick}> {/* Trigger the category filter */}
+    <div className="category-block" onClick={onCategoryClick}>  
       <div className="category-image svg-image">
         <img src={img} alt={title} />
       </div>
@@ -46,8 +46,8 @@ const Category = () => {
   }, []);
 
   const handleCategoryClick = (categoryName) => {
-    handleCategoryFilter(categoryName);  // Update the active category
-    navigate(`/shop/${categoryName}`);  // Navigate to the category-specific page
+    handleCategoryFilter(categoryName);  
+    navigate(`/shop/${categoryName}`);   
   };
 
   return (

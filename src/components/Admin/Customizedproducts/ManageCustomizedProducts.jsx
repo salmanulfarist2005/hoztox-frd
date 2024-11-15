@@ -25,7 +25,7 @@ const ManageCustomProducts = () => {
         SKU: "",
         product_name: "",
         category: "",
-        color: "",
+ 
         gross_weight: "",
         diamond_weight: "",
         colour_stones: "",
@@ -88,7 +88,7 @@ const ManageCustomProducts = () => {
             SKU: product.SKU,
             product_name: product.product_name,
             category: product.category,
-            color: product.color,
+           
             gross_weight: product.gross_weight,
             diamond_weight: product.diamond_weight,
             colour_stones: product.colour_stones,
@@ -391,11 +391,12 @@ const ManageCustomProducts = () => {
             });
 
             alert("Product updated successfully!");
+            fetchProducts();
             setFormData({
                 SKU: "",
                 product_name: "",
                 category: "",
-                color: "",
+              
                 gross_weight: "",
                 diamond_weight: "",
                 colour_stones: "",
@@ -588,7 +589,7 @@ const ManageCustomProducts = () => {
                                                                 <td>{product.product_name}</td>
                                                                 <td>{product.SKU}</td>
                                                                 <td>{product.category_name}</td>
-                                                                <td>{product.color}</td>
+                                                              
 
                                                                 <td>
                                                                     <div className="d-flex gap-2">
@@ -698,25 +699,7 @@ const ManageCustomProducts = () => {
                                     </select>
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label
-                                    htmlFor="example-text-input"
-                                    className="col-md-2 col-form-label"
-                                >
-                                    Product Colour
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="color"
-                                        placeholder="Product Color"
-                                        value={formData.color}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </Row>
+                            
                             <Row className="mb-3 d-flex align-items-center">
                                 <label htmlFor="example-text-input" className="col-md-2 col-form-label">
                                     Product Weight

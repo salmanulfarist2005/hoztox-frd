@@ -9,6 +9,7 @@ const BestSellerTabContent = () => {
 
     const [quantities, setQuantities] = useState({});
     const [products, setProducts] = useState([]);
+    const [selectedColors, setSelectedColors] = useState({});
 
     const fetchProducts = async () => {
         try {
@@ -16,12 +17,15 @@ const BestSellerTabContent = () => {
             const fetchedProducts = response.data;
             setProducts(fetchedProducts);
 
-            // Set initial quantities based on fetched products
             const initialQuantities = {};
             fetchedProducts.forEach((product) => {
-                initialQuantities[product.id] = 1; // Default quantity of 1
+                initialQuantities[product.id] = 1;
             });
             setQuantities(initialQuantities);
+
+           
+           
+   
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -34,7 +38,14 @@ const BestSellerTabContent = () => {
     const handleQuantityChange = (productId, newQuantity) => {
         setQuantities((prevQuantities) => ({
             ...prevQuantities,
-            [productId]: Math.max(1, newQuantity), // Ensure quantity doesn't go below 1
+            [productId]: Math.max(1, newQuantity),
+        }));
+    };
+
+    const handleColorSelection = (productId, color) => {
+        setSelectedColors((prevSelectedColors) => ({
+            ...prevSelectedColors,
+            [productId]: color,
         }));
     };
 
@@ -55,7 +66,14 @@ const BestSellerTabContent = () => {
                             <div className="fz-2-single-product-actions">
                                 <button
                                     className="fz-add-to-cart-btn"
-                                    onClick={() => addToJeweleryCart(product.id, quantities[product.id])}
+                                    onClick={() => {
+                                        const selectedColor = selectedColors[product.id];
+                                        if (selectedColor) {
+                                            addToJeweleryCart(product.id, quantities[product.id], selectedColor);
+                                        } else {
+                                            alert('Please select a color!');
+                                        }
+                                    }}
                                 >
                                     Add to Cart
                                 </button>
@@ -91,13 +109,14 @@ const BestSellerTabContent = () => {
                             </div>
                         </div>
                         <div className="fz-2-single-product-txt">
-                            <div>
-                                <span className="fz-2-single-product-category">{product.category_name}</span>
-                                <span className="color_span">&nbsp;&nbsp;( {product.color} )</span>
-                            </div>
-                            <h5 className="fz-2-single-product-title mb-555">
+                        <h5 className="fz-2-single-product-title ">
                                 <Link to={`/products/${product.id}`}>{product.product_name}</Link>
                             </h5>
+                            <div>
+                                <span className="fz-2-single-product-category mb-555">{product.category_name}</span>
+                                
+                            </div>
+                           
                             <div className="inf_gm">
                                 <ul>
                                     <li>GW:<span>{product.gross_weight}</span></li>
@@ -110,9 +129,33 @@ const BestSellerTabContent = () => {
                                     <li>NW:<span>{product.net_weight}</span></li>
                                 </ul>
                             </div>
-                            
+                            <div className="color-selection">
+                                <ul className="color-options">
+                                    <li className={`color-option ${selectedColors[product.id] === 'rose' ? 'selected' : ''}`}>
+                                        <input
+                                            type="radio"
+                                            name={`color-${product.id}`}
+                                            value="rose"
+                                            onChange={() => handleColorSelection(product.id, 'rose')}
+                                            checked={selectedColors[product.id] === 'rose'}
+                                        />
+                                        <span className="color-box" style={{ backgroundColor: 'pink' }}></span>
+                                        Rose
+                                    </li>
+                                    <li className={`color-option ${selectedColors[product.id] === 'yellow' ? 'selected' : ''}`}>
+                                        <input
+                                            type="radio"
+                                            name={`color-${product.id}`}
+                                            value="yellow"
+                                            onChange={() => handleColorSelection(product.id, 'yellow')}
+                                            checked={selectedColors[product.id] === 'yellow'}
+                                        />
+                                        <span className="color-box" style={{ backgroundColor: 'yellow' }}></span>
+                                        Yellow
+                                    </li>
+                                </ul>
+                            </div>
                             <div className="mob-cart">
-                               
                                 <div className="mob-cart-number">
                                     <div className="fz-product-details__quantity cart-product__quantity">
                                         <button
@@ -142,16 +185,21 @@ const BestSellerTabContent = () => {
                                         </button>
                                     </div>
                                 </div>
-
                                 <div className="m-cart">
                                     <button
                                         className="fz-add-to-cart-btn"
-                                        onClick={() => addToJeweleryCart(product.id, quantities[product.id])}
+                                        onClick={() => {
+                                            const selectedColor = selectedColors[product.id];
+                                            if (selectedColor) {
+                                                addToJeweleryCart(product.id, quantities[product.id], selectedColor);
+                                            } else {
+                                                alert('Please select a color!');
+                                            }
+                                        }}
                                     >
                                         Add to Cart
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
