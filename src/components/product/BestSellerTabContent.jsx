@@ -120,7 +120,7 @@ const BestSellerTabContent = () => {
                             <div className="inf_gm">
                                 <ul>
                                     <li>GW:<span>{product.gross_weight}</span></li>
-                                    <li>D:<span>{product.diamond_weight}</span></li>
+                                    <li>DMD:<span>{product.diamond_weight} CT</span></li>
                                 </ul>
                             </div>
                             <div className="inf_gm">

@@ -150,7 +150,7 @@ const ProductViewFilter = () => {
                                     <div className='inf_gm'>
                                         <ul>
                                             <li>GW:<span>{item.gross_weight} gm</span></li>
-                                            <li>D:<span>{item.diamond_weight} gm</span></li>
+                                            <li>DMD:<span>{item.diamond_weight} CT</span></li>
                                         </ul>
                                     </div>
                                     <div className='inf_gm'>

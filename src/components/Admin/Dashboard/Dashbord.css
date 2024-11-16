@@ -141,6 +141,8 @@
 .metismenu {
     margin: 0;
     padding-top: 20px;
+    max-height: 650px;
+    overflow: scroll;
 }
 
 .metismenu li {

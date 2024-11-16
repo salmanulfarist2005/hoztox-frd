@@ -500,3 +500,24 @@ TABLE OF CONTENTS:
         height: 10px;
     }
 }
+
+
+.centered-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center;  
+    padding: 10px;    
+              
+}
+.login-logo {
+    width: 150px;            
+    height: auto;            
+}
+
+ 
+.form-containerssss {
+    box-shadow: 0 4px 15px rgba(117, 110, 110, 0.5);  
+   
+    background-color: #fff;   
+     
+}

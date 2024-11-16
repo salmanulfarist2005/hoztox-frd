@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 // import logolight from "../../assets/images/logo-light.png";
 // import logodark from "../../assets/images/logo-dark.png";
 import axios from 'axios';
@@ -14,7 +14,7 @@ const Login = () => {
     useEffect(() => {
         const token = localStorage.getItem('adminAuthToken');
         if (token) {
-            navigate('/dashboard');  
+            navigate('/dashboard');
         }
     }, [navigate]);
     const handleSubmit = async (e) => {
@@ -24,25 +24,25 @@ const Login = () => {
                 email,
                 password,
             });
-    
-         
+
+
             const { access } = response.data;
-    
+
             if (access) {
-                localStorage.setItem('adminAuthToken', access);  
-                alert('Login successful!');  
-                console.log("access",access)
+                localStorage.setItem('adminAuthToken', access);
+                alert('Login successful!');
+                console.log("access", access)
                 navigate('/dashboard');
             }
         } catch (error) {
             console.error(error);
-            alert('Invalid Credentials'); 
+            alert('Invalid Credentials');
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     return (
         <React.Fragment>
@@ -71,11 +71,18 @@ const Login = () => {
                                             </Link>
                                         </div>
                                         <h4 className="font-size-18 text-muted mt-2 text-center">
-                                            Welcome to Caratree Admin 
+                                            Welcome to Caratree
                                         </h4>
-                                        {/* <p className="mb-5 text-center">
-                                            Sign in to continue to Upzet.
-                                        </p> */}
+                                        <div className="centered-container">
+                                            <img
+                                                src="../assets/images/logo-2.svg"
+                                                alt="logo"
+                                                className="login-logo"
+                                            />
+                                        </div>
+
+
+
                                         <Form className="form-horizontal" onSubmit={handleSubmit}>
                                             <Row>
                                                 <Col md={12}>
@@ -122,13 +129,7 @@ const Login = () => {
                                                                 </label>
                                                             </div>
                                                         </Col>
-                                                        <Col className="col-7">
-                                                            <div className="text-md-end mt-3 mt-md-0">
-                                                                <Link to="" className="text-muted">
-                                                                    <i className="mdi mdi-lock"></i> Forgot your password?
-                                                                </Link>
-                                                            </div>
-                                                        </Col>
+
                                                     </Row>
 
                                                     <div className="d-grid mt-4">

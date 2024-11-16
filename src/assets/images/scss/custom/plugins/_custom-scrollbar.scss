@@ -76,7 +76,9 @@
   width: 100%;
   pointer-events: none;
 }
-
+.simplebar-placeholder {
+  display: none;
+}
 .simplebar-height-auto-observer-wrapper {
   box-sizing: inherit !important;
   height: 100%;

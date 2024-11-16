@@ -852,6 +852,7 @@
 }
 
 a.fz-hamburger {
+    
     height: 40px;
     border: 1px solid #d9d9d9;
     border-radius: 50%;
@@ -860,6 +861,7 @@ a.fz-hamburger {
     line-height: 40px;
     margin: 0px 3px ;
 }
+
 
 // INDEX-2 HEADER STYLES
 .fz-2-header-section {
@@ -2400,3 +2402,11 @@ a.fz-hamburger {
     min-height: 20px;
     text-align: center;
   }
+
+  a.fz-hamburger:hover {   
+   
+    border: 1px solid #15585a;
+    background-color: #15585a;
+    color: #fff !important;
+  
+}

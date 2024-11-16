@@ -96,8 +96,10 @@ const HeaderSection4 = () => {
 
                     <a className="d-none d-lg-block">
                     <button onClick={toggleDropdown} className=" d-lg-flex" aria-expanded={dropdownOpen}>
+                    <a className="fz-hamburger " title="Profile">
                       <i className="fa-light fa-user"></i>
-                      <span className="d-none d-lg-block" >Profile</span>
+                      {/* <span className="d-none d-lg-block" >Profile</span> */}
+                      </a>
                     </button>
                     </a>
 
@@ -119,10 +121,14 @@ const HeaderSection4 = () => {
                     )}
                   </>
                 ) : (
+                  
                   <Link to="/account" className="d-lg-block">
-                    <a className="fz-hamburger"> <i className="fa-light fa-user"></i>
-                   <span className="d-m-none">Login</span></a>
+                   
+                    <a className="fz-hamburger "  title="Login">
+                      <i className="fa-light fa-lock"></i>
+                   </a>
                   </Link>
+                
                 )}
               </li>
 

@@ -144,7 +144,7 @@ const Sidebar = (props) => {
   return (
     <React.Fragment>
       <div className="vertical-menu">
-        <SimpleBar className="h-100" ref={ref}>
+        <SimpleBar className="h-50" ref={ref}>
           <div id="sidebar-menu">
             <ul className="metismenu list-unstyled" id="side-menu-item">
               {(sidebarData || []).map((item, key) => (
