@@ -926,7 +926,7 @@
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
    */:root,
   [data-bs-theme=light] {
-    --bs-blue:#0d6efd;
+    --bs-blue:#b0774c;
     --bs-indigo:#6610f2;
     --bs-purple:#6f42c1;
     --bs-pink:#d63384;
@@ -949,7 +949,7 @@
     --bs-gray-700:#495057;
     --bs-gray-800:#343a40;
     --bs-gray-900:#212529;
-    --bs-primary:#0d6efd;
+    --bs-primary:#b0774c;
     --bs-secondary:#6c757d;
     --bs-success:#198754;
     --bs-info:#0dcaf0;
@@ -1013,10 +1013,10 @@
     --bs-tertiary-bg:#f8f9fa;
     --bs-tertiary-bg-rgb:248,249,250;
     --bs-heading-color:inherit;
-    --bs-link-color:#0d6efd;
+    --bs-link-color:#b0774c;
     --bs-link-color-rgb:13,110,253;
     --bs-link-decoration:underline;
-    --bs-link-hover-color:#0a58ca;
+    --bs-link-hover-color:#b0774c;
     --bs-link-hover-color-rgb:10,88,202;
     --bs-code-color:#d63384;
     --bs-highlight-bg:#fff3cd;
@@ -1382,9 +1382,9 @@
   [type=button]:not(:disabled),
   [type=reset]:not(:disabled),
   [type=submit]:not(:disabled),
-  button:not(:disabled) {
+  /* button:not(:disabled) {
     cursor:pointer
-  }
+  } */
   ::-moz-focus-inner {
     padding:0;
     border-style:none
@@ -3192,8 +3192,8 @@
     box-shadow:0 0 0 .25rem rgba(13,110,253,.25)
   }
   .form-check-input:checked {
-    background-color:#0d6efd;
-    border-color:#0d6efd
+    background-color:#b0774c;
+    border-color:#b0774c
   }
   .form-check-input:checked[type=checkbox] {
     --bs-form-check-bg-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")
@@ -3808,7 +3808,7 @@
     --bs-btn-hover-border-color:#0a58ca;
     --bs-btn-focus-shadow-rgb:49,132,253;
     --bs-btn-active-color:#fff;
-    --bs-btn-active-bg:#0a58ca;
+    --bs-btn-active-bg:#b0774c;
     --bs-btn-active-border-color:#0a53be;
     --bs-btn-active-shadow:inset 0 3px 5px rgba(0,0,0,.125);
     --bs-btn-disabled-color:#fff;
@@ -4168,7 +4168,7 @@
     --bs-dropdown-link-hover-color:var(--bs-body-color);
     --bs-dropdown-link-hover-bg:var(--bs-tertiary-bg);
     --bs-dropdown-link-active-color:#fff;
-    --bs-dropdown-link-active-bg:#0d6efd;
+    --bs-dropdown-link-active-bg:#c9c3be !important;
     --bs-dropdown-link-disabled-color:var(--bs-tertiary-color);
     --bs-dropdown-item-padding-x:1rem;
     --bs-dropdown-item-padding-y:0.25rem;
@@ -4424,7 +4424,7 @@
     --bs-dropdown-divider-bg:var(--bs-border-color-translucent);
     --bs-dropdown-link-hover-bg:hsla(0,0%,100%,.15);
     --bs-dropdown-link-active-color:#fff;
-    --bs-dropdown-link-active-bg:#0d6efd;
+    --bs-dropdown-link-active-bg:#b0774c;
     --bs-dropdown-link-disabled-color:#adb5bd;
     --bs-dropdown-header-color:#adb5bd
   }
@@ -4798,7 +4798,7 @@
     .navbar-expand-sm .navbar-nav {
       flex-direction:row
     }
-    .navbar-expand-sm .navbar-nav .dropdown-menu {
+    .navbar-expand-sm .navbar-nav .{
       position:absolute
     }
     .navbar-expand-sm .navbar-nav .nav-link {
@@ -4939,7 +4939,7 @@
     .navbar-expand-xl .navbar-nav {
       flex-direction:row
     }
-    .navbar-expand-xl .navbar-nav .dropdown-menu {
+    .navbar-expand-xl .navbar-nav .{
       position:absolute
     }
     .navbar-expand-xl .navbar-nav .nav-link {
@@ -32388,9 +32388,7 @@
     .cart-section tbody tr td {
       min-width:135px
     }
-    .cart-section tbody tr td:last-child {
-      display:none
-    }
+  
     .cart-section .cart-buttons>div:last-child {
       padding-right:15px
     }
@@ -33538,10 +33536,10 @@
       display:flex;
       align-items:center
     }
-    .cart-section .cart-table thead th:nth-last-child(-n+4),
+    /* .cart-section .cart-table thead th:nth-last-child(-n+4),
     .cart-section tbody tr td:nth-last-child(-n+4) {
       display:none
-    }
+    } */
     .cart-section tbody tr td .mobile-cart-content {
       display:flex
     }
@@ -38957,5 +38955,4 @@
   }
 
  
-
  

@@ -91,26 +91,31 @@ const ProductViewFilter = () => {
             <div className="row gy-4 gx-3 justify-content-center">
                 {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((item) => (
-                        <div className="col-xl-4 col-md-4 col-6 col-xxs-6" key={item.id}>
+                        <div className="col-xl-3 col-md-4 col-6 col-xxs-6 m-p-1" key={item.id}>
                             <div className="fz-2-single-product">
                                 <div className="fz-2-single-product-img">
                                     <Link to={`/products/${item.SKU}`}>
                                         <img src={BASE_URL + item.product_image} alt={item.product_name} />
                                     </Link>
+                                    <div className="color_text">
+                                        <h5 className="fz-2-single-product-title">
+                                            <Link to={`/products/${item.id}`}>{item.SKU}</Link>
+                                        </h5>
+                                    </div>
                                     <div className="fz-2-single-product-actions">
-                                    <button
-                                    className="fz-add-to-cart-btn"
-                                    onClick={() => {
-                                        const selectedColor = selectedColors[item.id];
-                                        if (selectedColor) {
-                                            addToJeweleryCart(item.id, quantity[item.id], selectedColor);
-                                        } else {
-                                            alert('Please select a color!');
-                                        }
-                                    }}
-                                >
-                                    Add to Cart
-                                </button>
+                                        <button
+                                            className="fz-add-to-cart-btn"
+                                            onClick={() => {
+                                                const selectedColor = selectedColors[item.id];
+                                                if (selectedColor) {
+                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                } else {
+                                                    alert('Please select a color!');
+                                                }
+                                            }}
+                                        >
+                                            Add to Cart
+                                        </button>
                                         <div className="btnactions">
                                             <div className="fz-product-details__quantity cart-product__quantity">
                                                 <button
@@ -123,8 +128,13 @@ const ProductViewFilter = () => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={quantity[item.id] || 1}
-                                                    onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                                                    value={quantity[item.id]}
+                                                    onChange={(e) =>
+                                                        handleQuantityChange(
+                                                            item.id,
+                                                            Math.max(1, parseInt(e.target.value))
+                                                        )
+                                                    }
                                                     min="1"
                                                 />
                                                 <button
@@ -137,55 +147,100 @@ const ProductViewFilter = () => {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="fz-2-single-product-txt">
-                                <h5 className="fz-2-single-product-title ">
+                                    <h5 className="fz-2-single-product-title ">
                                         <Link to={`/products/${item.id}`}>{item.product_name}</Link>
                                     </h5>
                                     <div>
                                         <span className="fz-2-single-product-category mb-555">{item.category_name}</span>
-                                        
+
                                     </div>
-                                    
-                                    <div className='inf_gm'>
+
+                                    <div className="inf_gm">
                                         <ul>
-                                            <li>GW:<span>{item.gross_weight} gm</span></li>
+                                            <li>GW:<span>{item.gross_weight}</span></li>
                                             <li>DMD:<span>{item.diamond_weight} CT</span></li>
                                         </ul>
                                     </div>
-                                    <div className='inf_gm'>
+                                    <div className="inf_gm">
                                         <ul>
-                                            <li>CS:<span>{item.colour_stones} gm</span></li>
-                                            <li>NW:<span>{item.net_weight} gm</span></li>
+                                            <li>CS:<span>{item.colour_stones}</span></li>
+                                            <li>NW:<span>{item.net_weight}</span></li>
                                         </ul>
                                     </div>
+                                    <div className="color-selection">
+                                        <ul className="color-options">
+                                            <li className={`color-option ${selectedColors[item.id] === 'rose' ? 'selected' : ''}`}>
+                                                <input
+                                                    type="radio"
+                                                    name={`color-${item.id}`}
+                                                    value="rose"
+                                                    onChange={() => handleColorSelection(item.id, 'rose')}
+                                                    checked={selectedColors[item.id] === 'rose'}
+                                                />
+                                                <span className="color-box" style={{ backgroundColor: 'pink' }}></span>
+                                                Rose
+                                            </li>
+                                            <li className={`color-option ${selectedColors[item.id] === 'yellow' ? 'selected' : ''}`}>
+                                                <input
+                                                    type="radio"
+                                                    name={`color-${item.id}`}
+                                                    value="yellow"
+                                                    onChange={() => handleColorSelection(item.id, 'yellow')}
+                                                    checked={selectedColors[item.id] === 'yellow'}
+                                                />
+                                                <span className="color-box" style={{ backgroundColor: 'yellow' }}></span>
+                                                Yellow
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className="mob-cart">
+                                        <div className="mob-cart-number">
+                                            <div className="fz-product-details__quantity cart-product__quantity">
+                                                <button
+                                                    className="minus-btn cart-product__minus"
+                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] - 1)}
+                                                >
+                                                    <i className="fa-light fa-minus"></i>
+                                                </button>
+                                                <input
+                                                    type="number"
+                                                    name="product-quantity"
+                                                    className="cart-product-quantity-input"
+                                                    value={quantity[item.id]}
+                                                    onChange={(e) =>
+                                                        handleQuantityChange(
+                                                            item.id,
+                                                            Math.max(1, parseInt(e.target.value))
+                                                        )
+                                                    }
+                                                    min="1"
+                                                />
+                                                <button
+                                                    className="plus-btn cart-product__plus"
+                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] + 1)}
+                                                >
+                                                    <i className="fa-light fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="m-cart">
+                                            <button
+                                                className="fz-add-to-cart-btn"
+                                                onClick={() => {
+                                                    const selectedColor = selectedColors[item.id];
+                                                    if (selectedColor) {
+                                                        addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                    } else {
+                                                        alert('Please select a color!');
+                                                    }
+                                                }}
+                                            >
+                                                Add to Cart
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="color-selection">
-                                <ul className="color-options">
-                                    <li className={`color-option ${selectedColors[item.id] === 'rose' ? 'selected' : ''}`}>
-                                        <input
-                                            type="radio"
-                                            name={`color-${item.id}`}
-                                            value="rose"
-                                            onChange={() => handleColorSelection(item.id, 'rose')}
-                                            checked={selectedColors[item.id] === 'rose'}
-                                        />
-                                        <span className="color-box" style={{ backgroundColor: 'pink' }}></span>
-                                        Rose
-                                    </li>
-                                    <li className={`color-option ${selectedColors[item.id] === 'yellow' ? 'selected' : ''}`}>
-                                        <input
-                                            type="radio"
-                                            name={`color-${item.id}`}
-                                            value="yellow"
-                                            onChange={() => handleColorSelection(item.id, 'yellow')}
-                                            checked={selectedColors[item.id] === 'yellow'}
-                                        />
-                                        <span className="color-box" style={{ backgroundColor: 'yellow' }}></span>
-                                        Yellow
-                                    </li>
-                                </ul>
-                            </div>
                             </div>
                         </div>
                     ))

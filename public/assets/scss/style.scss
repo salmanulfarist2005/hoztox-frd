@@ -541,3 +541,13 @@ TABLE OF CONTENTS:
     background-color: #fff;   
      
 }
+@media (max-width: 768px) {
+    .fz-sidebar {
+      margin-bottom: 20px; /* Adds space between the filters and product display */
+    }
+  
+    .col-xl-9 {
+      margin-top: 20px; /* Adds space between the product filters and the products */
+    }
+  }
+  
