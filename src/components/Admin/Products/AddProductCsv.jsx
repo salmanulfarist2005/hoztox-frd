@@ -54,41 +54,64 @@ const ProductCSVUpload = () => {
       alert("Please upload a CSV file.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("file", csvFile);
-
+  
+    // Log file details
+    console.log("Uploading CSV file:");
+    console.log("File name:", csvFile.name);
+    console.log("File type:", csvFile.type);
+    console.log("File size:", csvFile.size);
+  
     try {
+      // Log request details
+      console.log("Sending POST request to:", `${BASE_URL}/products/upload-csv/`);
+      console.log("Request headers:", {
+        "Content-Type": "multipart/form-data",
+      });
+      console.log("FormData content:");
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}:`, pair[1]);
+      }
+  
       const response = await axios.post(`${BASE_URL}/products/upload-csv/`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log('Data saved successfully:', response);
-      setSuccessMessage('CSV uploaded successfully!');
-      setErrorMessage('');
+  
+      // Log success response
+      console.log("Data saved successfully:", response.data);
+      setSuccessMessage("CSV uploaded successfully!");
+      setErrorMessage("");
       setCsvFile(null);
-
     } catch (error) {
-      console.error('Error uploading CSV:', error);
-
+      console.error("Error uploading CSV:", error);
+  
       if (error.response) {
-        console.error('Error response data:', error.response.data);
-
-        const errorMessage = error.response.data.error || 'An unknown error occurred.';
+        // Log error details from the server
+        console.error("Server responded with status:", error.response.status);
+        console.error("Response headers:", error.response.headers);
+        console.error("Error response data:", error.response.data);
+  
+        const errorMessage = error.response.data.error || "An unknown error occurred.";
         setErrorMessage(errorMessage);
       } else if (error.request) {
-        console.error('No response received:', error.request);
-        setErrorMessage('No response received from server. Please check your connection.');
+        // Log details when no response is received
+        console.error("No response received from the server. Request details:");
+        console.error(error.request);
+        setErrorMessage("No response received from server. Please check your connection.");
       } else {
-        console.error('Error message:', error.message);
-        setErrorMessage('Error uploading CSV file. Please try again.');
+        // Log generic error message
+        console.error("Error message:", error.message);
+        setErrorMessage("Error uploading CSV file. Please try again.");
       }
-
-      setSuccessMessage('');
+  
+      setSuccessMessage("");
     }
   };
+  
 
 
 

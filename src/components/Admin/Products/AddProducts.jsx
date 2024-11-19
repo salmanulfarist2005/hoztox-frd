@@ -128,60 +128,58 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const productFormData = new FormData();
-    console.log("productFormData", formData)
+    console.log("productFormData", formData);
+  
     for (const key in formData) {
-      if (key === 'usertypes') {
-        selectedUserTypes.forEach(userTypeId => {
+      if (key === "usertypes") {
+        selectedUserTypes.forEach((userTypeId) => {
           productFormData.append("usertypes", String(userTypeId));
         });
+      } else if (key === "description" && !formData[key]) {
+        // Skip appending description if it's empty
+        continue;
       } else {
         productFormData.append(key, formData[key]);
       }
     }
-
+  
     images.forEach((image) => {
       productFormData.append("additional_images", image);
     });
-
+  
     try {
       const response = await axios.post(`${BASE_URL}/products/products/`, productFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+  
       console.log("Product added:", response.data);
       alert("Product added successfully!");
-
-
+  
       setFormData({
         SKU: "",
         product_name: "",
         category: "",
-       
         gross_weight: "",
         diamond_weight: "",
         colour_stones: "",
         net_weight: "",
         product_size: "",
         product_image: null,
-        description: "",
-        usertypes: []
+        description: "", // Reset to an empty string
+        usertypes: [],
       });
-
-
+  
       setImages([]);
-
-
       setSelectedUserTypes([]);
-
-
-
     } catch (error) {
       console.error("Error adding product:", error.response ? error.response.data : error.message);
     }
   };
+  
 
 
 
@@ -364,7 +362,7 @@ const AddProduct = () => {
                             value={formData.description}
                             onChange={handleChange}
                             rows="3"
-                            required
+                           
                           />
                         </div>
                       </Row>
