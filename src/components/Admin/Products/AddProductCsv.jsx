@@ -68,7 +68,7 @@ const ProductCSVUpload = () => {
 
 
 
-        console.log('Data saved successfully:', response);
+        console.log('Data saved successfully:', response.data);
         setSuccessMessage('CSV uploaded successfully!');
         setErrorMessage('');
         setCsvFile(null);

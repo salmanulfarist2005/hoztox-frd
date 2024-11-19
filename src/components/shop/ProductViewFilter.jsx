@@ -91,7 +91,7 @@ const ProductViewFilter = () => {
             <div className="row gy-4 gx-3 justify-content-center">
                 {paginatedProducts.length > 0 ? (
                     paginatedProducts.map((item) => (
-                        <div className="col-xl-3 col-md-4 col-6 col-xxs-6 m-p-1" key={item.id}>
+                        <div className="col-xl-4 col-md-4 col-6 col-xxs-6 m-p-1" key={item.id}>
                             <div className="fz-2-single-product">
                                 <div className="fz-2-single-product-img">
                                     <Link to={`/products/${item.SKU}`}>
