@@ -25,7 +25,7 @@ const ManageProducts = () => {
         diamond_weight: "",
         colour_stones: "",
         net_weight: "",
-        product_size: "",
+    
         product_image: null,
         description: "",
         usertypes: []
@@ -72,7 +72,7 @@ const ManageProducts = () => {
             diamond_weight: product.diamond_weight,
             colour_stones: product.colour_stones,
             net_weight: product.net_weight,
-            product_size: product.product_size,
+        
             product_image: product.product_image, // Main image
             description: product.description,
             usertypes: product.usertypes
@@ -369,7 +369,7 @@ const ManageProducts = () => {
                 diamond_weight: "",
                 colour_stones: "",
                 net_weight: "",
-                product_size: "",
+            
                 product_image: null,
                 description: "",
                 usertypes: []
@@ -723,25 +723,7 @@ const ManageProducts = () => {
                             </Row>
 
 
-                            <Row className="mb-3">
-                                <label
-                                    htmlFor="example-text-input"
-                                    className="col-md-2 col-form-label"
-                                >
-                                    Product Size
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="product_size"
-                                        placeholder="Product Size"
-                                        value={formData.product_size}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </Row>
+                            
                             <Row className="mb-3">
                                 <label
                                     htmlFor="example-image-input"

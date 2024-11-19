@@ -41,13 +41,16 @@ const BannerSection2 = () => {
                                     <img src="/assets/images/Slider1.jpg" alt="Slider Image 1" />
                                 </div>
                                 <div>
-                                    <img src="/assets/images/Slider2.jpg" alt="Slider Image 2" />
+                                    <img src="/assets/images/Slider7.jpg" alt="Slider Image 2" />
                                 </div>
                                 <div>
                                     <img src="/assets/images/Slider3.jpg" alt="Slider Image 3" />
                                 </div>
                                 <div>
                                     <img src="/assets/images/Slider4.jpg" alt="Slider Image 4" />
+                                </div>
+                                <div>
+                                    <img src="/assets/images/Slider5.jpg" alt="Slider Image 5" />
                                 </div>
                             </Slider>
 

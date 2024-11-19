@@ -24,7 +24,7 @@ const AddProduct = () => {
     diamond_weight: "",
     colour_stones: "",
     net_weight: "",
-    product_size: "",
+   
     product_image: null,
     description: "",
     usertypes: []
@@ -167,7 +167,7 @@ const AddProduct = () => {
         diamond_weight: "",
         colour_stones: "",
         net_weight: "",
-        product_size: "",
+      
         product_image: null,
         description: "", // Reset to an empty string
         usertypes: [],
@@ -307,20 +307,7 @@ const AddProduct = () => {
                           />
                         </div>
                       </Row>
-                      <Row className="mb-3">
-                        <label htmlFor="product_size" className="col-md-2 col-form-label">Product Size</label>
-                        <div className="col-md-10">
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="product_size"
-                            placeholder="Product Size"
-                            value={formData.product_size}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                      </Row>
+                      
                       <Row className="mb-3">
                         <label htmlFor="product_image" className="col-md-2 col-form-label">Product Image</label>
                         <div className="col-md-10">
