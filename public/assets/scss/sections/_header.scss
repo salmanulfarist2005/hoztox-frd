@@ -2410,3 +2410,7 @@ a.fz-hamburger {
     color: #fff !important;
   
 }
+[type="button"]:not(:disabled), [type="reset"]:not(:disabled), [type="submit"]:not(:disabled), ::-moz-focus-inner {
+    padding: 6px !important;
+    border-style: none;
+  }

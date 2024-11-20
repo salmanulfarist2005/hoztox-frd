@@ -149,12 +149,9 @@ const ProductViewFilter = () => {
                                 </div>
                                 <div className="fz-2-single-product-txt">
                                     <h5 className="fz-2-single-product-title ">
-                                        <Link to={`/products/${item.id}`}>{item.product_name}</Link>
+                                        <Link to={`/products/${item.id}`}>{item.category_name}</Link>
                                     </h5>
-                                    <div>
-                                        <span className="fz-2-single-product-category mb-555">{item.category_name}</span>
-
-                                    </div>
+                                   
 
                                     <div className="inf_gm">
                                         <ul>

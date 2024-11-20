@@ -268,7 +268,7 @@ function Order() {
                                                 <li className="order-item">
                                                     <div className="order-items-list">
                                                         <div className="order-description">
-                                                            <h5>{order.product.product_name}</h5>
+                                                        <h5>{item.product.category.category_name}</h5>
                                                             <p>orderCode: {order.ordercode}</p>
                                                             <p>SKU: {order.product.SKU}</p>
                                                             <p>Color: {order.product.color}</p>
@@ -406,7 +406,7 @@ function Order() {
                                                 {order.order_items.map(item => (
                                                     <div key={item.id} className="order-item-details">                                                       
                                                         <div className="order-description">
-                                                            <h5>{item.product.product_name}</h5>
+                                                        <h5>{item.product.category.category_name}</h5>
                                                             <p>SKU: {item.product.SKU}</p>
                                                             <p>Color: {item.product.color}</p>
                                                             <p>Gross Weight: {item.total_gross_weight} gm</p>

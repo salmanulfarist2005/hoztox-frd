@@ -76,14 +76,9 @@ const HotDealSection = () => {
                                 </div>
                                 <div className="fz-2-single-product-txt br-0">
                                     <h5 className="fz-2-single-product-title ">
-                                        <Link to={`/customized-products/${product.SKU}`}>{product.product_name}</Link>
+                                        <Link to={`/customized-products/${product.SKU}`}>{product.category_name}</Link>
                                     </h5>
-                                    <div className=''>
-
-                                        <span className="fz-2-single-product-category mb-555">   {product.category_name} </span>
-
-
-                                    </div>
+                                    
 
 
 

@@ -99,7 +99,7 @@ const CheckoutSection = () => {
                                 <div className="cart-product__img">
                                     <img src={item.product.product_image} alt="Product" />
                                 </div>
-                                <h4 className="cart-title">{item.product?.product_name}</h4>
+                                <h4 className="cart-title">{item.product?.category.category_name}</h4>
                                 <ul className="cart-summary">
                                     <li><span className="cart-key">Quantity:</span> <span className="cart-value">{item.quantity}</span></li>
                                     <li><span className="cart-key">Color:</span> <span className="cart-value">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span></li>

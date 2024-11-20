@@ -134,7 +134,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
                     </div>
                     <div className="cart-product__txt">
                       <h6>
-                        <Link to="/shopDetails">{item.product.product_name}</Link>
+                        <Link to="/shopDetails">{item.product.category.category_name}</Link>
                       </h6>
                       <h6>{item.product.SKU}</h6>
                     </div>

@@ -237,7 +237,7 @@ function Order() {
                                             <div className="order-items-list">
                                                 
                                                 <div className="order-description">
-                                                    <h5>{order.product.product_name}</h5>
+                                                <h5>{item.product.category_name}</h5>
                                                     <p>orderCode: {order.ordercode}</p>
                                                     <p>SKU: {order.product.SKU}</p>
                                                     <p>Color: {order.product.color}</p>
@@ -350,7 +350,7 @@ function Order() {
                                                         </div>
                                                         
                                                         <div className="order-description">
-                                                            <h5>{item.product.product_name}</h5>
+                                                        <h5>{item.product.category_name}</h5>
                                                             <p>SKU: {item.product.SKU}</p>
                                                             <p>Color: {item.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
 
