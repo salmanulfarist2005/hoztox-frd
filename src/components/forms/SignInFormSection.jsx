@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../helpers/config';
@@ -8,7 +8,16 @@ const SignInFormSection = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-
+   
+ 
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        }else {
+            navigate("/home")
+        }
+    }, [navigate]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
