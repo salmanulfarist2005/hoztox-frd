@@ -7,7 +7,7 @@ const FooterSection5 = () => {
       <div className="fz-6-footer-header">
         <div className="container">
           <div className="d-flex flex-column flex-sm-row align-items-center justify-content-between">
-            <Link href="/">
+            <Link href="/home">
               <img src="assets/images/logo-6-dark.png" alt="logo" />
             </Link>
 

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { BASE_URL } from '../helpers/config';
 import defaultImg from "../../../public/assets/images/prof.png";
 import editIcon from "../../../public/assets/images/edit.png";
-
+import { useNavigate } from 'react-router-dom';
 function UserProfile() {
     const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -13,7 +13,13 @@ function UserProfile() {
     const [profileImage, setProfileImage] = useState(defaultImg);
     const [companyLogo, setCompanyLogo] = useState(defaultImg);
     const token = localStorage.getItem('authToken');
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
     const fetchUserData = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/current-user/`, {

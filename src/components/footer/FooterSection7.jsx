@@ -10,7 +10,7 @@ const FooterSection7 = () => {
             <div className="col-xl-3 col-sm-6">
               <div className="fz-footer-about">
                 <div className="fz-logo">
-                  <Link to="/">
+                  <Link to="/home">
                     <img src="assets/images/logo-8-light.png" alt="logo" />
                   </Link>
                 </div>

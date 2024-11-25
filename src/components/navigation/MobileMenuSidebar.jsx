@@ -30,7 +30,7 @@ const MobileMenuSidebar = () => {
             }`}
           >
             <li>
-              <Link to="/" className="fz-nav-link fz-submenu-nav-link">
+              <Link to="/home" className="fz-nav-link fz-submenu-nav-link">
                 Door Shop
               </Link>
             </li>

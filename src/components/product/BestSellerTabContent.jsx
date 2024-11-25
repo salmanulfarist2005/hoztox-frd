@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import { BASE_URL } from '../helpers/config';
@@ -11,25 +11,39 @@ const BestSellerTabContent = () => {
     const [products, setProducts] = useState([]);
     const [selectedColors, setSelectedColors] = useState({});
 
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        }
+    }, [navigate]);
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/products_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+        
+            console.log('Fetched Products Response:', response);
+
+      
             const fetchedProducts = response.data;
             setProducts(fetchedProducts);
 
+ 
             const initialQuantities = {};
             fetchedProducts.forEach((product) => {
                 initialQuantities[product.id] = 1;
             });
             setQuantities(initialQuantities);
-
-           
-           
-   
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
+
+
 
     useEffect(() => {
         fetchProducts();
@@ -109,14 +123,14 @@ const BestSellerTabContent = () => {
                             </div>
                         </div>
                         <div className="fz-2-single-product-txt">
-                        {/* <h5 className="fz-2-single-product-title ">
+                            {/* <h5 className="fz-2-single-product-title ">
                                 <Link to={`/products/${product.id}`}>{product.product_name}</Link>
                             </h5> */}
                             <div>
                                 <span className="fz-2-single-product-title">{product.category_name}</span>
-                                
+
                             </div>
-                           
+
                             <div className="inf_gm">
                                 <ul>
                                     <li>GW:<span>{product.gross_weight}</span></li>

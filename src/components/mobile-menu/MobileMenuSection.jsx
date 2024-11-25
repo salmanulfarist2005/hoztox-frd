@@ -24,8 +24,8 @@ const MobileMenuSection = ( ) => {
       <nav className="mobile-mean-nav">
         <div className="mobile-menu-list-items">
           <div className="fz-dropdown fz-nav-item">
-          <Link to="/">
-            <a role="button" className="fz-nav-link"onClick={() => closeAndNavigate("/")}>
+          <Link to="/home">
+            <a role="button" className="fz-nav-link"onClick={() => closeAndNavigate("/home")}>
               <span>Home</span>
                
             </a>

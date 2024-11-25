@@ -52,8 +52,8 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        <Route path="/" element={<JewelleryShop />} />
+      <Route path="/" element={<Account />} />
+        <Route path="/home" element={<JewelleryShop />} />
 
 
 
@@ -66,13 +66,13 @@ function App() {
         <Route path="/shop/:categoryName" element={<Shop />} />
         <Route path="/customized-products/:SKU" element={<CustomePage />} />
         <Route path="/about" element={<About />} />
-        <Route path="/faq" element={<Faq />} />
-        <Route path="/wishlist" element={<Wishlist />} />
+ 
+ 
         <Route path="/cart" element={<Cart />} />
         <Route path="/account" element={<Account />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="*" element={<Error />} />
+     
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/my-orders" element={<Orderprofile />} />
         <Route path="/custom-full" element={< CustomeFullPage />} />
@@ -99,7 +99,7 @@ function App() {
         {/* ............................ */}
         {/* ................................................................ */}
         <Route path="/view-order" element={< ViewOrdersPage />} />
-        <Route path="//manage-order" element={< MnageOrdersPage />} />
+        <Route path="/manage-order" element={< MnageOrdersPage />} />
         {/* ............................ */}
 
         <Route path="/add-user" element={<AddUserPage />} />

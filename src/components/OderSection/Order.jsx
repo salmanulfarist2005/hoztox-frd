@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../helpers/config';
 import './Order.css';
+import { useNavigate } from 'react-router-dom';
 
 function Order() {
     const [orders, setOrders] = useState([]);
@@ -11,7 +12,13 @@ function Order() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const token = localStorage.getItem('authToken');
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
     // Fetch user orders
     const fetchUserOrders = async () => {
         try {

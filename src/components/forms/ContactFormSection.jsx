@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';   
+import { useNavigate } from 'react-router-dom';
  
 import { BASE_URL } from '../helpers/config';
 const ContactFormSection = () => {
@@ -11,6 +12,14 @@ const ContactFormSection = () => {
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const authToken = localStorage.getItem('authToken');
+
+  const navigate = useNavigate();
+  useEffect(() => {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+          navigate('/');
+      } 
+  }, [navigate]);
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!authToken) {

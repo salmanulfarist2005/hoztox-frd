@@ -60,7 +60,7 @@ const FooterSection4 = () => {
             <div className="fz-5-footer-col">
               <div className="fz-footer-about">
                 <div className="fz-footer-logo">
-                  <Link to="/">
+                  <Link to="/home">
                     <img src="assets/images/logo-5-light.png" alt="logo" />
                   </Link>
                 </div>

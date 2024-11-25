@@ -704,10 +704,11 @@ const FarzaaContextProvider = ({ children }) => {
   const [ornamentList, setOrnamentList] = useState([]);
   const fetchData = async () => {
     try {
-
-      const productsResponse = await axios.get(`${BASE_URL}/products/products_list/`);
-
-
+      const token = localStorage.getItem('authToken');
+      const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+  
       setOrnamentList(productsResponse.data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -716,7 +717,7 @@ const FarzaaContextProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchData();
   }, []);

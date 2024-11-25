@@ -14,7 +14,7 @@ const BottomMobileMenu = ({ style, logo }) => {
     <div className={`fz-4-mobile-menu ${style} d-lg-none`}>
       <ul className="fz-4-app-menu">
         <li>
-          <Link to="/" className="active">
+          <Link to="/home" className="active">
             <span className="icon">
               <i className="fa-light fa-home"></i>
             </span>

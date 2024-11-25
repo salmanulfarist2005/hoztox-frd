@@ -16,7 +16,7 @@ const HeaderSection2 = () => {
           <div className="row g-0 align-items-center">
             <div className="col-lg-3 col-md-6 col-9">
               <div className="fz-logo-container">
-                <Link to="/">
+                <Link to="/home">
                   <img
                     src="assets/images/logo-2.svg"
                     alt="logo"

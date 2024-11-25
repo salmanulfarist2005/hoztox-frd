@@ -11,7 +11,7 @@ const BreadcrumbSection2 = ({ title, currentPage }) => {
               <h1>{title}</h1>
               <ul className="fz-inner-page-breadcrumb-nav">
                 <li>
-                  <Link to="/">Home</Link>
+                  <Link to="/home">Home</Link>
                 </li>
                 <li className="current-page">{currentPage}</li>
               </ul>

@@ -35,7 +35,7 @@ const FooterSection6 = () => {
             </div>
 
             <div className="col-lg-4 order-0 order-lg-1 text-center">
-              <Link to="/">
+              <Link to="/home">
                 <img src="assets/images/logo-7-dark.png" alt="logo" />
               </Link>
             </div>

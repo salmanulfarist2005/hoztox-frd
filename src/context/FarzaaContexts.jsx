@@ -11,7 +11,7 @@ export const FarzaaProvider = ({ children }) => {
 
     const handleCategoryFilter = async (category) => {
         setActiveCategory(category);
-        const response = await axios.get(`${BASE_URL}/products/products_list/?category=${category}`);
+        const response = await axios.get(`${BASE_URL}/?category=${category}`);
         setProducts(response.data);
     };
 

@@ -13,7 +13,13 @@ const CheckoutSection = () => {
     const [notes, setNotes] = useState({});
     const [showConfirmation, setShowConfirmation] = useState(false); // New state for confirmation popup
     const navigate = useNavigate();
-
+ 
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
     const fetchCartItems = async () => {
         try {
             const token = localStorage.getItem('authToken');

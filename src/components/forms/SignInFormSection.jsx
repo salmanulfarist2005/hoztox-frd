@@ -24,7 +24,7 @@ const SignInFormSection = () => {
                 console.log("authToken", access)
                 console.log("email", email)
                 alert('Login successful!');
-                navigate('/');
+                navigate('/home');
             }
         } catch (error) {
             console.error('Login failed:', error);

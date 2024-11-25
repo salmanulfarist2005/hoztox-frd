@@ -11,12 +11,19 @@ const CartSection = () => {
         handleQuantityChange,
         handleRemoveItem,
     } = useContext(FarzaaContext);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
 
     const [additionalNotes, setAdditionalNotes] = useState({});
     const [cartData, setCartData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
+ 
 
   
     const fetchCartDetails = async () => {

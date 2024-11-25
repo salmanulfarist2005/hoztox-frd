@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 const ProductViewFilter = () => {
     const {
@@ -13,7 +13,13 @@ const ProductViewFilter = () => {
         searchTerm,
         activeCategory
     } = useContext(FarzaaContext);
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
     const defaultQuantity = 1;
     const [quantity, setQuantity] = useState({});
     const [categories, setCategories] = useState([]);
@@ -31,10 +37,13 @@ const ProductViewFilter = () => {
             [productId]: Math.max(1, newQuantity),
         }));
     };
-
     const fetchData = async () => {
         try {
-            const productsResponse = await axios.get(`${BASE_URL}/products/products_list/`);
+            const token = localStorage.getItem('authToken');
+            const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
             setProducts(productsResponse.data);
             const initialQuantities = {};
             productsResponse.data.forEach((product) => {
@@ -48,6 +57,7 @@ const ProductViewFilter = () => {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchData();

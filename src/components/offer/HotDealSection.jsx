@@ -14,18 +14,16 @@ const HotDealSection = () => {
 
     const fetchProducts = async () => {
         try {
-            // const token = localStorage.getItem('authToken');
-            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`, {
-                // headers: {
-                //     Authorization: `Bearer ${token}`,
-                // },
+            const token = localStorage.getItem('authToken');
+            const productsResponse = await axios.get(`${BASE_URL}/products/custom_products_user_list/`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
-
-            const data = response.data;
-            setProducts(data);
-            console.log("products", data);
+            setProducts(productsResponse.data);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching data:', error);
+            setError('Failed to load data. Please try again later.');
+        } finally {
+            setLoading(false);
         }
     };
 

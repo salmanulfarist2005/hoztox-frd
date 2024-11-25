@@ -10,7 +10,7 @@ const BreadcrumbSection = ({title,current}) => {
                     <div className="breadcrumb-txt">
                         <h1>{title}</h1>
                         <ul className="fz-inner-page-breadcrumb-nav">
-                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/home">Home</Link></li>
                             <li className="current-page">{current}</li>
                         </ul>
                     </div>

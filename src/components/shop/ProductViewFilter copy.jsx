@@ -33,7 +33,8 @@ const ProductViewFilter = () => {
 
     const fetchData = async () => {
         try {
-            const productsResponse = await axios.get(`${BASE_URL}/products/products_list/`);
+            const token = localStorage.getItem('authToken');
+            const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`);
             setProducts(productsResponse.data);
         } catch (error) {
             console.error('Error fetching data:', error);

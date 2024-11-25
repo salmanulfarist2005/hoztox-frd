@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 
 const CustomProductViewFilter = () => {
     const {
@@ -13,7 +13,13 @@ const CustomProductViewFilter = () => {
         searchTerm,  
         activeCategory  
     } = useContext(FarzaaContext);
-
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        } 
+    }, [navigate]);
     const defaultQuantity = 1;
     const [quantity, setQuantity] = useState(defaultQuantity);
     const [categories, setCategories] = useState([]);
@@ -33,7 +39,10 @@ const CustomProductViewFilter = () => {
 
     const fetchData = async () => {
         try {
-            const productsResponse = await axios.get(`${BASE_URL}/products/customized_products_list/`);
+            const token = localStorage.getItem('authToken');
+            const productsResponse = await axios.get(`${BASE_URL}/products/custom_products_user_list/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
             setProducts(productsResponse.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -42,6 +51,7 @@ const CustomProductViewFilter = () => {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchData();
@@ -73,16 +83,26 @@ const CustomProductViewFilter = () => {
                 {currentProducts.length > 0 ? (
                     currentProducts.map((item) => (
                         <div className="col-xl-4 col-md-4 col-6 col-xxs-6" key={item.id}>
-                            <div className="fz-2-single-product">
-                                <div className="fz-2-single-product-img">
+                              <div className="fz-2-single-product br-12">
+                                <div className="fz-2-single-product-img br-0">
                                     <Link to={`/customized-products/${item.SKU}`}>
-                                        <img src={BASE_URL + item.product_image} alt={item.product_name} />
+                                        <img className='br-0' src={BASE_URL + item.product_image} alt={item.product_name} />
                                     </Link>
+                                    <div className='color_text'>
+                                        <h5 className="fz-2-single-product-title">
+                                            <Link to={`/customized-products/${item.SKU}`}>{item.SKU}</Link>
+                                        </h5>
+                                    </div>
+
                                 </div>
-                                <div className="fz-2-single-product-txt">
-                                    <h5 className="fz-2-single-product-title"> <Link to={`/customized-products/${item.SKU}`}>{item.product_name}</Link></h5>
-                                    <span className="fz-2-single-product-category"><Link to="#">{item.category_name}</Link></span>
-                                    <h5 className="fz-2-single-product-title"> <Link to={`/customized-products/${item.SKU}`}>SKU: {item.SKU}</Link></h5>
+                                <div className="fz-2-single-product-txt br-0">
+                                    <h5 className="fz-2-single-product-title ">
+                                        <Link to={`/customized-products/${item.SKU}`}>{item.category_name}</Link>
+                                    </h5>
+                                    
+
+
+
                                 </div>
                             </div>
                         </div>

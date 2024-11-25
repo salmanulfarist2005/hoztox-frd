@@ -11,7 +11,7 @@ const FooterSection = ({ logo }) => {
           <div className="col-xl-3 col-lg-6 col-md-8">
             <div className="fz-footer-about">
               <div className="fz-logo">
-                <Link to="/">
+                <Link to="/home">
                   <img src="assets/images/logo-2.svg" alt="logo" />
                 </Link>
               </div> 

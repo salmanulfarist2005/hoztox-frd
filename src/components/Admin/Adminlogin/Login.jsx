@@ -55,7 +55,7 @@ const Login = () => {
                                 <CardBody className="p-4">
                                     <div>
                                         <div className="text-center">
-                                            <Link to="/">
+                                            <Link to="/home">
                                                 {/* <img
                                                     src={logodark}
                                                     alt="logo-dark"
