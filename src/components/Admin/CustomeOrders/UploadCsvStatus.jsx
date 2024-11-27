@@ -7,7 +7,7 @@ import { BASE_URL } from '../../helpers/config';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 const StatusCSVUpload = () => {
-    document.title = "Upload CSV | Upzet - React Admin & Dashboard Template";
+    document.title = "Caratree Diamonds-Dashboard";
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [csvFile, setCsvFile] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');

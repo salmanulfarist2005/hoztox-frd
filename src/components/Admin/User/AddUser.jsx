@@ -22,7 +22,7 @@ const generateRandomPassword = (length = 12) => {
 };
 
 const AddUser = () => {
-  document.title = "Add a User";
+  document.title = " Caratree Diamonds-Dahboard";
 
   const [userTypes, setUserTypes] = useState([]);
   const [selectedUserTypes, setSelectedUserTypes] = useState([]);
@@ -150,7 +150,7 @@ const AddUser = () => {
       <div className="main-content">
         <div className="page-content ">
           <Container fluid={true}>
-            <Breadcrumbs title="Users" breadcrumbItem="Add a User" />
+            <Breadcrumbs title="Users" breadcrumbItem=" Add a User" />
             <Row>
               <Col>
                 <Card>

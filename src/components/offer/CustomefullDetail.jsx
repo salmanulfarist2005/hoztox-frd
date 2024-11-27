@@ -11,7 +11,7 @@ import { BASE_URL } from '../helpers/config';
 import "./CustomeDetail.css"
 
 const CustomFull = () => {
-  document.title = "Add Products | Upzet - React Admin & Dashboard Template";
+  document.title = "Caratree Diamonds-Dashboard";
   const [category, setCategory] = useState([]);
   const [colors, setColors] = useState([]);  
   const [formData, setFormData] = useState({

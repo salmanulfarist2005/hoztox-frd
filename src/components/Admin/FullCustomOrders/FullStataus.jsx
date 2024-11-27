@@ -8,7 +8,7 @@ import { Button, Card, CardBody, Form, CardHeader, Col, Container, Row, Modal, M
 
 // Status Updater Component
 const FullStatus = () => {
-    document.title = "Upload CSV | Upzet - React Admin & Dashboard Template";
+    document.title = "Caratree Diamonds-Dashboard ";
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [csvFile, setCsvFile] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');

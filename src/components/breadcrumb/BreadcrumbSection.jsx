@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const BreadcrumbSection = ({title,current}) => {
   return (
-    <div className="fz-inner-page-breadcrumb ">
+    <div className="fz-inner-page-breadcrumb">
         <div className="container">
             <div className="row justify-content-between align-items-center">
                 <div className="col-12">

@@ -5,7 +5,7 @@ import axios from "axios";
 import { BASE_URL } from '../../helpers/config';
 
 const Media = () => {
-  document.title = "Add Products | Upzet - React Admin & Dashboard Template";
+  document.title = "Caratree Diamonds-Dashboard";
 
   const [formData, setFormData] = useState({
     SKU: "",

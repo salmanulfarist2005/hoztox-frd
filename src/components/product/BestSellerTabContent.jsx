@@ -123,9 +123,7 @@ const BestSellerTabContent = () => {
                             </div>
                         </div>
                         <div className="fz-2-single-product-txt">
-                            {/* <h5 className="fz-2-single-product-title ">
-                                <Link to={`/products/${product.id}`}>{product.product_name}</Link>
-                            </h5> */}
+                           
                             <div>
                                 <span className="fz-2-single-product-title">{product.category_name}</span>
 

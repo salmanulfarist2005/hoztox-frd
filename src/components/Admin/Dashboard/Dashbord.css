@@ -145,6 +145,16 @@
     overflow: scroll;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 1600px) {
+.metismenu {  
+    max-height: 550px;   
+}
+}
+
 .metismenu li {
     display: block;
     width: 100%;

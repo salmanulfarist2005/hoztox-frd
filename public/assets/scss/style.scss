@@ -301,6 +301,8 @@ TABLE OF CONTENTS:
     border: 1px solid #175a5c;
 }
 
+.mt-top-0 { margin-top: 0px !important;}
+
 
 
 @media (max-width: 991px) {
@@ -311,6 +313,7 @@ TABLE OF CONTENTS:
     .ptop-50 {
         padding-top: 30px;
     }
+    .fz-account-form-section form .single-form-btn { height: auto;}
 }
 
 @media (max-width: 520px) {
@@ -536,9 +539,10 @@ TABLE OF CONTENTS:
 
  
 .form-containerssss {
-    box-shadow: 0 4px 15px rgba(117, 110, 110, 0.5);  
+    box-shadow: 0 4px 15px rgba(222, 222, 222, 0.5);  
    
     background-color: #fff;   
+    border-radius: 20px;
      
 }
 @media (max-width: 768px) {
@@ -550,4 +554,139 @@ TABLE OF CONTENTS:
       margin-top: 20px; /* Adds space between the product filters and the products */
     }
   }
-  
+
+
+
+  .fz-account-form-section img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+    width: auto;
+    height: 99px;
+}
+
+.form-containerssss .form-label {
+    color: #898989;
+    font-family: 'poppins';
+    margin-bottom: 0px;
+}
+
+#login-email {
+    border-radius: 12px; 
+    padding: 30px 10px;
+    border: 1px solid #e8e8e8; 
+    width: 100%; 
+    box-sizing: border-box;
+    margin-bottom: 15px;
+}
+
+#login-password {
+    border-radius: 12px; 
+    padding: 30px 10px;
+    border: 1px solid #e8e8e8; 
+    width: 100%; 
+    box-sizing: border-box;
+
+}
+
+.form-containerssss ::placeholder {
+    font-family: 'poppins';
+    color: #E0E0E0;
+}
+
+.form-containerssss .forms {
+    padding: 40px 40px;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input[type="password"], input[type="text"] {
+    padding-right: 30px; 
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 10px; 
+    cursor: pointer;
+    font-size: 18px;
+    color: #888; 
+}
+
+.form-containerssss .sign-in {
+    font-family: 'poppins';
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #25282B;
+}
+
+.fz-account-form-section .forming {
+    padding: 0px 85px;
+}
+.fz-account-form-section .logo-img {
+    height: 120px;
+    width: auto;
+    margin-top: 0;
+}
+
+
+ 
+
+
+@media (max-width: 768px) {
+    .forms {
+        max-width: 100%;  
+        padding: 15px; 
+    }
+
+    .sign-in {
+        font-size: 20px; 
+    }
+
+    .form-label {
+        font-size: 12px; 
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        padding: 12px;  
+    }
+}
+
+.eyebtn { position: absolute; right: 15px;}
+// ::-webkit-scrollbar {
+//     display: none;
+// }
+
+ 
+@media (max-width: 480px) {
+    .form-containerssss .forms {
+        padding: 30px 20px;  
+    }
+
+    .sign-in {
+        font-size: 18px;  
+    }
+
+    #login-email {
+        padding: 25px 10px ;
+    }
+    #login-password{
+        padding: 25px 10px;
+    }
+    .fz-account-form-section .forming {
+        padding: 20px 20px;
+    }
+    .fz-account-form-section .logo-img {
+        height: 99px;
+        width: auto;
+    }
+    .fz-account-form-section {
+        margin-top: 90px;
+    }
+    
+}   

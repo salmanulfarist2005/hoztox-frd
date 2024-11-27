@@ -11,7 +11,7 @@ import axios from "axios";
 import { BASE_URL } from '../../helpers/config';
 
 const ChangePassword = () => {
-    document.title = "Form Elements | Upzet - React Admin & Dashboard Template";
+    document.title = "Caratree Diamonds-Dashboard";
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");

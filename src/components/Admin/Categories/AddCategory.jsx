@@ -12,7 +12,7 @@ import { BASE_URL } from '../../helpers/config';
 import axios from 'axios';
 
 const AddCategory = () => {
-    document.title = "Form Elements | Upzet - React Admin & Dashboard Template";
+    document.title = "Caratree Diamonds-Dashboard";
     const [categoryName, setCategoryName] = useState(""); 
     const [image, setImage] = useState(null);  
 

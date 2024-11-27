@@ -1,5 +1,6 @@
 .fz-account-form-section {
-    padding: 120px 0;
+    margin-top: 40px;
+    
 
     @include lg {
         padding: 50px 0;
@@ -30,7 +31,7 @@
         border: 1px solid #eaeaea;
         padding: 40px 30px;
         display: grid;
-        gap: 15px;
+        gap: 10px;
         border-radius: 3px;
 
         @include lg {
@@ -89,15 +90,19 @@
         }
 
         .single-form-btn {
-            justify-self: start;
-            border-radius: 3px;
+            justify-self: center;
+            width: 100%;
+            border-radius: 8px;
             background-color: $black;
-            height: 45px;
-            line-height: 43px;
-            font-size: 16px;
+            height: 55px;
+            line-height: 37px;
+            font-size: 21px;
+            font-family: 'poppins';
+            font-weight: 600;
             color: $white;
             border: 1px solid $black;
-            padding: 0 40px;
+            margin: 15px 0px;
+            
 
             @include md {
                 justify-self: center;
@@ -124,6 +129,16 @@
                 border-radius: 3px;
                 background-color: $white;
             }
+        }
+        
+        @media (max-width: 480px) {
+            .single-form-btn {
+                height: 48px;
+                line-height: 37px;
+                font-size: 20px;
+                font-weight: 600;
+            }
+    
         }
     }
 }

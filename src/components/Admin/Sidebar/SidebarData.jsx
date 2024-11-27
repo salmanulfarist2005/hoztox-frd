@@ -108,7 +108,7 @@ const SidebarData = [
         icon: "mdi mdi-format-page-break",
         subItem: [
             { sublabel: "Change Password", link: "/password-chanage" },           
-            { sublabel: "Manage Admin User", link: "/admin-user" },
+            // { sublabel: "Manage Admin User", link: "/admin-user" },
             
         ],
     },

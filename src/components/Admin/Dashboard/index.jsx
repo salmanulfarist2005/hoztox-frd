@@ -14,13 +14,13 @@ import './Dashbord.css';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 const Dashboard = () => {
-  document.title = "Dashboard | Upzet - React Admin & Dashboard Template";
+  document.title = " Caratree Diamonds-Dahboard";
   return (
     <React.Fragment>
       <div className="main-content">
         <div className="page-content ">
           <Container fluid={true}>
-            <Breadcrumbs title="Upzet" breadcrumbItem="Dashboard" />
+            <Breadcrumbs title="Caratree" breadcrumbItem="Dashboard" />
 
             <UsePanel />
 

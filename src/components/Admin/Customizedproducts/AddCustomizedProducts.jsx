@@ -13,7 +13,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { BASE_URL } from '../../helpers/config';
 
 const AddCustomeProduct = () => {
-  document.title = "Add Products | Upzet - React Admin & Dashboard Template";
+  document.title = "Caratree Diamonds-Dashboard ";
   const [category, setCategory] = useState([]);
   const [formData, setFormData] = useState({
     SKU: "",
