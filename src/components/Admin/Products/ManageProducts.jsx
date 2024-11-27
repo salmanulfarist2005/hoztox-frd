@@ -536,7 +536,7 @@ const ManageProducts = () => {
                                                             <th className="sort" data-sort="customer_name">Product Name</th>
                                                             <th className="sort" data-sort="email">SKU</th>
                                                             <th className="sort" data-sort="phone">Product Category</th>
-                                                            <th className="sort" data-sort="date">Product Colour</th>
+                                                         
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
