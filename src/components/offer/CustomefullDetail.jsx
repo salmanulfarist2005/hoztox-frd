@@ -27,6 +27,7 @@ const CustomFull = () => {
   const [categories, setCategories] = useState([]);
   const [quantity, setQuantity] = useState(1);  
   const [showConfirmation, setShowConfirmation] = useState(false); 
+  const [orderProcessing, setOrderProcessing] = useState(false); 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setImages((prevImages) => [...prevImages, ...selectedFiles]);
@@ -109,6 +110,8 @@ const CustomFull = () => {
   };
 
   const handleSubmit = async (e) => {
+    setOrderProcessing(true);
+ 
     e.preventDefault();
     const productFormData = new FormData();
     
@@ -131,9 +134,9 @@ const CustomFull = () => {
             },
         });
         console.log("Product added:", response.data);
-        alert("Product added successfully!");
+  
         setShowConfirmation(true);
-        
+        setOrderProcessing(false);
         // Reset form state
         setFormData({
             design_number: "",
@@ -296,6 +299,13 @@ const CustomFull = () => {
                     <button type="submit" className="btn btn-primary">Place Order</button>
                   </form>
                 </CardBody>
+                {orderProcessing && (
+                <div className="loading-spinner">
+                    <div className="spinner"></div>
+                    <p>Processing your order...</p>
+                </div>
+            )}
+
                 {showConfirmation && (
                 <div className="confirmation-popup">
                     <div className="confirmation-content">

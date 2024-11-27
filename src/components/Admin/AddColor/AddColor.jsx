@@ -211,7 +211,7 @@ const AddColor = () => {
                 <Modal isOpen={modal_list} toggle={toggleAddModal} centered>
                     <ModalHeader toggle={toggleAddModal}>Add Color</ModalHeader>
                     <form onSubmit={addColor}>
-                        <ModalBody>
+                    <ModalBody style={{ padding: '20px' }}>  
                             <div className="mb-3">
                                 <label htmlFor="color" className="form-label">Color Name</label>
                                 <input

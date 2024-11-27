@@ -17,7 +17,7 @@ import UserProfile from "./pages/UserProfilepage/profile";
 
 
 
-import Login from "./components/Admin/Adminlogin/Login";
+import AuthenticationSectionAdmin from "./components/Admin/Adminlogin/loginAdmin";
 import Dashboard from "./pages/Dashboard/Dashboard"
 import AddCategoryPage from "./pages/Dashboard/Addcategory"
 import ManageCategoryPage from "./pages/Dashboard/manageCategory"
@@ -79,7 +79,7 @@ function App() {
         <Route path="/custom-full" element={< CustomeFullPage />} />
 
         {/* .............................................................................................................. */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<AuthenticationSectionAdmin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         {/* ............................................................... */}
         <Route path="/add-category" element={<AddCategoryPage />} />

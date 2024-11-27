@@ -244,7 +244,7 @@ function Order() {
                                             <div className="order-items-list">
                                                 
                                                 <div className="order-description">
-                                                <h5>{item.product.category_name}</h5>
+                                                <h5>{order.product.category_name}</h5>
                                                     <p>orderCode: {order.ordercode}</p>
                                                     <p>SKU: {order.product.SKU}</p>
                                                     <p>Color: {order.product.color}</p>
@@ -351,22 +351,22 @@ function Order() {
                                         <li className="order-item width100">                                            
                                             <div className="order-items-list">
                                                 {order.order_items.map(item => (
-                                                    <div key={item.id} className="order-item-details normal-order-item">
+                                                    <div key={item?.id} className="order-item-details normal-order-item">
                                                         <div className="order-img order-img-200">
-                                                            <img src={BASE_URL + item.product.product_image} alt="" />
+                                                            <img src={BASE_URL + item?.product.product_image} alt="" />
                                                         </div>
                                                         
                                                         <div className="order-description">
-                                                        <h5>{item.product.category_name}</h5>
-                                                            <p>SKU: {item.product.SKU}</p>
-                                                            <p>Color: {item.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
+                                                        <h5>{item?.product.category_name}</h5>
+                                                            <p>SKU: {item?.product.SKU}</p>
+                                                            <p>Color: {item?.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
 
-                                                            <p>Gross Weight: {item.product.gross_weight} gm</p>
-                                                            <p>Diamond Weight: {item.product.diamond_weight} gm</p>
-                                                            <p>Net Weight: {item.product.net_weight} gm</p>
-                                                            <p>Color Stone: {item.product.colour_stones} gm</p>
-                                                            <p>Product Size: {item.product.product_size}</p>
-                                                            <p>Quantity: {item.quantity}</p>
+                                                            <p>Gross Weight: {item?.product.gross_weight} gm</p>
+                                                            <p>Diamond Weight: {item?.product.diamond_weight} gm</p>
+                                                            <p>Net Weight: {item?.product.net_weight} gm</p>
+                                                            <p>Color Stone: {item?.product.colour_stones} gm</p>
+                                                            <p>Product Size: {item?.product.product_size}</p>
+                                                            <p>Quantity: {item?.quantity}</p>
                                                         </div>
 
                                                     </div>

@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from '../../../components/helpers/config';
 
 const Login = () => {
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -39,119 +40,167 @@ const Login = () => {
             alert('Invalid Credentials');
         }
     };
-
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);  
+    };
 
 
 
 
     return (
-        <React.Fragment>
-            <div className="bg-overlay"></div>
-            <div className="account-pages my-5 pt-5">
-                <Container>
-                    <Row className="justify-content-center">
-                        <Col lg={6} md={8} xl={4}>
-                            <Card>
-                                <CardBody className="p-4">
-                                    <div>
-                                        <div className="text-center">
-                                            <Link to="/home">
-                                                {/* <img
-                                                    src={logodark}
-                                                    alt="logo-dark"
-                                                    height="24"
-                                                    className="auth-logo logo-dark mx-auto"
-                                                />
-                                                <img
-                                                    src={logolight}
-                                                    alt="logo-light"
-                                                    height="24"
-                                                    className="auth-logo logo-light mx-auto"
-                                                /> */}
-                                            </Link>
-                                        </div>
-                                        <h4 className="font-size-18 text-muted mt-2 text-center">
-                                            Welcome to Caratree
-                                        </h4>
-                                        <div className="centered-container">
-                                            <img
-                                                src="../assets/images/logo-2.svg"
-                                                alt="logo"
-                                                className="login-logo"
-                                            />
-                                        </div>
+        <div className="form-containerssss">
+       
+            <form onSubmit={handleSubmit} className="forms">
+                <h2 className="sign-in">Sign in</h2>
+
+                <label className="form-label" htmlFor="username">
+                    User Name
+                </label>
+                <input
+                    type="email"
+                    name="login-email"
+                    id="login-email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+
+                <label className="form-label" htmlFor="username">
+                    Password
+                </label>
+                <div className="password-container">
+                <input
+                        type={isPasswordVisible ? "text" : "password"} 
+                        name="login-password"
+                        id="login-password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <span
+                        className="eyebtn"
+                        onClick={togglePasswordVisibility}
+                    >
+                        {isPasswordVisible ? (
+                            <i className="fa fa-eye-slash"></i>
+                        ) : (
+                            <i className="fa fa-eye"></i>
+                        )}
+                    </span>
+                </div>
+
+                <button type="submit" className="fz-1-banner-btn single-form-btn">
+                    Log in
+                </button>
+            </form>
+        </div>
+        // <React.Fragment>
+        //     <div className="bg-overlay"></div>
+        //     <div className="account-pages my-5 pt-5">
+        //         <Container>
+        //             <Row className="justify-content-center">
+        //                 <Col lg={6} md={8} xl={4}>
+        //                     <Card>
+        //                         <CardBody className="p-4">
+        //                             <div>
+        //                                 <div className="text-center">
+        //                                     <Link to="/home">
+        //                                         {/* <img
+        //                                             src={logodark}
+        //                                             alt="logo-dark"
+        //                                             height="24"
+        //                                             className="auth-logo logo-dark mx-auto"
+        //                                         />
+        //                                         <img
+        //                                             src={logolight}
+        //                                             alt="logo-light"
+        //                                             height="24"
+        //                                             className="auth-logo logo-light mx-auto"
+        //                                         /> */}
+        //                                     </Link>
+        //                                 </div>
+        //                                 <h4 className="font-size-18 text-muted mt-2 text-center">
+        //                                     Welcome to Caratree
+        //                                 </h4>
+        //                                 <div className="centered-container">
+        //                                     <img
+        //                                         src="../assets/images/logo-2.svg"
+        //                                         alt="logo"
+        //                                         className="login-logo"
+        //                                     />
+        //                                 </div>
 
 
 
-                                        <Form className="form-horizontal" onSubmit={handleSubmit}>
-                                            <Row>
-                                                <Col md={12}>
-                                                    <div className="mb-4">
-                                                        <label className="form-label" htmlFor="username">
-                                                            Email
-                                                        </label>
-                                                        <input
-                                                            type="email"
-                                                            className="form-control"
-                                                            id="username"
-                                                            placeholder="Enter email"
-                                                            value={email}
-                                                            onChange={(e) => setEmail(e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div className="mb-4">
-                                                        <label className="form-label" htmlFor="userpassword">
-                                                            Password
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            className="form-control"
-                                                            id="userpassword"
-                                                            placeholder="Enter password"
-                                                            value={password}
-                                                            onChange={(e) => setPassword(e.target.value)}
-                                                        />
-                                                    </div>
+        //                                 <Form className="form-horizontal" onSubmit={handleSubmit}>
+        //                                     <Row>
+        //                                         <Col md={12}>
+        //                                             <div className="mb-4">
+        //                                                 <label className="form-label" htmlFor="username">
+        //                                                     Email
+        //                                                 </label>
+        //                                                 <input
+        //                                                     type="email"
+        //                                                     className="form-control"
+        //                                                     id="username"
+        //                                                     placeholder="Enter email"
+        //                                                     value={email}
+        //                                                     onChange={(e) => setEmail(e.target.value)}
+        //                                                 />
+        //                                             </div>
+        //                                             <div className="mb-4">
+        //                                                 <label className="form-label" htmlFor="userpassword">
+        //                                                     Password
+        //                                                 </label>
+        //                                                 <input
+        //                                                     type="password"
+        //                                                     className="form-control"
+        //                                                     id="userpassword"
+        //                                                     placeholder="Enter password"
+        //                                                     value={password}
+        //                                                     onChange={(e) => setPassword(e.target.value)}
+        //                                                 />
+        //                                             </div>
 
-                                                    <Row>
-                                                        <Col>
-                                                            <div className="form-check">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    className="form-check-input"
-                                                                    id="customControlInline"
-                                                                />
-                                                                <label
-                                                                    className="form-label form-check-label"
-                                                                    htmlFor="customControlInline"
-                                                                >
-                                                                    Remember me
-                                                                </label>
-                                                            </div>
-                                                        </Col>
+        //                                             <Row>
+        //                                                 <Col>
+        //                                                     <div className="form-check">
+        //                                                         <input
+        //                                                             type="checkbox"
+        //                                                             className="form-check-input"
+        //                                                             id="customControlInline"
+        //                                                         />
+        //                                                         <label
+        //                                                             className="form-label form-check-label"
+        //                                                             htmlFor="customControlInline"
+        //                                                         >
+        //                                                             Remember me
+        //                                                         </label>
+        //                                                     </div>
+        //                                                 </Col>
 
-                                                    </Row>
+        //                                             </Row>
 
-                                                    <div className="d-grid mt-4">
-                                                        <button
-                                                            className="btn btn-primary waves-effect waves-light"
-                                                            type="submit"
-                                                            disabled={loading}
-                                                        >
-                                                            {loading ? 'Logging in...' : 'Log In'}
-                                                        </button>
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                        </Form>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
-        </React.Fragment>
+        //                                             <div className="d-grid mt-4">
+        //                                                 <button
+        //                                                     className="btn btn-primary waves-effect waves-light"
+        //                                                     type="submit"
+        //                                                     disabled={loading}
+        //                                                 >
+        //                                                     {loading ? 'Logging in...' : 'Log In'}
+        //                                                 </button>
+        //                                             </div>
+        //                                         </Col>
+        //                                     </Row>
+        //                                 </Form>
+        //                             </div>
+        //                         </CardBody>
+        //                     </Card>
+        //                 </Col>
+        //             </Row>
+        //         </Container>
+        //     </div>
+        // </React.Fragment>
     );
 };
 

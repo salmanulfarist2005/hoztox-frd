@@ -50,6 +50,7 @@ const HeaderSection4 = () => {
     localStorage.removeItem("userId");
     setIsLoggedIn(false);
     setJeweleryCartItemAmount(0);  
+    navigate("/")
   };
 
   useEffect(() => {

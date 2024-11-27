@@ -708,6 +708,9 @@ const ManageCustomProducts = () => {
                                 <div className="col-md-10 d-flex justify-content-between">
 
                                     <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                    Gross Weight (gm)
+                                    </label>
                                         <input
                                             className="form-control"
                                             type="text"
@@ -719,6 +722,9 @@ const ManageCustomProducts = () => {
                                         />
                                     </div>
                                     <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                    Diamond Weight (gm)
+                                    </label>
                                         <input
                                             className="form-control"
                                             type="text"
@@ -730,6 +736,9 @@ const ManageCustomProducts = () => {
                                         />
                                     </div>
                                     <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                    Colour Stones (gm)
+                                    </label>
                                         <input
                                             className="form-control"
                                             type="text"
@@ -741,6 +750,9 @@ const ManageCustomProducts = () => {
                                         />
                                     </div>
                                     <div className="flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                    Net Weight (gm)
+                                    </label>
                                         <input
                                             className="form-control"
                                             type="text"

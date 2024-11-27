@@ -268,12 +268,12 @@ const CustomPendingOrder = () => {
                                     </div>
                                 </Row>
                                 <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Colour</label>
+                                    <label className="col-md-2 col-form-label">Product Color</label>
                                     <div className="col-md-10">
                                         <input
                                             className="form-control"
                                             type="text"
-                                            value={selectedItem.order?.product?.color}
+                                            value={selectedItem.order?.color?.color}
                                             readOnly
                                         />
                                     </div>

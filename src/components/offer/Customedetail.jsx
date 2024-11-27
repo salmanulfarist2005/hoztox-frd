@@ -8,7 +8,7 @@ import Slider from 'react-slick';
 
 function CustomeDetail() {
     const { id, SKU } = useParams();
-
+    const [orderProcessing, setOrderProcessing] = useState(false); 
     const [product, setProduct] = useState(null);
     const [additionalImages, setAdditionalImages] = useState([]);
     const [colors, setColors] = useState([]);
@@ -88,7 +88,9 @@ function CustomeDetail() {
     const [showConfirmation, setShowConfirmation] = useState(false);
     // Handle form submission to place an order
     const handleSubmit = async (e) => {
+        setOrderProcessing(true); 
         e.preventDefault();
+
         const token = localStorage.getItem('authToken');
         console.error("ordercreation:", formData);
         const orderData = {
@@ -107,8 +109,9 @@ function CustomeDetail() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            toast.success('Order placed successfully');
+       
             setShowConfirmation(true);
+            setOrderProcessing(false);
             setTimeout(() => {
                 setShowConfirmation(false);
                 navigate('/checkout');
@@ -289,6 +292,12 @@ function CustomeDetail() {
                 ) : (
                     <p>Product not found.</p>
                 )}
+                 {orderProcessing && (
+                <div className="loading-spinner">
+                    <div className="spinner"></div>
+                    <p>Processing your order...</p>
+                </div>
+            )}
                  {showConfirmation && (
                 <div className="confirmation-popup">
                     <div className="confirmation-content">

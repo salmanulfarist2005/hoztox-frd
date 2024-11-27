@@ -254,7 +254,7 @@ const AddCustomeProduct = () => {
 
                       
                       <Row className="mb-3">
-                        <label htmlFor="gross_weight" className="col-md-2 col-form-label">Gross Weight</label>
+                        <label htmlFor="gross_weight" className="col-md-2 col-form-label">Gross Weight (gm)</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"
@@ -268,7 +268,7 @@ const AddCustomeProduct = () => {
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="diamond_weight" className="col-md-2 col-form-label">Diamond Weight</label>
+                        <label htmlFor="diamond_weight" className="col-md-2 col-form-label">Diamond Weight (gm)</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"
@@ -281,7 +281,7 @@ const AddCustomeProduct = () => {
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="colour_stones" className="col-md-2 col-form-label">Colour Stones</label>
+                        <label htmlFor="colour_stones" className="col-md-2 col-form-label">Colour Stones (gm)</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"
@@ -294,7 +294,7 @@ const AddCustomeProduct = () => {
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="net_weight" className="col-md-2 col-form-label">Net Weight</label>
+                        <label htmlFor="net_weight" className="col-md-2 col-form-label">Net Weight (gm)</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"

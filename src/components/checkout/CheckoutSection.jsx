@@ -12,14 +12,16 @@ const CheckoutSection = () => {
     const [loading, setLoading] = useState(true);
     const [notes, setNotes] = useState({});
     const [showConfirmation, setShowConfirmation] = useState(false); // New state for confirmation popup
+    const [orderProcessing, setOrderProcessing] = useState(false); // Loading for order processing
     const navigate = useNavigate();
- 
+
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             navigate('/');
-        } 
+        }
     }, [navigate]);
+
     const fetchCartItems = async () => {
         try {
             const token = localStorage.getItem('authToken');
@@ -46,10 +48,11 @@ const CheckoutSection = () => {
     };
 
     const handlePlaceOrder = async () => {
+        setOrderProcessing(true); // Start showing spinner
         const token = localStorage.getItem('authToken');
         const uniqueCartItems = [];
         const seenSKUs = new Set();
-    
+
         cartItems.forEach(item => {
             if (!seenSKUs.has(item.product.SKU)) {
                 seenSKUs.add(item.product.SKU);
@@ -61,18 +64,15 @@ const CheckoutSection = () => {
                 });
             }
         });
-    
+
         try {
             const response = await axios.post(`${BASE_URL}/products/orders/`, { order_items: uniqueCartItems }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
-            console.log(response);   
-    
+
             if (response.status === 201) {
-             
                 setShowConfirmation(true);
                 fetchCartItems();
                 setTimeout(() => {
@@ -83,15 +83,17 @@ const CheckoutSection = () => {
                 alert("Failed to place order: Unexpected response");
             }
         } catch (error) {
-            console.error("Error placing order:", error);   
+            console.error("Error placing order:", error);
             if (error.response) {
                 alert("Failed to place order: " + (error.response.data.detail || "An error occurred."));
             } else {
                 alert("Failed to place order: Network error or server not reachable.");
             }
+        } finally {
+            setOrderProcessing(false); // Stop showing spinner
         }
     };
-    
+
     return (
         <div className="checkout-container">
             <h3 className="checkout-title">Order Items</h3>
@@ -144,11 +146,17 @@ const CheckoutSection = () => {
                 )}
             </div>
 
-           
+            {orderProcessing && (
+                <div className="loading-spinner">
+                    <div className="spinner"></div>
+                    <p>Processing your order...</p>
+                </div>
+            )}
+
             {showConfirmation && (
                 <div className="confirmation-popup">
                     <div className="confirmation-content">
-                        <span className="checkmark">&#10003;</span>  
+                        <span className="checkmark">&#10003;</span>
                         <p>Order placed successfully!</p>
                     </div>
                 </div>
