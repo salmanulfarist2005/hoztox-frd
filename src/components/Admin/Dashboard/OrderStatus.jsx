@@ -14,7 +14,7 @@ const OrderStatus = () => {
     return (
         <React.Fragment>
             <Col xl={4}>
-                <Card>
+                <Card className='mt-3'>
                     <CardBody>
                         <CardTitle>Order Stats</CardTitle>
                         <div>

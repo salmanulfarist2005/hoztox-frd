@@ -736,3 +736,11 @@ input[type="password"], input[type="text"] {
 .duedate{
     margin-top: 15px !important;
 }
+.sidebar-icon {
+    width: 30px; /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+    object-fit: cover; /* Ensures the image doesn't distort */
+  }
+.avatar-xs{
+    margin-left: 50px !important;
+}

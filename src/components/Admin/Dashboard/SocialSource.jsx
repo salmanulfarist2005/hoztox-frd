@@ -36,24 +36,32 @@ const SocialSource = () => {
             {/* RadialChart */}
             <RadialChart />
             <Row>
-              {SocialSourceData.map((item, key) => (
-                <div key={key} className="col-4">
-                  <div className="social-source text-center mt-3">
-                    <div className="avatar-xs mx-auto mb-3">
-                      <span
-                        className={
-                          "avatar-title rounded-circle font-size-18 bg-" +
-                          item.bgcolor
-                        }
-                      >
-                        <i className={item.icon + " text-white"}></i>
-                      </span>
-                    </div>
-                    <h5 className="font-size-15">{item.title}</h5>
-                    <p className="text-muted mb-0">{item.count} sales</p>
-                  </div>
-                </div>
-              ))}
+            {SocialSourceData.map((item, key) => (
+  <div key={key} className="col-4">
+    <div className="social-source text-center">
+      <div className="avatar-xs  mb-3">
+        <span
+          className={
+            "avatar-title rounded-circle font-size-18 bg-" + item.bgcolor
+          }
+          style={{
+            width: "35px",   
+            height: "35px",  
+            display: "flex",   
+            justifyContent: "center",  
+            alignItems: "center", 
+            marginBottom: "10px" 
+          }}
+        >
+          <i className={item.icon + " text-white"}></i>
+        </span>
+      </div>
+      <h5 className="font-size-15">{item.title}</h5>
+      <p className="text-muted mb-0">{item.count} sales</p>
+    </div>
+  </div>
+))}
+
             </Row>
           </CardBody>
         </Card>
