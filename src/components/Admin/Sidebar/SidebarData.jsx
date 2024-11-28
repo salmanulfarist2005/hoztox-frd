@@ -82,17 +82,17 @@ const SidebarData = [
             
         ],
     },
-    {
-        label: "Full Customized Orders",
-        icon: "mdi mdi-format-page-break",
-        subItem: [
-            { sublabel: "Pending Orders", link: "/full-custom-pending-order" },           
-            { sublabel: "View Orders", link: "/full-custom-view-order" },
-            { sublabel: "Manage Orders", link: "/full-custom-manage-order" },
-            { sublabel: "Status Csv", link: "/status-full-csv" },
+    // {
+    //     label: "Full Customized Orders",
+    //     icon: "mdi mdi-format-page-break",
+    //     subItem: [
+    //         { sublabel: "Pending Orders", link: "/full-custom-pending-order" },           
+    //         { sublabel: "View Orders", link: "/full-custom-view-order" },
+    //         { sublabel: "Manage Orders", link: "/full-custom-manage-order" },
+    //         { sublabel: "Status Csv", link: "/status-full-csv" },
             
-        ],
-    },
+    //     ],
+    // },
     {
         label: "Media",
         icon: "mdi mdi-format-page-break",

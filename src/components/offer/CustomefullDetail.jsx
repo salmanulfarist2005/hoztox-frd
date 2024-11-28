@@ -21,6 +21,7 @@ const CustomFull = () => {
     gram: "",
     cent: "",
     size: "",
+    due_date:"",
     description: "",
   });
   const [images, setImages] = useState([]);
@@ -145,6 +146,7 @@ const CustomFull = () => {
             gram: "",
             cent: "",
             size: "",
+            due_date:"",
             description: "",
         });
         setImages([]);
@@ -264,9 +266,22 @@ const CustomFull = () => {
                         />
                       </div>
                     </Row>
-
                     <Row className="mb-3">
-                      <label htmlFor="description" className="col-md-2 col-form-label">Product Description</label>
+                      <label htmlFor="size" className="col-md-2 col-form-label">Due Date</label>
+                      <div className="col-md-10">
+                        <input
+                          className="form-control"
+                          type="date"
+                          name="due_date"
+                          placeholder="Due Date"
+                          value={formData.due_date}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </Row>
+                    <Row className="mb-3">
+                      <label htmlFor="description" className="col-md-2 col-form-label">Addtional Notes</label>
                       <div className="col-md-10">
                         <textarea
                           className="form-control"

@@ -7,6 +7,7 @@ import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBo
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import FullCustomManageOrder from '../FullCustomOrders/ManageOrder'
 
 
 
@@ -260,7 +261,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Custom Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -418,6 +419,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     </Container>
                 </div>
                 </div>
+                <FullCustomManageOrder/>
                 <Modal
                     isOpen={modal_list}
                     toggle={tog_list}

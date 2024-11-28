@@ -91,7 +91,7 @@ const StatusCSVUpload = () => {
                                         <Form className="dropzone mt-2">
                                             <Dropzone
                                                 onDrop={handleAcceptedFiles}
-                                                accept=".csv" // Accept only CSV files
+                                                accept=".csv"  
                                             >
                                                 {({ getRootProps, getInputProps }) => (
                                                     <div style={{ textAlign: "center" }}>

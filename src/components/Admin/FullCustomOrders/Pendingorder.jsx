@@ -108,7 +108,7 @@ const FullCustomPendingOrder = () => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Pending Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Full Custom Pending Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -319,7 +319,7 @@ const FullCustomPendingOrder = () => {
                                 </Row>
 
                                 <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Description</label>
+                                    <label className="col-md-2 col-form-label">Addtional Notes</label>
                                     <div className="col-md-10">
                                         <textarea
                                             className="form-control"

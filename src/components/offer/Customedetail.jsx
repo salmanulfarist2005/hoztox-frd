@@ -20,6 +20,7 @@ function CustomeDetail() {
         gram: '',
         cent: '',
         color: '',
+        due_date: '',
         description: '',
     });
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -101,6 +102,7 @@ function CustomeDetail() {
             color: formData.color,
             description: formData.description,
             quantity: quantity,
+            due_date: formData.due_date,
         };
 
         try {
@@ -121,6 +123,7 @@ function CustomeDetail() {
                 gram: '',
                 cent: '',
                 color: '',
+                due_date: '',
                 description: '',
             });
             setQuantity(defaultQuantity);
@@ -256,7 +259,18 @@ function CustomeDetail() {
                                         />
                                     </label>
                                     </div>
-
+                                    <div className='col-sm-6 mb-m2'>
+                                    <label>
+                                       Due date
+                                        <input
+                                            type="date"
+                                            name="due_date"
+                                            value={formData.due_date}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </label>
+                                    </div>
                                     <div className='col-sm-6 mb-m2'>
                                     <label htmlFor="color" className="">Color</label>
                                     <div className=" ">
@@ -272,7 +286,7 @@ function CustomeDetail() {
                                     <div className='col-sm-12 mb-m2'>
 
                                     <label >
-                                        Description:
+                                     Addititonal Notes
                                         <textarea
                                             name="description"
                                             value={formData.description}

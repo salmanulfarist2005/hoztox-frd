@@ -12,12 +12,14 @@ const BestSellerTabContent = () => {
     const [selectedColors, setSelectedColors] = useState({});
 
     const navigate = useNavigate();
+
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             navigate('/');
         }
     }, [navigate]);
+
     const fetchProducts = async () => {
         try {
             const token = localStorage.getItem('authToken');
@@ -25,14 +27,11 @@ const BestSellerTabContent = () => {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-        
             console.log('Fetched Products Response:', response);
 
-      
             const fetchedProducts = response.data;
             setProducts(fetchedProducts);
 
- 
             const initialQuantities = {};
             fetchedProducts.forEach((product) => {
                 initialQuantities[product.id] = 1;
@@ -42,8 +41,6 @@ const BestSellerTabContent = () => {
             console.error('Error fetching products:', error);
         }
     };
-
-
 
     useEffect(() => {
         fetchProducts();
@@ -81,12 +78,8 @@ const BestSellerTabContent = () => {
                                 <button
                                     className="fz-add-to-cart-btn"
                                     onClick={() => {
-                                        const selectedColor = selectedColors[product.id];
-                                        if (selectedColor) {
-                                            addToJeweleryCart(product.id, quantities[product.id], selectedColor);
-                                        } else {
-                                            alert('Please select a color!');
-                                        }
+                                        const selectedColor = selectedColors[product.id] || '';  
+                                        addToJeweleryCart(product.id, quantities[product.id], selectedColor);
                                     }}
                                 >
                                     Add to Cart
@@ -123,12 +116,9 @@ const BestSellerTabContent = () => {
                             </div>
                         </div>
                         <div className="fz-2-single-product-txt">
-                           
                             <div>
                                 <span className="fz-2-single-product-title">{product.category_name}</span>
-
                             </div>
-
                             <div className="inf_gm">
                                 <ul>
                                     <li>GW:<span>{product.gross_weight}</span></li>
@@ -201,16 +191,14 @@ const BestSellerTabContent = () => {
                                     <button
                                         className="fz-add-to-cart-btn"
                                         onClick={() => {
-                                            const selectedColor = selectedColors[product.id];
-                                            if (selectedColor) {
-                                                addToJeweleryCart(product.id, quantities[product.id], selectedColor);
-                                            } else {
-                                                alert('Please select a color!');
-                                            }
+                                            // Check if a color is selected for the product; if not, set it to an empty string ('')
+                                            const selectedColor = selectedColors[product.id] || '';  // Set to '' if no color is selected
+                                            addToJeweleryCart(product.id, quantities[product.id], selectedColor);
                                         }}
                                     >
                                         Add to Cart
                                     </button>
+
                                 </div>
                             </div>
                         </div>

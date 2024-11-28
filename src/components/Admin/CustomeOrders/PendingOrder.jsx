@@ -4,6 +4,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
+import FullCustomPendingOrder from '../FullCustomOrders/Pendingorder'
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 const CustomPendingOrder = () => {
     const [orders, setOrders] = useState([]);
@@ -107,7 +108,7 @@ const CustomPendingOrder = () => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                    <Breadcrumbs title="Orders" breadcrumbItem="Manage Orders" />
+                    <Breadcrumbs title="Orders" breadcrumbItem="Custom Pending Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -203,12 +204,16 @@ const CustomPendingOrder = () => {
                                             </div>
                                         </div>
                                     </CardBody>
+                                
                                 </Card>
                             </Col>
                         </Row>
+                     
                     </Container>
+                   
                 </div>
                 </div>
+                <FullCustomPendingOrder/>
                 <Modal
                     isOpen={modal_list}
                     toggle={tog_list}
@@ -284,7 +289,7 @@ const CustomPendingOrder = () => {
                                         <input
                                             className="form-control"
                                             type="text"
-                                            value={selectedItem.order?.product?.product_size}
+                                            value={selectedItem.order?.size}
                                             readOnly
                                         />
                                     </div>
@@ -300,19 +305,9 @@ const CustomPendingOrder = () => {
                                         />
                                     </div>
                                 </Row>
+                            
                                 <Row className="mb-3">
                                     <label className="col-md-2 col-form-label">Additional Notes</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.order?.additional_notes}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Description</label>
                                     <div className="col-md-10">
                                         <textarea
                                             className="form-control"

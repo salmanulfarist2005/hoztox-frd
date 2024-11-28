@@ -260,7 +260,7 @@ const FullCustomManageOrder = (order) => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Pending Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Full Custom Orders" />
 
                         <Row>
                             <Col lg={12}>

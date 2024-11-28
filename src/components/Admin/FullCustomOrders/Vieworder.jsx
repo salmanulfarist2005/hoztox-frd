@@ -83,12 +83,20 @@ const FullCustomViewOrder = () => {
             alert("Cannot generate Order ID. Please select an order first.");
             return;
         }
-
+    
         try {
-            const response = await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/generate-order-id/`, {
-                ordercode: orderId,
-                due_date: dueDate
-            });
+        
+            const payload = {
+                ordercode: orderId
+            };
+    
+            if (dueDate) {
+        
+                payload.due_date = new Date(dueDate).toISOString();   
+            }
+    
+            const response = await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/generate-order-id/`, payload);
+    
             console.log("Order ID generated:", response.data);
             alert("Order ID Created Successfully");
             fetchOrders();
@@ -100,6 +108,7 @@ const FullCustomViewOrder = () => {
             alert("There was an error saving the Order ID. Please try again.");
         }
     };
+    
     const downloadCSV = () => {
         if (!selectedItem) return;
 
@@ -191,7 +200,7 @@ const FullCustomViewOrder = () => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Pending Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="View Full Custom Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -511,7 +520,7 @@ const FullCustomViewOrder = () => {
                                 />
                             </div>
                         </Row>
-                        <Row>
+                        <Row className='duedate'>
                             <label htmlFor="dueDate" className="col-md-4 col-form-label">Due Date:</label>
                             <div className="col-md-8">
                                 <input

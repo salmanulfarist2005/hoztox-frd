@@ -7,6 +7,7 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import FullCustomViewOrder from '../FullCustomOrders/Vieworder'
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 const CustomViewOrder = () => {
     const [orders, setOrders] = useState([]);
@@ -62,12 +63,21 @@ const CustomViewOrder = () => {
             alert("Cannot generate Order ID. Please select an order first.");
             return;
         }
-
+    
         try {
-            const response = await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/generate-order-id/`, {
-                ordercode: orderId,
-                due_date: dueDate
-            });
+            
+            const payload = {
+                ordercode: orderId
+            };
+    
+   
+            if (dueDate) {
+                payload.due_date = new Date(dueDate).toISOString();   
+            }
+    
+      
+            const response = await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/generate-order-id/`, payload);
+    
             console.log("Order ID generated:", response.data);
             alert("Order ID Created Successfully");
             fetchOrders();
@@ -79,7 +89,7 @@ const CustomViewOrder = () => {
             alert("There was an error saving the Order ID. Please try again.");
         }
     };
-
+    
 
 
     const downloadCSV = () => {
@@ -195,7 +205,7 @@ const CustomViewOrder = () => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="View Custom Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -299,6 +309,7 @@ const CustomViewOrder = () => {
                     </Container>
                 </div>
                 </div>
+                <FullCustomViewOrder/>
                 <Modal
                     isOpen={modal_list}
                     toggle={tog_list}
@@ -515,8 +526,8 @@ const CustomViewOrder = () => {
                                 />
                             </div>
                         </Row>
-                        <Row>
-                            <label htmlFor="dueDate" className="col-md-4 col-form-label">Due Date:</label>
+                        <Row className='duedate'>
+                            <label htmlFor="dueDate" className=" col-md-4 col-form-label">Due Date:</label>
                             <div className="col-md-8">
                                 <input
                                     type="date"
