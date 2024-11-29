@@ -33,7 +33,6 @@ const AddUser = () => {
     mobile_number: '',
     whatsapp_number: '',
     company_name: '',
-    billing_address: '',
     shipping_address: '',
     company_logo: null,
     company_email: '',
@@ -125,7 +124,7 @@ const AddUser = () => {
             mobile_number: '',
             whatsapp_number: '',
             company_name: '',
-            billing_address: '',
+   
             shipping_address: '',
             company_logo: null,
             company_email: '',
@@ -221,24 +220,13 @@ const AddUser = () => {
                             value={formData.company_name}
                             onChange={handleChange}
                             placeholder="Company Name"
+                            required
                           />
                         </div>
                       </Row>
+                     
                       <Row className="mb-3">
-                        <label htmlFor="billing_address" className="col-md-2 col-form-label">Billing Address</label>
-                        <div className="col-md-10">
-                          <input
-                            className="form-control"
-                            type="text"
-                            name="billing_address"
-                            value={formData.billing_address}
-                            onChange={handleChange}
-                            placeholder="Billing Address"
-                          />
-                        </div>
-                      </Row>
-                      <Row className="mb-3">
-                        <label htmlFor="shipping_address" className="col-md-2 col-form-label">Shipping Address</label>
+                        <label htmlFor="shipping_address" className="col-md-2 col-form-label">Address</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"
@@ -247,6 +235,7 @@ const AddUser = () => {
                             value={formData.shipping_address}
                             onChange={handleChange}
                             placeholder="Shipping Address"
+                            required
                           />
                         </div>
                       </Row>
@@ -280,7 +269,7 @@ const AddUser = () => {
                         <div className="col-md-10">
                           <input
                             className="form-control"
-                            type="url"
+                            type="text"
                             name="company_website"
                             value={formData.company_website}
                             onChange={handleChange}

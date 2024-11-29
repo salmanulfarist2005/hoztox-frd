@@ -20,7 +20,7 @@ const ManageUser = () => {
         mobile_number: '',
         whatsapp_number: '',
         company_name: '',
-        billing_address: '',
+ 
         shipping_address: '',
         company_logo: null,
         company_email: '',
@@ -92,28 +92,35 @@ const ManageUser = () => {
     
     
     const tog_list = (user) => {
+        if (!user || !user.id) {
+            console.error("Invalid user data:", user);
+            return;
+        }
+    
         console.log("Editing user:", user);
-        setUserId(user.id); 
+        setUserId(user.id);
+    
         setFormData({
-            full_name: user.full_name,
-            email: user.email,
-            mobile_number: user.mobile_number,
-            whatsapp_number: user.whatsapp_number,
-            company_name: user.company_name,
-            billing_address: user.billing_address,
-            shipping_address: user.shipping_address,
+            full_name: user.full_name || '',
+            email: user.email || '',
+            mobile_number: user.mobile_number || '',
+            whatsapp_number: user.whatsapp_number || '',
+            company_name: user.company_name || '',
+            shipping_address: user.shipping_address || '',
             company_logo: user.company_logo || '',
-            company_email: user.company_email,
-            company_website: user.company_website,
-            username: user.username,
+            company_email: user.company_email || '',
+            company_website: user.company_website || '',
+            username: user.username || '',
             password: '',  
             confirm_password: '',
-            usertypes: user.usertypes,
+            usertypes: user.usertypes || '',
         });
-        setCurrentLogo(user.company_logo);
-        setSelectedUserType(user.usertypes.toString());
+    
+        setCurrentLogo(user.company_logo || '');
+        setSelectedUserType(user.usertypes?.toString() || '');
         setModalList(true); // Open modal
     };
+    
 
     const [userId, setUserId] = useState(null);
     const handleSubmit = async (e) => {
@@ -166,7 +173,7 @@ const ManageUser = () => {
                 mobile_number: '',
                 whatsapp_number: '',
                 company_name: '',
-                billing_address: '',
+            
                 shipping_address: '',
                 company_logo: null, // Reset the logo
                 company_email: '',
@@ -511,21 +518,9 @@ const ManageUser = () => {
                                 />
                             </div>
                         </Row>
+                    
                         <Row className="mb-3">
-                            <label htmlFor="billing_address" className="col-md-2 col-form-label">Billing Address</label>
-                            <div className="col-md-10">
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    name="billing_address"
-                                    value={formData.billing_address}
-                                    onChange={handleChange}
-                                    placeholder="Billing Address"
-                                />
-                            </div>
-                        </Row>
-                        <Row className="mb-3">
-                            <label htmlFor="shipping_address" className="col-md-2 col-form-label">Shipping Address</label>
+                            <label htmlFor="shipping_address" className="col-md-2 col-form-label">Address</label>
                             <div className="col-md-10">
                                 <input
                                     className="form-control"
@@ -576,7 +571,7 @@ const ManageUser = () => {
                             <div className="col-md-10">
                                 <input
                                     className="form-control"
-                                    type="url"
+                                    type="text"
                                     name="company_website"
                                     value={formData.company_website}
                                     onChange={handleChange}
@@ -657,7 +652,7 @@ const ManageUser = () => {
                         <ModalFooter>
                     <div className="hstack gap-2 justify-content-end">
                         <button type="button" className="btn btn-light" onClick={() => setModalList(false)}>Close</button>
-                        <button type="submit" className="btn btn-success" id="add-btn">Update product</button>
+                        <button type="submit" className="btn btn-success" id="add-btn">Update User</button>
 
                     </div>
                 </ModalFooter>
