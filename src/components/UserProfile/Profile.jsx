@@ -36,7 +36,7 @@ function UserProfile() {
                 mobile_number: response.data.mobile_number || '',
                 whatsapp_number: response.data.whatsapp_number || '',
                 company_email: response.data.company_email || '',
-                billing_address: response.data.billing_address || '',
+           
                 shipping_address: response.data.shipping_address || '',
                 company_website: response.data.company_website || '',
 
@@ -130,24 +130,18 @@ function UserProfile() {
                     {!isEditing ? (
                         <div className="profile-card">
                             <div className="profile-header">
-                                {/* <div className="profile-image-container">
-                                    <img src={profileImage} alt="Profile" className="profile-picture" />
-                                    <input type="file" id="profileImage" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-                                </div> */}
+                              
 
                                 <div className="logo-item">
                                     <p className="detail-title">Company Logo</p>
                                     <img src={companyLogo} alt="Company Logo" className="company-logo" />
                                 </div>
-
-                                {/* <h2 className="user-name">{userData?.full_name || 'N/A'}</h2>
-                                <p className="user-username">{userData?.username || 'N/A'}</p>
-                                <p className="user-email">{userData?.email || 'N/A'}</p> */}
+ 
                             </div>
 
                             <div className="profile-details">
                                 <div className='row'>
-                                    {['full_name', 'company_name', 'mobile_number', 'whatsapp_number', 'email', 'company_email', 'billing_address', 'shipping_address', 'company_website'].map((field) => (
+                                    {['full_name', 'company_name', 'mobile_number', 'whatsapp_number', 'email', 'company_email',  'shipping_address', 'company_website'].map((field) => (
                                         <div className="detail-item col-md-6" key={field}>
                                             <div className='brd-botm-1'>
                                                 <p className="detail-title">{field.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}</p>
@@ -157,10 +151,7 @@ function UserProfile() {
                                     ))}
 
 
-                                    {/* <div className="logo-item">
-                                    <p className="detail-title">Company Logo</p>
-                                    <img src={companyLogo} alt="Company Logo" className="company-logo" />
-                                </div> */}
+                                
                                 </div>
                             </div>
 
@@ -186,7 +177,7 @@ function UserProfile() {
                                 </div>
 
                                 <div className='row'>
-                                    {['full_name', 'company_name', 'mobile_number', 'whatsapp_number', , 'email', 'company_email', 'company_website', 'billing_address', 'shipping_address'].map((field) => (
+                                    {['full_name', 'company_name', 'mobile_number', 'whatsapp_number', , 'email', 'company_email', 'company_website',   'shipping_address'].map((field) => (
 
                                         <div className="edit-item col-md-6" key={field}>
                                             <label>{field.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())}</label>
