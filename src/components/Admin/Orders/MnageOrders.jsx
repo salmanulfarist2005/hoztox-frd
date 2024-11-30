@@ -23,7 +23,7 @@ const ManageOrder = () => {
     // Fetch orders from backend
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/admin-orders/`);
+            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
             setOrders(response.data || []);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -62,7 +62,7 @@ const ManageOrder = () => {
             if (!selectedItem || !selectedItem.item) {
                 throw new Error("Selected item is not valid.");
             }
-
+    
             const updatedOrder = {
                 ordercode: editedOrderCode,
                 order_items: [
@@ -75,15 +75,29 @@ const ManageOrder = () => {
                     }
                 ]
             };
-
+    
             console.log("updatedOrder", updatedOrder);
+    
+            // Send the update request
             await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder);
-            fetchOrders();
-            setModalList1(false);
+    
+            // Update the orders list locally in the state
+            setOrders((prevOrders) => 
+                prevOrders.map((order) =>
+                    order.id === selectedItem.order.id
+                        ? { ...order, ordercode: editedOrderCode, order_items: updatedOrder.order_items }
+                        : order
+                )
+            );
+    
+            setModalList1(false);  // Close the modal
+            alert("Order updated successfully!");
         } catch (error) {
             console.error("Error updating order:", error.response ? error.response.data : error.message);
+            alert("Error updating order. Please try again.");
         }
     };
+    
     const downloadCSV = () => {
         if (!selectedItem) return;
 
@@ -206,7 +220,27 @@ const ManageOrder = () => {
         }
     }, [searchQuery, orders]);
 
-
+    const handleStatusChange = async (orderid, newStatus) => {
+        try {
+            const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
+                status: newStatus
+            });
+    
+           
+            setOrders((prevOrders) =>
+                prevOrders.map((order) =>
+                    order.id === orderid ? { ...order, status: newStatus } : order
+                )
+            );
+    
+            alert("Status Updated Successfully");
+            console.log("status.....", response.data);
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("There was an error updating the status. Please try again.");
+        }
+    };
+    
     return (
         <React.Fragment>
             <div className="main-content">
@@ -247,11 +281,13 @@ const ManageOrder = () => {
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th>OrderId</th>
+                                                            <th>Order Date</th>
                                                             <th>Shop Name</th>
                                                             <th>SKU</th>
                                                             <th>Product Name</th>
                                                             <th>Product Category</th>
                                                             <th>Quantity</th>
+                                                            <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -261,11 +297,27 @@ const ManageOrder = () => {
                                                                 order.order_items.map((item) => (
                                                                     <tr key={`${order.id}-${item.id}`}>
                                                                         <td className="OrderId">{order.ordercode}</td>
+                                                                        <td> {new Date(order.created_at).toLocaleDateString('en-US', {
+                                                                        day: 'numeric',
+                                                                        month: 'numeric',
+                                                                        year: 'numeric',
+                                                                    })}</td>
                                                                         <td className="OrderId">{order.user?.company_name}</td>
                                                                         <td className="sku">{item.product?.SKU}</td>
                                                                         <td className="product_name">{item.product?.product_name}</td>
                                                                         <td className="product_category">{item.product?.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
+                                                                        <td>
+                                                                                {order.status && (
+                                                                                    <select
+                                                                                        value={order.status || "pending"}
+                                                                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                                                                    >
+                                                                                        <option value="pending">Pending</option>
+                                                                                        <option value="delivered">Delivered</option>
+                                                                                    </select>
+                                                                                )}
+                                                                            </td>
                                                                         <td>
                                                                             <div className="d-flex gap-2">
                                                                                 <div className="d-flex gap-2">

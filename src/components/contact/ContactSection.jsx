@@ -17,7 +17,12 @@ const ContactSection = () => {
                     <ul>
                         <li className="fz-single-contact-info">
                             <i className="fa-light fa-location-dot"></i>
-                            <span className="contact-address">MANUFACTURERWHOLESALER<br />EXPORTERTHRISSUR | EASTFORT | BISHOP PALACE ROAD| OPPO. ATREYA HOSPITAL.</span>
+                            <span className="contact-address">Caratree Diamonds LLP
+                                Ground floor & first floor
+                                7/263, 7/264 Kokkan Building
+                                Bishop Palace road
+                                East Fort, Thrissur - Kerala
+                                680005</span>
                         </li>
 
                         <li className="fz-single-contact-info">

@@ -340,83 +340,89 @@ const ManageCustomProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!productId) return;
-
+    
         // Prepare the updated form data
         const updatedFormData = {
             ...formData,
             usertypes: selectedUserTypes,
             product_image: mainImage || formData.product_image,
         };
-
+    
         try {
             const formDataToSubmit = new FormData();
-
+    
             // Append the form data except for images and additional images
             Object.keys(updatedFormData).forEach((key) => {
                 if (key !== 'product_image' && key !== 'additional_images') {
                     formDataToSubmit.append(key, updatedFormData[key]);
                 }
             });
-
+    
             // Append the main image if it exists
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
-
+    
             // Append any new additional images
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
             });
-
+    
             // Re-append the existing additional images that haven't been removed
             const product = products.find(prod => prod.id === productId);
             if (product && product.additional_images) {
                 product.additional_images.forEach((existingImage) => {
                     if (!imagesToRemove.includes(existingImage.id)) {
-                        formDataToSubmit.append('additional_images', existingImage.image); // Assuming `image` holds the file URL or data
+                        formDataToSubmit.append('additional_images', existingImage.image);
                     }
                 });
             }
-
+    
             // Append the list of images to remove
             imagesToRemove.forEach((imageId) => {
                 formDataToSubmit.append('images_to_remove[]', imageId);
             });
-
+    
             // Make the API request
             await axios.put(`${BASE_URL}/products/customized_products/${productId}/update/`, formDataToSubmit, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
+    
             alert("Product updated successfully!");
-            fetchProducts();
+    
+            // Instead of calling fetchProducts, directly update the products state
+            setProducts((prevProducts) => {
+                return prevProducts.map((prod) => 
+                    prod.id === productId ? { ...prod, ...updatedFormData } : prod
+                );
+            });
+    
+            // Clear form data
             setFormData({
                 SKU: "",
                 product_name: "",
                 category: "",
-              
                 gross_weight: "",
                 diamond_weight: "",
                 colour_stones: "",
                 net_weight: "",
-          
                 product_image: null,
                 description: "",
                 usertypes: []
             });
-
+    
             setImages([]);
             setSelectedUserTypes([]);
             setImagesToRemove([]);
-            setmodal_list(false)
+            setmodal_list(false);
+    
         } catch (error) {
             console.error("Error updating product:", error.response ? error.response.data : error.message);
         }
     };
-
-
+    
 
     useEffect(() => {
         fetchProducts();
@@ -837,7 +843,7 @@ const ManageCustomProducts = () => {
                                                 id={`usertype-${userType.id}`}
                                                 value={userType.id}
                                                 onChange={handleCheckboxChange}
-                                                checked={selectedUserTypes.includes(userType.id)} // Check if selected
+                                                checked={selectedUserTypes.includes(userType.id)}  
                                             />
                                             <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
                                                 {userType.usertype}

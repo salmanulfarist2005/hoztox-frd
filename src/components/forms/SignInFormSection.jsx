@@ -67,7 +67,7 @@ const SignInFormSection = () => {
                 </label>
                 <div className="password-container">
                     <input
-                        type={isPasswordVisible ? "text" : "password"} 
+                        type={isPasswordVisible ? "text" : "password"}
                         name="login-password"
                         id="login-password"
                         placeholder="Password"
@@ -79,16 +79,19 @@ const SignInFormSection = () => {
                         onClick={togglePasswordVisibility}
                     >
                         {isPasswordVisible ? (
-                            <i className="fa fa-eye-slash"></i>  
+                            <i className="fa fa-eye-slash"></i>
                         ) : (
-                            <i className="fa fa-eye"></i>  
+                            <i className="fa fa-eye"></i>
                         )}
                     </span>
                 </div>
+                <p>For queries Call
 
+                    +919072333816</p>
                 <button type="submit" className="fz-1-banner-btn single-form-btn">
                     Log in
                 </button>
+
             </form>
         </div>
     );

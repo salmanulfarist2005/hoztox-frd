@@ -346,7 +346,7 @@ const AddUser = () => {
                         <div className="col-md-10 offset-md-2 d-flex">
                           <button type="button" onClick={handleGeneratePassword} className="btn btn-secondary me-2">Generate Password</button>
                           <button type="button" onClick={togglePasswordVisibility} className="btn btn-outline-secondary">
-                            {passwordVisible ? 'Hide' : 'Show'}
+                            {passwordVisible ? 'Hide Password' : 'Show Password'}
                           </button>
                         </div>
                       </Row>

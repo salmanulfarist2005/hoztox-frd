@@ -81,7 +81,7 @@ const SidebarData = [
             { sublabel: "View Orders", link: "/custom-view-order" },
             { sublabel: "Manage Orders", link: "/custom-manage-order" },
             { sublabel: "Status Csv", link: "/status-csv" },
-
+            { sublabel: "Completed Orders", link: "/custom-completed-order" },
             
         ],
     },

@@ -164,22 +164,39 @@ const FullCustomManageOrder = (order) => {
 
     const handleSaveChanges = async () => {
         if (!selectedItem) return;
-        console.log("selectedItemsssssssssssssss", selectedItem)
+        console.log("selectedItem", selectedItem);
+        
         try {
+            // Perform the update request
             await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
             });
-
-
-            fetchOrders();
-            alert("Updated Successfully")
+    
+            // After updating, update the state to reflect the changes
+            setOrders((prevOrders) => {
+                // Update the specific order based on the selected item
+                const updatedOrders = prevOrders.map((order) =>
+                    order.id === selectedItem.id
+                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }  // Update the changed fields
+                        : order
+                );
+    
+                // Optionally, you can sort the orders by an appropriate field, for example, order ID
+                return updatedOrders.sort((a, b) => a.id - b.id);  // Sorting by `id`, adjust based on your needs
+            });
+    
+            // Fetch orders again if necessary
+            // fetchOrders();  // Optional, if you still want to fetch orders again
+    
+            alert("Updated Successfully");
             setModalList1(false);
         } catch (error) {
             console.error("Error saving changes:", error);
             alert("There was an error saving the changes. Please try again.");
         }
     };
+    
 
     const handleDeleteOrder = async (orderId) => {
 
@@ -204,7 +221,7 @@ const FullCustomManageOrder = (order) => {
         { value: 'wax', label: 'WAX', className: 'badge bg-danger' },
         { value: 'casting', label: 'Casting', className: 'badge bg-warning' },
         { value: 'grilling', label: 'Grilling', className: 'badge bg-info' },
-        { value: 'filling', label: 'Filling', className: 'badge bg-light' },
+        { value: 'filling', label: 'Filling', className: 'badge bg-success' },
         { value: 'pre polish', label: 'Pre Polish', className: 'badge bg-dark' },
         { value: 'setting', label: 'Setting', className: 'badge bg-primary' },
         { value: 'final polish', label: 'Final Polish', className: 'badge bg-secondary' },
@@ -212,7 +229,7 @@ const FullCustomManageOrder = (order) => {
         { value: 'final qc', label: 'Final QC', className: 'badge bg-danger' },
         { value: 'certification', label: 'Certification', className: 'badge bg-warning' },
         { value: 'invoice', label: 'Invoice', className: 'badge bg-info' },
-        { value: 'out for delivery', label: 'Out For Delivery', className: 'badge bg-light' },
+        { value: 'out for delivery', label: 'Out For Delivery', className: 'badge bg-secondary' },
         { value: 'delivered', label: 'Delivered', className: 'badge bg-success' },
     ];
 
@@ -237,12 +254,20 @@ const FullCustomManageOrder = (order) => {
             console.log("Request Data:", requestData);
 
             try {
-                const response = await axios.patch(`${BASE_URL}/products/full-orders/${editingOrderId}/update-status/`, requestData);
+                const response = await axios.patch(
+                    `${BASE_URL}/products/full-orders/${editingOrderId}/update-status/`,
+                    requestData
+                );
                 console.log("Response:", response);
-                fetchOrders();
+
+                // Update the specific order directly in the state
+                setOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        order.id === editingOrderId ? { ...order, new_status: status } : order
+                    )
+                );
+
                 alert("Status updated successfully!");
-
-
             } catch (error) {
                 console.error("There was an error updating the status:", error);
                 alert("Failed to update status. Please try again.");
@@ -253,6 +278,7 @@ const FullCustomManageOrder = (order) => {
             }
         }
     };
+
 
 
     return (
@@ -295,6 +321,7 @@ const FullCustomManageOrder = (order) => {
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th className="sort" data-sort="shop_name">OrderId</th>
+                                                            <th className="sort" data-sort="shop_name">Order Date</th>
                                                             <th className="sort" data-sort="shop_name">Shop Name</th>
 
                                                             <th className="sort" data-sort="gram">Product Category</th>
@@ -312,32 +339,23 @@ const FullCustomManageOrder = (order) => {
                                                             filteredOrders.map((order) => (
                                                                 <tr key={order.id}>
                                                                     <td>{order.ordercode}</td>
+                                                                    <td> {new Date(order.created_at).toLocaleDateString('en-US', {
+                                                                        day: 'numeric',
+                                                                        month: 'numeric',
+                                                                        year: 'numeric',
+                                                                    })}</td>
                                                                     <td>{order.user?.company_name}</td>
 
                                                                     <td>{order.category?.category_name}</td>
                                                                     <td>{order.size}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
-                                                                        {!isEditing ? (
-                                                                            <div className="d-flex gap-2 align-items-center">
-
-                                                                                <span className={`badge ${getBadgeClass(order.new_status)} px-3 py-2`}>
-                                                                                    {newStatusChoices.find(choice => choice.value === order.new_status)?.label || order.new_status}
-                                                                                </span>
-
-                                                                                <Button size="sm" color="primary" onClick={() => {
-                                                                                    setIsEditing(true);
-                                                                                    setStatus(order.new_status);
-                                                                                }}>
-                                                                                    Change Status
-                                                                                </Button>
-                                                                            </div>
-                                                                        ) : (
+                                                                        {editingOrderId === order.id ? (
                                                                             <div className="d-flex gap-2 align-items-center">
                                                                                 <Input
                                                                                     type="select"
                                                                                     value={status}
-                                                                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                                                                    onChange={(e) => setStatus(e.target.value)}
                                                                                     className="form-select form-select-sm"
                                                                                     style={{ width: 'auto' }}
                                                                                 >
@@ -348,15 +366,50 @@ const FullCustomManageOrder = (order) => {
                                                                                     ))}
                                                                                 </Input>
 
-                                                                                <Button size="sm" color="success" onClick={handleConfirm}>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    color="success"
+                                                                                    onClick={() => handleConfirm(order.id)}
+                                                                                >
                                                                                     Confirm
                                                                                 </Button>
-                                                                                <Button size="sm" color="secondary" onClick={() => setIsEditing(false)}>
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    color="secondary"
+                                                                                    onClick={() => setEditingOrderId(null)}
+                                                                                >
                                                                                     Cancel
                                                                                 </Button>
                                                                             </div>
-                                                                        )}
+                                                                        ) : (
+                                                                            <div className="d-flex gap-2 align-items-center">
+                                                                                <span
+                                                                                    className={`badge ${getBadgeClass(order.new_status)} px-3 py-2`}
+                                                                                    style={{
+                                                                                        width: '140px',
+                                                                                        textAlign: 'center',
+                                                                                        whiteSpace: 'nowrap',
+                                                                                        overflow: 'hidden',
+                                                                                        textOverflow: 'ellipsis',
+                                                                                    }}
+                                                                                >
+                                                                                    {newStatusChoices.find(
+                                                                                        (choice) => choice.value === order.new_status
+                                                                                    )?.label || order.new_status}
+                                                                                </span>
 
+                                                                                <Button
+                                                                                    size="sm"
+                                                                                    color="primary"
+                                                                                    onClick={() => {
+                                                                                        setEditingOrderId(order.id);
+                                                                                        setStatus(order.new_status);
+                                                                                    }}
+                                                                                >
+                                                                                    Change Status
+                                                                                </Button>
+                                                                            </div>
+                                                                        )}
                                                                     </td>
 
                                                                     <td>
@@ -416,39 +469,39 @@ const FullCustomManageOrder = (order) => {
                         </Row>
                     </Container>
                 </div>
-                </div>
-                <Modal
-                    isOpen={modal_list}
-                    toggle={tog_list}
-                    centered
-                    style={{ maxWidth: '900px', width: '90%' }}
-                >
-                    <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
-                        View Product
-                    </ModalHeader>
-                    <ModalBody style={{ padding: '20px' }}>
-                        {console.log("Selected Item:", selectedItem)}
-                        {selectedItem ? (
-                            <>
-                                <Row className="mb-3 mt-2">
-                                    <label className="col-md-2 col-form-label">Product Images</label>
-                                    <div className="col-md-10">
-                                        {console.log("Selected Item:", selectedItem)}
-                                        {Array.isArray(selectedItem.order?.additional_images) && selectedItem.order?.additional_images.length > 0 ? (
-                                            selectedItem.order?.additional_images.map((imageObj, index) => (
-                                                <img
-                                                    key={index}
-                                                    src={BASE_URL + imageObj.image}
-                                                    alt={`Image ${index + 1} of ${selectedItem.order?.product?.product_name}`}
-                                                    style={{ width: '100px', height: '100px', marginRight: '5px' }}
-                                                    onError={(e) => { e.target.src = 'path/to/placeholder-image.png'; }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <div>No images available.</div>
-                                        )}
-                                    </div>
-                                </Row>
+            </div>
+            <Modal
+                isOpen={modal_list}
+                toggle={tog_list}
+                centered
+                style={{ maxWidth: '900px', width: '90%' }}
+            >
+                <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
+                    View Product
+                </ModalHeader>
+                <ModalBody style={{ padding: '20px' }}>
+                    {console.log("Selected Item:", selectedItem)}
+                    {selectedItem ? (
+                        <>
+                            <Row className="mb-3 mt-2">
+                                <label className="col-md-2 col-form-label">Product Images</label>
+                                <div className="col-md-10">
+                                    {console.log("Selected Item:", selectedItem)}
+                                    {Array.isArray(selectedItem.order?.additional_images) && selectedItem.order?.additional_images.length > 0 ? (
+                                        selectedItem.order?.additional_images.map((imageObj, index) => (
+                                            <img
+                                                key={index}
+                                                src={BASE_URL + imageObj.image}
+                                                alt={`Image ${index + 1} of ${selectedItem.order?.product?.product_name}`}
+                                                style={{ width: '100px', height: '100px', marginRight: '5px' }}
+                                                onError={(e) => { e.target.src = 'path/to/placeholder-image.png'; }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div>No images available.</div>
+                                    )}
+                                </div>
+                            </Row>
 
 
 
@@ -456,191 +509,191 @@ const FullCustomManageOrder = (order) => {
 
 
 
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Category</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.category?.category_name}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Colour</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.color?.color}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Size</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.size}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Gram</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.gram}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Cent</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.cent}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Quantity</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.quantity}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Category</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.category?.category_name}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Colour</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.color?.color}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Size</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.size}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Gram</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.gram}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Cent</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.cent}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Quantity</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.quantity}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
 
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Description</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.order?.description}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Shop Name</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.company_name}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Shipping Address</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.shipping_address}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Mobile Number</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.mobile_number}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">WhatsApp Number</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.whatsapp_number}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Email</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.company_email}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mt-3">
-                                    <Col className="text-end">
-                                        <Button color="primary" onClick={downloadCSV} className="me-2">
-                                            Download CSV
-                                        </Button>
-                                        <Button color="primary" onClick={downloadPDF}>
-                                            Download PDF
-                                        </Button>
-                                    </Col>
-                                </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Description</label>
+                                <div className="col-md-10">
+                                    <textarea
+                                        className="form-control"
+                                        rows="4"
+                                        value={selectedItem.order?.description}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Shop Name</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.company_name}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Shipping Address</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.shipping_address}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Mobile Number</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.mobile_number}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">WhatsApp Number</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.whatsapp_number}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Email</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.company_email}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mt-3">
+                                <Col className="text-end">
+                                    <Button color="primary" onClick={downloadCSV} className="me-2">
+                                        Download CSV
+                                    </Button>
+                                    <Button color="primary" onClick={downloadPDF}>
+                                        Download PDF
+                                    </Button>
+                                </Col>
+                            </Row>
 
-                            </>
-                        ) : (
-                            <div>No order selected.</div>
-                        )}
-                    </ModalBody>
-                </Modal>
-                <Modal isOpen={modal_list1} toggle={() => setModalList1(!modal_list1)} centered style={{ maxWidth: '900px', width: '90%' }}>
-                    <ModalHeader className="bg-light p-3" toggle={() => setModalList1(!modal_list1)}>
-                        Edit Order
-                    </ModalHeader>
-                    <ModalBody style={{ padding: '20px' }}>
-                        {selectedItem ? (
-                            <>
-                                <Row className="mb-3 mt-2">
-                                    <label className="col-md-2 col-form-label">Order ID</label>
-                                    <div className="col-md-10">
-                                        <Input
-                                            type="text"
-                                            value={editedOrderCode}
-                                            onChange={(e) => setEditedOrderCode(e.target.value)}
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Quantity</label>
-                                    <div className="col-md-10">
-                                        <Input
-                                            type="number"
-                                            value={editedQuantity}
-                                            onChange={(e) => setEditedQuantity(e.target.value)}
-                                        />
-                                    </div>
-                                </Row>
-                            </>
-                        ) : null}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-                        <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
-                    </ModalFooter>
-                </Modal>
+                        </>
+                    ) : (
+                        <div>No order selected.</div>
+                    )}
+                </ModalBody>
+            </Modal>
+            <Modal isOpen={modal_list1} toggle={() => setModalList1(!modal_list1)} centered style={{ maxWidth: '900px', width: '90%' }}>
+                <ModalHeader className="bg-light p-3" toggle={() => setModalList1(!modal_list1)}>
+                    Edit Order
+                </ModalHeader>
+                <ModalBody style={{ padding: '20px' }}>
+                    {selectedItem ? (
+                        <>
+                            <Row className="mb-3 mt-2">
+                                <label className="col-md-2 col-form-label">Order ID</label>
+                                <div className="col-md-10">
+                                    <Input
+                                        type="text"
+                                        value={editedOrderCode}
+                                        onChange={(e) => setEditedOrderCode(e.target.value)}
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Quantity</label>
+                                <div className="col-md-10">
+                                    <Input
+                                        type="number"
+                                        value={editedQuantity}
+                                        onChange={(e) => setEditedQuantity(e.target.value)}
+                                    />
+                                </div>
+                            </Row>
+                        </>
+                    ) : null}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
+                    <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
+                </ModalFooter>
+            </Modal>
 
         </React.Fragment>
     );

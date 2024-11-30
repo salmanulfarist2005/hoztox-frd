@@ -81,23 +81,34 @@ const UserType = () => {
         }
     };
 
-
     const updateUserType = async (e) => {
         e.preventDefault();
+    
         if (!currentUserType || !currentUserType.id) {
             console.error('No current user type selected.');
             return;
         }
-
+    
         try {
+            // Send the update request
             await axios.put(`${BASE_URL}/products/usertypes/${currentUserType.id}/`, formData);
-            fetchUserTypes();
-            tog_list1(null);
-            alert("User type  Updated successfully!");
+    
+            // Update the user type in the state directly
+            setUserTypes((prevUserTypes) => 
+                prevUserTypes.map((userType) => 
+                    userType.id === currentUserType.id ? { ...userType, ...formData } : userType
+                )
+            );
+    
+            tog_list1(null); // Close the modal or list view
+    
+            alert("User type updated successfully!");
         } catch (error) {
             console.error('Error updating user type:', error);
+            alert("Error updating user type. Please try again.");
         }
     };
+    
 
     const deleteUserType = async (userTypeId) => {
         if (window.confirm("Are you sure you want to delete this user type?")) {

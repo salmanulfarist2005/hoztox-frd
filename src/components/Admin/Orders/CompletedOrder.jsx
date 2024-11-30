@@ -1,96 +1,76 @@
 import React, { useState, useEffect } from 'react';
-
+import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import List from 'list.js';
 import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import FullCustomViewOrder from '../FullCustomOrders/Vieworder'
-import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
-const CustomViewOrder = () => {
+
+const CompletedOrder = () => {
+    const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
     const [modal_delete, setModalDelete] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
-    const [dueDate, setDueDate] = useState('');
+
+
+
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
+            const response = await axios.get(`${BASE_URL}/products/orders/delivered/`);
             const data = response.data;
             setOrders(data || []);
-            console.log("response", response);
+            console.log("response orderssssssss", response.data)
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
     };
-
     useEffect(() => {
         fetchOrders();
+
     }, []);
 
 
-
-    const tog_list1 = (order) => {
-        console.log("Selected Item for Order ID:", order);
-        setSelectedItem(order);
-        setOrderId(order.ordercode || '');
-
-        if (order.due_date) {
-            const parsedDueDate = new Date(order.due_date).toISOString().split('T')[0];
-            setDueDate(parsedDueDate);
-        } else {
-            setDueDate('');
-        }
-        setModalList1(!modal_list1);
-    };
-
-    const tog_delete = () => {
-        setModalDelete(!modal_delete);
-    }; const tog_list = (order) => {
-        console.log("Selected Order:", order);
-        setSelectedItem(order);
-        setModalList(!modal_list);
-    };
-
-
     const handleGenerateOrderId = async () => {
-        if (!selectedItem || !selectedItem.id) {
-            console.error("Selected item or order ID is missing.", selectedItem.id);
-            alert("Cannot generate Order ID. Please select an order first.");
-            return;
-        }
 
         try {
-
-            const payload = {
-                ordercode: orderId
-            };
-
-
-            if (dueDate) {
-                payload.due_date = new Date(dueDate).toISOString();
-            }
-
-
-            const response = await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/generate-order-id/`, payload);
-
-            console.log("Order ID generated:", response.data);
-            alert("Order ID Created Successfully");
-            fetchOrders();
+            await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
+                ordercode: orderId,
+            });
             setModalList1(false);
             setOrderId('');
-            setDueDate('');
+            fetchOrders()
+
         } catch (error) {
-            console.error("Error saving Order ID:", error.response ? error.response.data : error);
+            console.error("Error saving Order ID:", error);
             alert("There was an error saving the Order ID. Please try again.");
         }
     };
 
 
+
+    const tog_list = (order) => {
+        console.log("Selected Order:", order);
+        setSelectedItem(order);
+        setModalList(!modal_list);
+    };
+
+    const tog_list1 = (order) => {
+        console.log("Selected Item for Order ID:", order);
+        setSelectedItem(order);
+        setOrderId(order.ordercode || '');
+        setModalList1(!modal_list1);
+    };
+
+
+    const tog_delete = () => {
+        setModalDelete(!modal_delete);
+    };
 
     const downloadCSV = () => {
         if (!selectedItem) return;
@@ -98,13 +78,13 @@ const CustomViewOrder = () => {
         const orderData = {
             OrderId: selectedItem.order?.ordercode,
             ShopName: selectedItem.order?.user?.company_name,
-            SKU: selectedItem.order?.product?.SKU,
-            ProductName: selectedItem.order?.product?.product_name,
-            ProductCategory: selectedItem.order?.product?.category_name,
-            Quantity: selectedItem.order?.quantity,
-            ProductColor: selectedItem.order?.product?.color,
-            ProductSize: selectedItem.order?.product?.product_size,
-            AdditionalNotes: selectedItem.order?.additional_notes,
+            SKU: selectedItem.item?.product?.SKU,
+            ProductName: selectedItem.item?.product?.product_name,
+            ProductCategory: selectedItem.item?.product?.category_name,
+            Quantity: selectedItem.item?.quantity,
+            ProductColor: selectedItem.item?.product?.color,
+            ProductSize: selectedItem.item?.product?.product_size,
+            AdditionalNotes: selectedItem.item?.additional_notes,
             ShippingAddress: selectedItem.order?.user?.shipping_address,
             MobileNumber: selectedItem.order?.user?.mobile_number,
             WhatsAppNumber: selectedItem.order?.user?.whatsapp_number,
@@ -141,12 +121,12 @@ const CustomViewOrder = () => {
             ["Order ID", selectedItem.order?.ordercode || "N/A"],
             ["Shop Name", selectedItem.order?.user?.company_name || "N/A"],
             ["SKU", selectedItem.item?.product?.SKU || "N/A"],
-            ["Product Name", selectedItem.order?.product?.product_name || "N/A"],
-            ["Product Category", selectedItem.order?.product?.category_name || "N/A"],
-            ["Quantity", selectedItem.order?.quantity || "N/A"],
-            ["Product Color", selectedItem.order?.product?.color || "N/A"],
-            ["Product Size", selectedItem.order?.product?.product_size || "N/A"],
-            ["Additional Notes", selectedItem.order?.additional_notes || "N/A"],
+            ["Product Name", selectedItem.item?.product?.product_name || "N/A"],
+            ["Product Category", selectedItem.item?.product?.category_name || "N/A"],
+            ["Quantity", selectedItem.item?.quantity || "N/A"],
+            ["Product Color", selectedItem.item?.product?.color || "N/A"],
+            ["Product Size", selectedItem.item?.product?.product_size || "N/A"],
+            ["Additional Notes", selectedItem.item?.additional_notes || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
             ["WhatsApp Number", selectedItem.order?.user?.whatsapp_number || "N/A"],
@@ -181,14 +161,14 @@ const CustomViewOrder = () => {
 
         doc.save('order_details.pdf');
     };
-
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
+        console.log("Search Query:", searchQuery);
         if (searchQuery) {
             const lowercasedQuery = searchQuery.toLowerCase();
             const results = orders.filter(order =>
-                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
+                (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
                 order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
                 (order.order_items && order.order_items.some(item =>
                     item.product?.product_name.toLowerCase().includes(lowercasedQuery)
@@ -198,14 +178,18 @@ const CustomViewOrder = () => {
         } else {
             setFilteredOrders(orders);
         }
+        console.log("Filtered Orders after search:", filteredOrders);
     }, [searchQuery, orders]);
+
+ 
+    
 
     return (
         <React.Fragment>
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="View Custom Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -221,7 +205,7 @@ const CustomViewOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -235,59 +219,61 @@ const CustomViewOrder = () => {
                                                     </div>
                                                 </Col>
                                             </Row>
+
                                             <div className="table-responsive table-card mt-3 mb-1">
                                                 <table className="table align-middle table-nowrap" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
-                                                            <th className="sort" data-sort="shop_name">Order Id</th>
-                                                            <th className="sort" data-sort="shop_name">Shop Name</th>
-                                                            <th className="sort" data-sort="order_id">SKU</th>
-                                                            <th className="sort" data-sort="size">Product Name</th>
-                                                            <th className="sort" data-sort="gram">Product Category</th>
-                                                            <th className="sort" data-sort="cent">Quantity</th>
-                                                            <th className="sort" data-sort="cent">Status</th>
+                                                            <th className="sort" data-sort="sku">OrderId</th>
+                                                            <th className="sort" data-sort="sku">Shop Name</th>
+                                                            <th className="sort" data-sort="sku">SKU</th>
+                                                            <th className="sort" data-sort="product_name">Product Name</th>
+                                                            <th className="sort" data-sort="product_category">Product Category</th>
+
+                                                            <th className="sort" data-sort="quantity">Quantity</th>
+                                                            <th className="sort" data-sort="action">Status</th>
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all">
                                                         {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
-                                                                <tr key={order.id}>
-                                                                    <td>{order.ordercode}</td>
-                                                                    <td>{order.user?.company_name}</td>
-                                                                    <td>{order.product?.SKU}</td>
-                                                                    <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name}</td>
-                                                                    <td>{order.quantity}</td>
-                                                                   
-                                                                    <td className="bgbutton">{order.new_status}</td>
+                                                            filteredOrders.map((order) =>
+                                                                order.order_items.map((item) => (
+                                                                    <tr key={`${order.id}-${item.id}`}>
+                                                                        <td className="OrderId">{order.ordercode}</td>
+                                                                        <td className="OrderId">{order.user?.company_name}</td>
+                                                                        <td className="sku">{item.product?.SKU}</td>
+                                                                        <td className="product_name">{item.product?.product_name}</td>
+                                                                        <td className="product_category">{item.product?.category_name}</td>
+                                                                        <td className="quantity">{item.quantity}</td>
+                                                                        <td className="quantity">{order.status}</td>
 
-                                                                    
-                                                                    <td>
-                                                                        <div className="d-flex gap-2">
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
-                                                                                    onClick={() => tog_list1(order)}
-                                                                                >
-                                                                                    Generate OrderId
-                                                                                </button>
+                                                                        <td>
+                                                                            <div className="d-flex gap-2">
+                                                                                <div className="edit">
+                                                                                    <button
+                                                                                        className="btn btn-sm btn-success edit-item-btn"
+                                                                                        onClick={() => tog_list1(order)}
+                                                                                    >
+                                                                                        Generate OrderId
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="edit">
+                                                                                    <button
+                                                                                        className="btn btn-sm btn-success edit-item-btn"
+                                                                                        onClick={() => tog_list({ order, item })}
+                                                                                    >
+                                                                                        View Order
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
-                                                                                    onClick={() => tog_list({ order })}
-                                                                                >
-                                                                                    View Order
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            ))
+                                                                        </td>
+                                                                    </tr>
+                                                                ))
+                                                            )
                                                         ) : (
                                                             <tr>
-                                                                <td colSpan="8">No orders found.</td>
+                                                                <td colSpan="7" className="text-center">No orders found.</td>
                                                             </tr>
                                                         )}
                                                     </tbody>
@@ -313,7 +299,6 @@ const CustomViewOrder = () => {
                     </Container>
                 </div>
             </div>
-            <FullCustomViewOrder />
             <Modal
                 isOpen={modal_list}
                 toggle={tog_list}
@@ -327,13 +312,12 @@ const CustomViewOrder = () => {
                     {console.log("Selected Item:", selectedItem)}
                     {selectedItem ? (
                         <>
-
                             <Row className="mb-3 mt-2">
                                 <label className="col-md-2 col-form-label">Product Image</label>
                                 <div className="col-md-10">
                                     <img
-                                        src={`${BASE_URL}${selectedItem.order?.product?.product_image}`}
-                                        alt={`Image of ${selectedItem.order?.product?.product_name}`}
+                                        src={`${BASE_URL}${selectedItem.item?.product?.product_image}`}
+                                        alt={selectedItem.item?.product?.product_image}
                                         style={{ width: '100px', height: '100px' }}
                                     />
                                 </div>
@@ -355,7 +339,7 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.SKU}
+                                        value={selectedItem.item?.product?.SKU}
                                         readOnly
                                     />
                                 </div>
@@ -366,7 +350,7 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.product_name}
+                                        value={selectedItem.item?.product?.product_name}
                                         readOnly
                                     />
                                 </div>
@@ -377,18 +361,18 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.item?.product?.category_name}
                                         readOnly
                                     />
                                 </div>
                             </Row>
                             <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Color</label>
+                                <label className="col-md-2 col-form-label">Product Colour</label>
                                 <div className="col-md-10">
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.color?.color}
+                                        value={selectedItem.item?.product?.color}
                                         readOnly
                                     />
                                 </div>
@@ -399,7 +383,7 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.product_size}
+                                        value={selectedItem.item?.product?.product_size}
                                         readOnly
                                     />
                                 </div>
@@ -410,7 +394,7 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.quantity}
+                                        value={selectedItem.item?.quantity}
                                         readOnly
                                     />
                                 </div>
@@ -421,7 +405,7 @@ const CustomViewOrder = () => {
                                     <textarea
                                         className="form-control"
                                         rows="4"
-                                        value={selectedItem.order?.additional_notes}
+                                        value={selectedItem.item?.additional_notes}
                                         readOnly
                                     />
                                 </div>
@@ -432,7 +416,7 @@ const CustomViewOrder = () => {
                                     <textarea
                                         className="form-control"
                                         rows="4"
-                                        value={selectedItem.order?.product?.description}
+                                        value={selectedItem.item?.product?.description}
                                         readOnly
                                     />
                                 </div>
@@ -503,11 +487,16 @@ const CustomViewOrder = () => {
                                 </Col>
                             </Row>
                         </>
-                    ) : (
-                        <div>No order selected.</div>
-                    )}
+                    ) : null}
                 </ModalBody>
+
+
+
+                <ModalFooter>
+                    <Button color="secondary" onClick={tog_list}>Close</Button>
+                </ModalFooter>
             </Modal>
+
             <Modal
                 isOpen={modal_list1}
                 toggle={tog_list1}
@@ -530,18 +519,6 @@ const CustomViewOrder = () => {
                             />
                         </div>
                     </Row>
-                    <Row className='duedate'>
-                        <label htmlFor="dueDate" className=" col-md-4 col-form-label">Due Date:</label>
-                        <div className="col-md-8">
-                            <input
-                                type="date"
-                                className="form-control"
-                                id="dueDate"
-                                value={dueDate}
-                                onChange={(e) => setDueDate(e.target.value)}
-                            />
-                        </div>
-                    </Row>
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={handleGenerateOrderId}>Save</Button>
@@ -550,8 +527,9 @@ const CustomViewOrder = () => {
             </Modal>
 
 
+
         </React.Fragment>
     );
 };
 
-export default CustomViewOrder;
+export default CompletedOrder;

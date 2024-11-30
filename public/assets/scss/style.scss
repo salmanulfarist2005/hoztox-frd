@@ -737,10 +737,16 @@ input[type="password"], input[type="text"] {
     margin-top: 15px !important;
 }
 .sidebar-icon {
-    width: 30px; /* Adjust size as needed */
-    height: 30px; /* Adjust size as needed */
-    object-fit: cover; /* Ensures the image doesn't distort */
+   
+    width: 30px;  
+    height: 30px;  
+    object-fit: cover;  
   }
 .avatar-xs{
     margin-left: 50px !important;
 }
+.bgbutton {
+    font-weight: bold;
+   
+  }
+ 

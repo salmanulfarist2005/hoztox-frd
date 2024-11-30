@@ -150,7 +150,7 @@ function Order() {
                                                     </div>
                                                     <div>
                                                         <div className="title">Processed</div>
-                                                        <div className="caption">Some text about the Processing step.</div>
+                                                        {/* <div className="caption">Some text about the Processing step.</div> */}
                                                     </div>
                                                 </div>
                                                 {/* Step 2: Production */}
@@ -182,7 +182,7 @@ function Order() {
                                                     </div>
                                                     <div>
                                                         <div className="title">Out for Delivery</div>
-                                                        <div className="caption">Some text about Third step.</div>
+                                                        {/* <div className="caption">Some text about Third step.</div> */}
                                                     </div>
                                                 </div>
                                                 {/* Step 4: Delivered */}
@@ -247,7 +247,7 @@ function Order() {
                                                     </div>
                                                     <div>
                                                         <div className="title">Processed</div>
-                                                        <div className="caption">Some text about the Processing step.</div>
+                                                        {/* <div className="caption">Some text about the Processing step.</div> */}
                                                     </div>
                                                 </div>
 
@@ -281,7 +281,7 @@ function Order() {
                                                     </div>
                                                     <div>
                                                         <div className="title">Out for Delivery</div>
-                                                        <div className="caption">Some text about Third step.</div>
+                                                        {/* <div className="caption">Some text about Third step.</div> */}
                                                     </div>
                                                 </div>
 

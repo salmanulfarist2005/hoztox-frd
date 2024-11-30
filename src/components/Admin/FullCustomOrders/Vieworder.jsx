@@ -241,7 +241,7 @@ const FullCustomViewOrder = () => {
                                                             <th className="sort" data-sort="cent">Product Size</th>
                                                             <th className="sort" data-sort="cent">Quantity</th>
 
-
+                                                            <th className="sort" data-sort="shop_name">Status</th>
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
 
@@ -258,7 +258,7 @@ const FullCustomViewOrder = () => {
                                                                     <td>{order.size}</td>
                                                                     <td>{order.quantity}</td>
 
-
+                                                                    <td className="bgbutton">{order.new_status}</td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
                                                                             <div className="edit">

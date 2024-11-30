@@ -22,10 +22,10 @@ const ViewOrder = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/admin-orders/`);
+            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
             const data = response.data;
             setOrders(data || []);
-            console.log("response orders", response.data)
+            console.log("response orderssssssss", response.data)
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -164,7 +164,7 @@ const ViewOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
-        console.log("Search Query:", searchQuery);  
+        console.log("Search Query:", searchQuery);
         if (searchQuery) {
             const lowercasedQuery = searchQuery.toLowerCase();
             const results = orders.filter(order =>
@@ -180,8 +180,9 @@ const ViewOrder = () => {
         }
         console.log("Filtered Orders after search:", filteredOrders);
     }, [searchQuery, orders]);
-    
 
+ 
+    
 
     return (
         <React.Fragment>
@@ -230,7 +231,7 @@ const ViewOrder = () => {
                                                             <th className="sort" data-sort="product_category">Product Category</th>
 
                                                             <th className="sort" data-sort="quantity">Quantity</th>
-
+                                                            <th className="sort" data-sort="action">Status</th>
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
@@ -245,6 +246,8 @@ const ViewOrder = () => {
                                                                         <td className="product_name">{item.product?.product_name}</td>
                                                                         <td className="product_category">{item.product?.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
+                                                                        <td className="quantity">{order.status}</td>
+
                                                                         <td>
                                                                             <div className="d-flex gap-2">
                                                                                 <div className="edit">

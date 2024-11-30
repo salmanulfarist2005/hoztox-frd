@@ -113,19 +113,18 @@ const ProductViewFilter = () => {
                                         </h5>
                                     </div>
                                     <div className="fz-2-single-product-actions">
+                             
+
                                         <button
-                                            className="fz-add-to-cart-btn"
-                                            onClick={() => {
-                                                const selectedColor = selectedColors[item.id];
-                                                if (selectedColor) {
-                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor);
-                                                } else {
-                                                    alert('Please select a color!');
-                                                }
-                                            }}
-                                        >
-                                            Add to Cart
-                                        </button>
+                                    className="fz-add-to-cart-btn"
+                                    onClick={() => {
+                                        const selectedColor = selectedColors[item.id] || '';  
+                                        addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                    }}
+                                >
+                                    Add to Cart
+                                </button>
+
                                         <div className="btnactions">
                                             <div className="fz-product-details__quantity cart-product__quantity">
                                                 <button

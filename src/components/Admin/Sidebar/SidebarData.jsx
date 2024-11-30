@@ -57,6 +57,8 @@ const SidebarData = [
         subItem: [
             { sublabel: "View Orders", link: "/view-order" },
             { sublabel: "Manage Orders", link: "/manage-order" },
+            { sublabel: "Delivered Orders", link: "/completed-order" },
+            
         ],
     },
 
@@ -68,6 +70,7 @@ const SidebarData = [
             { sublabel: "View Orders", link: "/custom-view-order" },
             { sublabel: "Manage Orders", link: "/custom-manage-order" },
             { sublabel: "Status Csv", link: "/status-csv" },
+            { sublabel: "Completed Orders", link: "/custom-completed-order" },
         ],
     },
 

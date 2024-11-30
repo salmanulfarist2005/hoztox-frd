@@ -8,7 +8,8 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [cartItems, setCartItems] = useState([]);
+  const [totals, setTotals] = useState({});
   const navigate = useNavigate();
   const fetchCartDetails = async () => {
     try {
@@ -31,6 +32,26 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
   useEffect(() => {
     fetchCartDetails();
   }, []);
+  const fetchCartItems = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/cart/items/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCartItems(response.data.cart_items);
+      setTotals(response.data.totals);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
 
   const handleQuantityChange = async (SKU, newQuantity, color) => {
     if (newQuantity < 1) return;
@@ -48,16 +69,19 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
         }
       );
 
+
       setCart((prevCart) =>
         prevCart.map((item) =>
           item.product.SKU === SKU ? { ...item, ...response.data } : item
         )
       );
+      fetchCartDetails();
     } catch (error) {
       console.error("Error updating cart quantity:", error);
       alert("Failed to update cart quantity.");
     }
   };
+
 
 
   const handleRemoveItem = async (SKU) => {
@@ -82,7 +106,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       const token = localStorage.getItem('authToken');
       const response = await axios.patch(
         `${BASE_URL}/products/cart/update/${SKU}/`,
-        { color: newColor, quantity: 1 }, 
+        { color: newColor, quantity: 1 },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -90,7 +114,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
           },
         }
       );
-  
+
       setCart((prevCart) =>
         prevCart.map((item) =>
           item.product.SKU === SKU ? { ...item, color: newColor } : item
@@ -101,124 +125,139 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       alert('Failed to update product color.');
     }
   };
-  
+
 
 
   return (
-    <table className="cart-page-table">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Quantity</th>
-          <th>Product Color</th>
-          <th>Gross Weight</th>
-          <th>Diamond</th>
-          <th>Color Stone</th>
-          <th>Net Weight</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody>
-        {cart.length === 0 ? (
-          <tr className="no-item-msg">
-            <td className="no-item-msg-text" colSpan="8">No items in the cart</td>
+    <div>
+      <table className="cart-page-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Product Color</th>
+            <th>Gross Weight</th>
+            <th>Diamond</th>
+            <th>Color Stone</th>
+            <th>Net Weight</th>
+            <th>Remove</th>
           </tr>
-        ) : (
-          cart.map((item) => (
-            <React.Fragment key={item.product.SKU}>
-              <tr>
-                <td className="wi-20">
-                  <div className="cart-product">
-                    <div className="cart-product__img">
-                      <img src={item.product.product_image} alt="Product" />
+        </thead>
+        <tbody>
+          {cart.length === 0 ? (
+            <tr className="no-item-msg">
+              <td className="no-item-msg-text" colSpan="8">No items in the cart</td>
+            </tr>
+          ) : (
+            cart.map((item) => (
+              <React.Fragment key={item.product.SKU}>
+                <tr>
+                  <td className="wi-20">
+                    <div className="cart-product">
+                      <div className="cart-product__img">
+                        <img src={item.product.product_image} alt="Product" />
+                      </div>
+                      <div className="cart-product__txt">
+                        <h6>
+                          <Link to="/shopDetails">{item.product.category.category_name}</Link>
+                        </h6>
+                        <h6>{item.product.SKU}</h6>
+                      </div>
                     </div>
-                    <div className="cart-product__txt">
-                      <h6>
-                        <Link to="/shopDetails">{item.product.category.category_name}</Link>
-                      </h6>
-                      <h6>{item.product.SKU}</h6>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div className="cart-product__quantity">
-                    <div className="cart-product__quantity-btns">
-                      <button
-                        className="cart-product__minus"
-                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity - 1, item.color)}
-                      >
-                        <i className="fa-light fa-minus"></i>
-                      </button>
-                      <button
-                        className="cart-product__plus"
-                        onClick={() => handleQuantityChange(item.product.SKU, item.quantity + 1, item.color)}
-                      >
-                        <i className="fa-light fa-plus"></i>
-                      </button>
+                  </td>
+                  <td>
+                    <div className="cart-product__quantity">
+                      <div className="cart-product__quantity-btns">
+                        <button
+                          className="cart-product__minus"
+                          onClick={() => handleQuantityChange(item.product.SKU, item.quantity - 1, item.color)}
+                        >
+                          <i className="fa-light fa-minus"></i>
+                        </button>
+                        <button
+                          className="cart-product__plus"
+                          onClick={() => handleQuantityChange(item.product.SKU, item.quantity + 1, item.color)}
+                        >
+                          <i className="fa-light fa-plus"></i>
+                        </button>
 
+                      </div>
+                      <input
+                        type="number"
+                        name="product-quantity-input"
+                        className="cart-product-quantity-input"
+                        min="0"
+                        value={item.quantity}
+                        onChange={(event) => {
+                          const newQuantity = Math.max(0, parseInt(event.target.value));
+                          handleQuantityChange(item.product.SKU, newQuantity);
+                        }}
+                      />
                     </div>
-                    <input
-                      type="number"
-                      name="product-quantity-input"
-                      className="cart-product-quantity-input"
-                      min="0"
-                      value={item.quantity}
-                      onChange={(event) => {
-                        const newQuantity = Math.max(0, parseInt(event.target.value));
-                        handleQuantityChange(item.product.SKU, newQuantity);
-                      }}
-                    />
-                  </div>
-                </td>
-                <td>
-                  {item.color && (
-                    <select
-                      value={item.color || "yellow"}
-                      onChange={(e) => handleColorChange(item.product.SKU, e.target.value)}
+                  </td>
+                  <td>
+                    {item.color && (
+                      <select
+                        value={item.color || "yellow"}
+                        onChange={(e) => handleColorChange(item.product.SKU, e.target.value)}
+                      >
+                        <option value="yellow">Yellow</option>
+                        <option value="rose">Rose</option>
+
+                      </select>
+                    )}
+                  </td>
+
+                  <td>
+                    {item.gross_weight} gm<br />
+                    ({item.product.gross_weight} gm)
+                  </td>
+                  <td>
+                    {item.diamond_weight} gm<br />
+                    ({item.product.diamond_weight} gm)
+                  </td>
+                  <td>
+                    {item.colour_stones} gm<br />
+                    ({item.product.colour_stones} gm)
+                  </td>
+                  <td>
+                    {item.net_weight} gm<br />
+                    ({item.product.net_weight} gm)
+                  </td>
+
+                  <td>
+                    <button
+                      className="item-remove-btn"
+                      onClick={() => handleRemoveItem(item.product.SKU)}
                     >
-                      <option value="yellow">Yellow</option>
-                      <option value="rose">Rose</option>
+                      <i className="fa-light fa-xmark"></i>
+                    </button>
+                  </td>
+                </tr>
+              </React.Fragment>
+            ))
+          )}
+        </tbody>
+        <Link to="/checkout">
+          <button className="fz-1-banner-btn cart-checkout-btn">
+            Proceed to checkout
+          </button>
+        </Link>
 
-                    </select>
-                  )}
-                </td>
+      </table >
+      <div>
+        {cartItems.length > 0 && (
+          <div className="total-weights">
+            <h4>Total Weights</h4>
+            <p>Total Gross Weight: {totals.total_gross_weight || 0} gm</p>
+            <p>Total Diamond Weight: {totals.total_diamond_weight || 0} gm</p>
+            <p>Total Color Stones: {totals.total_colour_stones || 0} gm</p>
+            <p>Total Net Weight: {totals.total_net_weight || 0} gm</p>
 
-                <td>
-                  {item.gross_weight} gm<br />
-                  ({item.product.gross_weight} gm)
-                </td>
-                <td>
-                  {item.diamond_weight} gm<br />
-                  ({item.product.diamond_weight} gm)
-                </td>
-                <td>
-                  {item.colour_stones} gm<br />
-                  ({item.product.colour_stones} gm)
-                </td>
-                <td>
-                  {item.net_weight} gm<br />
-                  ({item.product.net_weight} gm)
-                </td>
-
-                <td>
-                  <button
-                    className="item-remove-btn"
-                    onClick={() => handleRemoveItem(item.product.SKU)}
-                  >
-                    <i className="fa-light fa-xmark"></i>
-                  </button>
-                </td>
-              </tr>
-            </React.Fragment>
-          ))
+          </div>
         )}
-      </tbody>
-      <Link to="/checkout">
-        <button className="fz-1-banner-btn cart-checkout-btn">
-          Proceed to checkout
-        </button>
-      </Link>
-    </table >
+      </div>
+    </div>
   );
 };
 

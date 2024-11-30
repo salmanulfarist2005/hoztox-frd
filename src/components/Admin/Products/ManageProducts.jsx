@@ -225,21 +225,21 @@ const ManageProducts = () => {
         );
     };
 
-    // State to keep track of images to remove
+ 
     const [imagesToRemove, setImagesToRemove] = useState([]);
 
-    // Handle removal of existing images
+   
     const handleExistingImageRemove = (index) => {
         const product = products.find(prod => prod.id === productId);
         const imageToRemove = product.additional_images[index];
 
-        // Add the image ID to the imagesToRemove array
+      
         setImagesToRemove((prev) => [...prev, imageToRemove.id]);
 
-        // Remove the image from the UI
+     
         product.additional_images.splice(index, 1);
 
-        setProducts([...products]); // Trigger re-render
+        setProducts([...products]);  
     };
 
     const renderImagePreviewAdditional = () => {
@@ -309,88 +309,84 @@ const ManageProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!productId) return;
-
-        // Prepare the updated form data
+    
         const updatedFormData = {
             ...formData,
             usertypes: selectedUserTypes,
             product_image: mainImage || formData.product_image,
         };
-
+    
         try {
             const formDataToSubmit = new FormData();
-
-            // Append the form data except for images and additional images
+    
             Object.keys(updatedFormData).forEach((key) => {
                 if (key !== 'product_image' && key !== 'additional_images') {
                     formDataToSubmit.append(key, updatedFormData[key]);
                 }
             });
-
-            // Append the main image if it exists
+    
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
-
-            // Append any new additional images
+    
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
             });
-
-            // Re-append the existing additional images that haven't been removed
+    
             const product = products.find(prod => prod.id === productId);
             if (product && product.additional_images) {
                 product.additional_images.forEach((existingImage) => {
                     if (!imagesToRemove.includes(existingImage.id)) {
-                        formDataToSubmit.append('additional_images', existingImage.image); // Assuming `image` holds the file URL or data
+                        formDataToSubmit.append('additional_images', existingImage.image);  
                     }
                 });
             }
-
-            // Append the list of images to remove
+    
             imagesToRemove.forEach((imageId) => {
                 formDataToSubmit.append('images_to_remove[]', imageId);
             });
-
-            // Make the API request
+    
+            // Send the update request
             await axios.put(`${BASE_URL}/products/products/${productId}/update/`, formDataToSubmit, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
+    
+            // Update the local state with the updated product
+            setProducts(prevProducts => prevProducts.map(prod => prod.id === productId ? { ...prod, ...updatedFormData } : prod));
+    
             alert("Product updated successfully!");
             setFormData({
                 SKU: "",
                 product_name: "",
                 category: "",
-
                 gross_weight: "",
                 diamond_weight: "",
                 colour_stones: "",
                 net_weight: "",
-
                 product_image: null,
                 description: "",
                 usertypes: []
             });
-
+    
             setImages([]);
             setSelectedUserTypes([]);
             setImagesToRemove([]);
-            setmodal_list(false)
-            fetchProducts();
+            setmodal_list(false);
+    
         } catch (error) {
             console.error("Error updating product:", error.response ? error.response.data : error.message);
         }
     };
+    
 
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    // Other existing useEffect hooks...
+  
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };

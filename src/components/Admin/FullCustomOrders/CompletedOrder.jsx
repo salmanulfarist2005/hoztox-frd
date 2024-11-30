@@ -1,35 +1,30 @@
 import React, { useState, useEffect } from 'react';
+
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
-import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBody, ModalFooter, ModalHeader, Input } from 'reactstrap';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import FullCustomManageOrder from '../FullCustomOrders/ManageOrder'
-
-
-
-const CustomManageOrder = ({ order, onStatusUpdate }) => {
+import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBody, ModalFooter, ModalHeader, Input } from 'reactstrap';
+const CompletedOrder = (order) => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
     const [modal_delete, setModalDelete] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
-    const [status, setStatus] = useState(order?.status || 'N/A');
-
-
     const [editedOrderCode, setEditedOrderCode] = useState('');
     const [editedQuantity, setEditedQuantity] = useState('');
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [status, setStatus] = useState(order?.status || 'N/A');
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
-            setOrders(response.data || []);
+            const response = await axios.get(`${BASE_URL}/products/full-delivered-orders/`);
+            const data = response.data;
+            setOrders(data || []);
             console.log("response", response.data);
-            
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -39,8 +34,9 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         fetchOrders();
     }, []);
 
+
+
     const tog_list1 = (order) => {
-        if (!order) return;
         console.log("Selected Item for Order ID:", order);
         setSelectedItem(order);
         setOrderId(order.ordercode || '');
@@ -49,56 +45,48 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         setModalList1(!modal_list1);
     };
 
-    const tog_list = (order) => {
+
+    const tog_delete = () => {
+        setModalDelete(!modal_delete);
+    }; const tog_list = (order) => {
+        console.log("Selected Order:", order);
         setSelectedItem(order);
         setModalList(!modal_list);
-        setModalList1(false);
-    }
-
-    const handleSaveChanges = async () => {
-        if (!selectedItem) return;
-    
-        try {
-            // Perform the update request
-            await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
-                ordercode: editedOrderCode,
-                quantity: editedQuantity,
-            });
-    
-            // After updating, update the state to reflect the changes
-            setOrders((prevOrders) => {
-                // Update the specific order based on the selected item
-                const updatedOrders = prevOrders.map((order) =>
-                    order.id === selectedItem.id
-                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }  // Update the changed fields
-                        : order
-                );
-    
-                // Optionally, you can sort the orders by an appropriate field, for example, order ID
-                return updatedOrders.sort((a, b) => a.id - b.id);  // Sorting by `id`, adjust based on your needs
-            });
-    
-            alert("Updated Successfully");
-            setModalList1(false);
-        } catch (error) {
-            console.error("Error saving changes:", error);
-            alert("There was an error saving the changes. Please try again.");
-        }
     };
-    
+
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredOrders, setFilteredOrders] = useState([]);
+    useEffect(() => {
+        if (searchQuery) {
+            const lowercasedQuery = searchQuery.toLowerCase();
+            const results = orders.filter(order =>
+                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
+                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
+                (order.order_items && order.order_items.some(item =>
+                    item.category?.category_name.toLowerCase().includes(lowercasedQuery)
+                ))
+            );
+            setFilteredOrders(results);
+        } else {
+            setFilteredOrders(orders);
+        }
+    }, [searchQuery, orders]);
+
+
+
     const downloadCSV = () => {
         if (!selectedItem) return;
 
         const orderData = {
             OrderId: selectedItem.order?.ordercode,
             ShopName: selectedItem.order?.user?.company_name,
-            SKU: selectedItem.order?.product?.SKU,
-            ProductName: selectedItem.order?.product?.product_name,
-            ProductCategory: selectedItem.order?.product?.category_name,
+
+            ProductCategory: selectedItem.order?.category?.category_name,
             Quantity: selectedItem.order?.quantity,
-            ProductColor: selectedItem.order?.product?.color,
-            ProductSize: selectedItem.order?.product?.product_size,
-            AdditionalNotes: selectedItem.order?.additional_notes,
+            ProductColor: selectedItem.order?.category?.color,
+            ProductSize: selectedItem.order?.size,
+
             ShippingAddress: selectedItem.order?.user?.shipping_address,
             MobileNumber: selectedItem.order?.user?.mobile_number,
             WhatsAppNumber: selectedItem.order?.user?.whatsapp_number,
@@ -116,6 +104,8 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         document.body.removeChild(link);
     };
 
+
+
     const downloadPDF = () => {
         if (!selectedItem) return;
 
@@ -132,13 +122,10 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         const rows = [
             ["Order ID", selectedItem.order?.ordercode || "N/A"],
             ["Shop Name", selectedItem.order?.user?.company_name || "N/A"],
-            ["SKU", selectedItem.item?.product?.SKU || "N/A"],
-            ["Product Name", selectedItem.order?.product?.product_name || "N/A"],
-            ["Product Category", selectedItem.order?.product?.category_name || "N/A"],
+            ["Product Category", selectedItem.order?.category?.category_name || "N/A"],
             ["Quantity", selectedItem.order?.quantity || "N/A"],
-            ["Product Color", selectedItem.order?.product?.color || "N/A"],
-            ["Product Size", selectedItem.order?.product?.product_size || "N/A"],
-            ["Additional Notes", selectedItem.order?.additional_notes || "N/A"],
+            ["Product Color", selectedItem.order?.color?.color || "N/A"],
+            ["Product Size", selectedItem.order?.size || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
             ["WhatsApp Number", selectedItem.order?.user?.whatsapp_number || "N/A"],
@@ -174,12 +161,49 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         doc.save('order_details.pdf');
     };
 
+
+    const handleSaveChanges = async () => {
+        if (!selectedItem) return;
+        console.log("selectedItem", selectedItem);
+        
+        try {
+            // Perform the update request
+            await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/`, {
+                ordercode: editedOrderCode,
+                quantity: editedQuantity,
+            });
+    
+            // After updating, update the state to reflect the changes
+            setOrders((prevOrders) => {
+                // Update the specific order based on the selected item
+                const updatedOrders = prevOrders.map((order) =>
+                    order.id === selectedItem.id
+                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }  // Update the changed fields
+                        : order
+                );
+    
+                // Optionally, you can sort the orders by an appropriate field, for example, order ID
+                return updatedOrders.sort((a, b) => a.id - b.id);  // Sorting by `id`, adjust based on your needs
+            });
+    
+            // Fetch orders again if necessary
+            // fetchOrders();  // Optional, if you still want to fetch orders again
+    
+            alert("Updated Successfully");
+            setModalList1(false);
+        } catch (error) {
+            console.error("Error saving changes:", error);
+            alert("There was an error saving the changes. Please try again.");
+        }
+    };
+    
+
     const handleDeleteOrder = async (orderId) => {
 
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-full-orders/${orderId}/delete/`);
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -188,63 +212,6 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             }
         }
     };
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.product?.product_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-    }, [searchQuery, orders]);
-    const [editingOrderId, setEditingOrderId] = useState(null);
-    const [newStatus, setNewStatus] = useState({});
-    const [showConfirm, setShowConfirm] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-
-    const handleStatusChange = (orderId, value) => {
-        setStatus(value);
-        setEditingOrderId(orderId);
-        setIsEditing(true);
-    };
-
-    const handleConfirm = async (orderId) => {
-        if (orderId) {
-            const requestData = {
-                new_status: status,
-            };
-
-            try {
-                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData);
-
-                // Update the specific order directly in the state
-                setOrders((prevOrders) =>
-                    prevOrders.map((order) =>
-                        order.id === orderId ? { ...order, new_status: status } : order
-                    )
-                );
-
-                alert("Status updated successfully!");
-            } catch (error) {
-                console.error("There was an error updating the status:", error);
-                alert("Failed to update status. Please try again.");
-            } finally {
-                setEditingOrderId(null);
-                setStatus('');
-            }
-        }
-    };
-
-
-
 
 
     const newStatusChoices = [
@@ -266,17 +233,60 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         { value: 'delivered', label: 'Delivered', className: 'badge bg-success' },
     ];
 
-
+    const [editingOrderId, setEditingOrderId] = useState(null);
     const getBadgeClass = (status) => {
         const statusChoice = newStatusChoices.find(choice => choice.value === status);
         return statusChoice ? statusChoice.className : 'badge-default';
     };
+
+    const handleStatusChange = (orderId, value) => {
+        setStatus(value);
+        setEditingOrderId(orderId);
+        setIsEditing(true);
+    };
+    const handleConfirm = async () => {
+        if (editingOrderId) {
+            console.log("editingOrderId", editingOrderId);
+
+            const requestData = {
+                new_status: status,
+            };
+            console.log("Request Data:", requestData);
+
+            try {
+                const response = await axios.patch(
+                    `${BASE_URL}/products/full-orders/${editingOrderId}/update-status/`,
+                    requestData
+                );
+                console.log("Response:", response);
+
+                // Update the specific order directly in the state
+                setOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        order.id === editingOrderId ? { ...order, new_status: status } : order
+                    )
+                );
+
+                alert("Status updated successfully!");
+            } catch (error) {
+                console.error("There was an error updating the status:", error);
+                alert("Failed to update status. Please try again.");
+            } finally {
+                setIsEditing(false);
+                setEditingOrderId(null);
+                setStatus('');
+            }
+        }
+    };
+
+
+
     return (
         <React.Fragment>
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Custom Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Manage Full Custom Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -310,34 +320,34 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                 <table className="table align-middle table-nowrap" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
-                                                            <th className="sort" data-sort="shop_name">Order Id</th>
+                                                            <th className="sort" data-sort="shop_name">OrderId</th>
                                                             <th className="sort" data-sort="shop_name">Order Date</th>
                                                             <th className="sort" data-sort="shop_name">Shop Name</th>
-                                                            <th className="sort" data-sort="order_id">SKU</th>
-                                                            <th className="sort" data-sort="size">Product Name</th>
+
                                                             <th className="sort" data-sort="gram">Product Category</th>
+                                                            <th className="sort" data-sort="cent">Product Size</th>
                                                             <th className="sort" data-sort="cent">Quantity</th>
+
                                                             <th className="sort" data-sort="cent">Status</th>
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
+
+
                                                     </thead>
                                                     <tbody className="list form-check-all">
-
-
                                                         {filteredOrders.length > 0 ? (
                                                             filteredOrders.map((order) => (
                                                                 <tr key={order.id}>
-
                                                                     <td>{order.ordercode}</td>
                                                                     <td> {new Date(order.created_at).toLocaleDateString('en-US', {
                                                                         day: 'numeric',
                                                                         month: 'numeric',
                                                                         year: 'numeric',
                                                                     })}</td>
-                                                                    <td>{order.user?.company_name || "N/A"}</td>
-                                                                    <td>{order.product?.SKU || "N/A"}</td>
-                                                                    <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name || "N/A"}</td>
+                                                                    <td>{order.user?.company_name}</td>
+
+                                                                    <td>{order.category?.category_name}</td>
+                                                                    <td>{order.size}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
                                                                         {editingOrderId === order.id ? (
@@ -401,6 +411,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                             </div>
                                                                         )}
                                                                     </td>
+
                                                                     <td>
                                                                         <div className="d-flex gap-2">
                                                                             <div className="edit">
@@ -437,8 +448,6 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                             </tr>
                                                         )}
                                                     </tbody>
-
-
                                                 </table>
                                             </div>
 
@@ -461,7 +470,6 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     </Container>
                 </div>
             </div>
-            <FullCustomManageOrder />
             <Modal
                 isOpen={modal_list}
                 toggle={tog_list}
@@ -475,57 +483,39 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     {console.log("Selected Item:", selectedItem)}
                     {selectedItem ? (
                         <>
-
                             <Row className="mb-3 mt-2">
-                                <label className="col-md-2 col-form-label">Product Image</label>
+                                <label className="col-md-2 col-form-label">Product Images</label>
                                 <div className="col-md-10">
-                                    <img
-                                        src={`${BASE_URL}${selectedItem.order?.product?.product_image}`}
-                                        alt={`Image of ${selectedItem.order?.product?.product_name}`}
-                                        style={{ width: '100px', height: '100px' }}
-                                    />
+                                    {console.log("Selected Item:", selectedItem)}
+                                    {Array.isArray(selectedItem.order?.additional_images) && selectedItem.order?.additional_images.length > 0 ? (
+                                        selectedItem.order?.additional_images.map((imageObj, index) => (
+                                            <img
+                                                key={index}
+                                                src={BASE_URL + imageObj.image}
+                                                alt={`Image ${index + 1} of ${selectedItem.order?.product?.product_name}`}
+                                                style={{ width: '100px', height: '100px', marginRight: '5px' }}
+                                                onError={(e) => { e.target.src = 'path/to/placeholder-image.png'; }}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div>No images available.</div>
+                                    )}
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">OrderId</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.ordercode}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">SKU</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.product?.SKU}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Name</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.product?.product_name}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
+
+
+
+
+
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Product Category</label>
                                 <div className="col-md-10">
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.order?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
@@ -536,7 +526,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.color}
+                                        value={selectedItem.order?.color?.color}
                                         readOnly
                                     />
                                 </div>
@@ -547,7 +537,29 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.product_size}
+                                        value={selectedItem.order?.size}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Gram</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.gram}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Cent</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.cent}
                                         readOnly
                                     />
                                 </div>
@@ -563,24 +575,14 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Additional Notes</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.order?.additional_notes}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Description</label>
                                 <div className="col-md-10">
                                     <textarea
                                         className="form-control"
                                         rows="4"
-                                        value={selectedItem.order?.product?.description}
+                                        value={selectedItem.order?.description}
                                         readOnly
                                     />
                                 </div>
@@ -650,6 +652,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     </Button>
                                 </Col>
                             </Row>
+
                         </>
                     ) : (
                         <div>No order selected.</div>
@@ -691,8 +694,12 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
                 </ModalFooter>
             </Modal>
+
         </React.Fragment>
     );
 };
 
-export default CustomManageOrder;
+export default CompletedOrder;
+
+
+

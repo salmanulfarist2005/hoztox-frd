@@ -125,7 +125,7 @@ const ManageUser = () => {
     const [userId, setUserId] = useState(null);
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+        
         if (!userId) {
             console.error("User ID is not defined.");
             return; 
@@ -164,6 +164,13 @@ const ManageUser = () => {
     
             if (response.status === 200) {
                 alert("User updated successfully!");
+                
+                // Directly update the user in the state
+                setUsers(prevUsers => 
+                    prevUsers.map(user => 
+                        user.id === userId ? { ...user, ...formData } : user
+                    )
+                );
             }
     
             // Reset form data
@@ -173,9 +180,8 @@ const ManageUser = () => {
                 mobile_number: '',
                 whatsapp_number: '',
                 company_name: '',
-            
                 shipping_address: '',
-                company_logo: null, // Reset the logo
+                company_logo: null,
                 company_email: '',
                 company_website: '',
                 username: '',
@@ -184,7 +190,6 @@ const ManageUser = () => {
                 usertypes: '',
             });
             setCurrentLogo(null); 
-            fetchUsers()
             setSelectedUserType('');
             setUserId(null);
             setModalList(false);
@@ -645,7 +650,7 @@ const ManageUser = () => {
                             <div className="col-md-10 offset-md-2 d-flex">
                                 <button type="button" onClick={handleGeneratePassword} className="btn btn-secondary me-2">Generate Password</button>
                                 <button type="button" onClick={togglePasswordVisibility} className="btn btn-outline-secondary">
-                                    {passwordVisible ? 'Hide' : 'Show'}
+                                    {passwordVisible ? 'Hide Password' : 'Show Password'}
                                 </button>
                             </div>
                         </Row>

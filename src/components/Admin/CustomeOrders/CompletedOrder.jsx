@@ -7,11 +7,11 @@ import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBo
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import FullCustomManageOrder from '../FullCustomOrders/ManageOrder'
+import CompletedCustumOrdersFullPage from '../FullCustomOrders/CompletedOrder'
 
 
 
-const CustomManageOrder = ({ order, onStatusUpdate }) => {
+const CompletedOrder = ({ order, onStatusUpdate }) => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
     const [modal_delete, setModalDelete] = useState(false);
@@ -26,10 +26,9 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
+            const response = await axios.get(`${BASE_URL}/products/delivered-orders/`);
             setOrders(response.data || []);
             console.log("response", response.data);
-            
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -59,23 +58,23 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         if (!selectedItem) return;
     
         try {
-            // Perform the update request
+            
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
             });
     
-            // After updating, update the state to reflect the changes
+  
             setOrders((prevOrders) => {
-                // Update the specific order based on the selected item
+             
                 const updatedOrders = prevOrders.map((order) =>
                     order.id === selectedItem.id
-                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }  // Update the changed fields
+                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }   
                         : order
                 );
     
-                // Optionally, you can sort the orders by an appropriate field, for example, order ID
-                return updatedOrders.sort((a, b) => a.id - b.id);  // Sorting by `id`, adjust based on your needs
+                 
+                return updatedOrders.sort((a, b) => a.id - b.id);   
             });
     
             alert("Updated Successfully");
@@ -461,7 +460,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     </Container>
                 </div>
             </div>
-            <FullCustomManageOrder />
+            <CompletedCustumOrdersFullPage/>
             <Modal
                 isOpen={modal_list}
                 toggle={tog_list}
@@ -695,4 +694,4 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
     );
 };
 
-export default CustomManageOrder;
+export default CompletedOrder;

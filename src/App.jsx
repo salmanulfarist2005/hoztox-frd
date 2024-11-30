@@ -47,6 +47,9 @@ import AddImagePage from "./pages/Dashboard/AddImages"
 import ManagemagePage from "./pages/Dashboard/ManageImages"
 import ChangepasswordPage from "./pages/Dashboard/Changepassword"
 import CustomShop from "./pages/Customshop";
+import CompletedCustumOrdersPage from "./pages/Dashboard/CompletedOrderPage"
+import CompletedCustumOrdersFullPage from "./pages/Dashboard/CompletedOrderPageFull"
+import CompletedNOrder from "./pages/Dashboard/CompletedOrder"
 // import ProductCategoryList from "./components/shop/ProductCategoryList"
 function App() {
   
@@ -101,6 +104,8 @@ function App() {
         {/* ................................................................ */}
         <Route path="/view-order" element={< ViewOrdersPage />} />
         <Route path="/manage-order" element={< MnageOrdersPage />} />
+        <Route path="/completed-order" element={< CompletedNOrder />} />
+        
         {/* ............................ */}
 
         <Route path="/add-user" element={<AddUserPage />} />
@@ -112,13 +117,16 @@ function App() {
         <Route path="/custom-pending-order" element={<PendingCustumOrdersPage />} />
         <Route path="/custom-manage-order" element={<ManageCustumOrdersPage />} />
         <Route path="/status-csv" element={<StatusCustumOrdersPage />} />
-
+        <Route path="/custom-completed-order" element={<CompletedCustumOrdersPage />} />
+        
         {/* ............................ */}
 
         <Route path="/full-custom-pending-order" element={<PendingFullOrdersPage />} />
         <Route path="/full-custom-view-order" element={<ViewFullOrdersPage />} />
         <Route path="/full-custom-manage-order" element={<ManageFullCustumOrdersPage />} />
         <Route path="/status-full-csv" element={<StatusFullOrdersPage />} />
+        <Route path="/custom-full-completed-order" element={<CompletedCustumOrdersFullPage />} />
+        
 
         {/* ............................ */}
 
