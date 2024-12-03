@@ -97,16 +97,22 @@ const AddProduct = () => {
     try {
       const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
       console.log("Full response:", response.data);
-
-
+  
       const userTypesData = response.data;
-
-
-      console.log("User types data:", userTypesData);
-
+  
       if (Array.isArray(userTypesData)) {
         setUserTypes(userTypesData);
-        console.log("response", response)
+  
+        // Automatically select all user types by default
+        const allUserTypeIds = userTypesData.map((userType) => userType.id);
+        setSelectedUserTypes(allUserTypeIds);
+  
+        setFormData((prevData) => ({
+          ...prevData,
+          usertypes: allUserTypeIds,
+        }));
+  
+        console.log("Selected user types (default):", allUserTypeIds);
       } else {
         console.warn("Unexpected data format:", userTypesData);
         setUserTypes([]);
@@ -116,9 +122,11 @@ const AddProduct = () => {
       setUserTypes([]);
     }
   };
+  
   useEffect(() => {
     fetchUserTypes();
   }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -169,7 +177,7 @@ const AddProduct = () => {
         net_weight: "",
       
         product_image: null,
-        description: "", // Reset to an empty string
+        description: "",  
         usertypes: [],
       });
   
@@ -187,16 +195,24 @@ const AddProduct = () => {
   const [selectedUserTypes, setSelectedUserTypes] = useState([]);
   const handleCheckboxChange = (event) => {
     const { value } = event.target;
+    const userTypeId = parseInt(value, 10);
+  
     setSelectedUserTypes((prevSelected) => {
-      const userTypeId = parseInt(value, 10);
+      // Toggle the selection of the user type
       const updatedSelection = prevSelected.includes(userTypeId)
-        ? prevSelected.filter((id) => id !== userTypeId)
-        : [...prevSelected, userTypeId];
-      // Update formData with the selected user types
-      setFormData((prevData) => ({ ...prevData, usertypes: updatedSelection }));
+        ? prevSelected.filter((id) => id !== userTypeId) // Remove if already selected
+        : [...prevSelected, userTypeId]; // Add if not selected
+  
+      // Update the formData with the new selection
+      setFormData((prevData) => ({
+        ...prevData,
+        usertypes: updatedSelection,
+      }));
+  
       return updatedSelection;
     });
   };
+  
 
 
   return (
