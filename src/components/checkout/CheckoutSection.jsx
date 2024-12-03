@@ -90,7 +90,7 @@ const CheckoutSection = () => {
                 alert("Failed to place order: Network error or server not reachable.");
             }
         } finally {
-            setOrderProcessing(false); // Stop showing spinner
+            setOrderProcessing(false); 
         }
     };
 

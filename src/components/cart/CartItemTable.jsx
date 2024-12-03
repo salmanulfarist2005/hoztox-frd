@@ -51,14 +51,16 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
 
   useEffect(() => {
     fetchCartItems();
+    fetchCartDetails();
   }, []);
 
   const handleQuantityChange = async (SKU, newQuantity, color) => {
     if (newQuantity < 1) return;
-
+  
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.patch(
+  
+      await axios.patch(
         `${BASE_URL}/products/cart/update/${SKU}/`,
         { quantity: newQuantity, color: color },
         {
@@ -68,19 +70,31 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
           },
         }
       );
-
-
-      setCart((prevCart) =>
-        prevCart.map((item) =>
-          item.product.SKU === SKU ? { ...item, ...response.data } : item
+  
+ 
+      setCart(prevCart =>
+        prevCart.map(item =>
+          item.product.SKU === SKU
+            ? { 
+                ...item, 
+                quantity: newQuantity,
+                gross_weight: (item.product.gross_weight * newQuantity).toFixed(3),  
+                diamond_weight: (item.product.diamond_weight * newQuantity).toFixed(3),  
+                colour_stones: (item.product.colour_stones * newQuantity).toFixed(3),   
+                net_weight: (item.product.net_weight * newQuantity).toFixed(3) 
+              }
+            : item
         )
       );
-      fetchCartDetails();
+ 
+
+      fetchCartItems();
     } catch (error) {
       console.error("Error updating cart quantity:", error);
       alert("Failed to update cart quantity.");
     }
   };
+  
 
 
 
@@ -127,7 +141,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
   };
 
 
-
+ 
   return (
     <div>
       <table className="cart-page-table">
@@ -247,7 +261,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       </table >
       <div>
         {cartItems.length > 0 && (
-          <div className="total-weights">
+          <div className="total-weights-cart">
             <h4>Total Weights</h4>
             <p>Total Gross Weight: {totals.total_gross_weight || 0} gm</p>
             <p>Total Diamond Weight: {totals.total_diamond_weight || 0} gm</p>

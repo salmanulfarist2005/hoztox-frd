@@ -107,6 +107,19 @@
     color: #fff;
 }
 
+
+.total-weights-cart{
+    background-color: #175a5c; 
+    border: 1px solid #b0784c;  
+    border-radius: 8px; 
+    padding: 20px;  
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  
+    margin-top: 0 ;
+    width: 35%;
+    color: #fff;
+    margin-top: 40px;
+
+}
 .bg-gold { background-color:#b0784c !important;}
 
 .total-weights h4 {
@@ -119,7 +132,7 @@
 
 .cart-checkout-btn {
     margin-top: 15px;  
-    background-color: #007bff;  
+    background-color: #b0784c;  
     color: white;  
     border: none;  
     border-radius: 4px;  
@@ -128,7 +141,8 @@
 }
 
 .cart-checkout-btn:hover {
-    background-color: #0056b3; 
+    background-color: #b0784c; 
+    color: white;
 }
 
 
