@@ -79,22 +79,29 @@ const ProductDetailSlider = () => {
                 ))}
             </Slider>
 
-            <Slider
-                className="fz-product-details__img-nav"
-                {...{ ...imgNavSettings, slidesToShow }}
-                ref={navImageRef}  
+            {additionalImages.length > 0 && (
+    <Slider
+        className="fz-product-details__img-nav"
+        {...{ ...imgNavSettings, slidesToShow }}
+        ref={navImageRef}
+    >
+        {mainImage && (
+            <div onClick={() => mainImageRef.current.slickGoTo(0)}>
+                <img src={mainImage} alt="Thumbnail Image" />
+            </div>
+        )}
+        {additionalImages.map((image, index) => (
+            <div
+                className=""
+                key={index}
+                onClick={() => mainImageRef.current.slickGoTo(index + 1)}
             >
-                {mainImage && (
-                    <div  onClick={() => mainImageRef.current.slickGoTo(0)}>
-                        <img src={mainImage} alt="Thumbnail Image" />
-                    </div>
-                )}
-                {additionalImages.map((image, index) => (
-                    <div  key={index} onClick={() => mainImageRef.current.slickGoTo(index + 1)}>
-                        <img src={`${BASE_URL}${image.image}`} alt={`Thumbnail Image ${index + 1}`} />
-                    </div>
-                ))}
-            </Slider>
+                <img src={`${BASE_URL}${image.image}`} alt={`Thumbnail Image ${index + 1}`} />
+            </div>
+        ))}
+    </Slider>
+)}
+
         </>
     );
 };
