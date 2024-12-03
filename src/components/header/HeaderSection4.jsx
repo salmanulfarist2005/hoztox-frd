@@ -22,7 +22,12 @@ const HeaderSection4 = () => {
     handleSidebarClose();
     navigate(path);
   };
-
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+        navigate('/');
+    }   
+}, [navigate]);
   const fetchCartItems = async () => {
     try {
       const token = localStorage.getItem("authToken");

@@ -6,7 +6,7 @@ import { BASE_URL } from '../helpers/config';
 const SignInFormSection = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);  
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const SignInFormSection = () => {
     };
 
     const togglePasswordVisibility = () => {
-        setIsPasswordVisible(!isPasswordVisible); // Toggle visibility state
+        setIsPasswordVisible(!isPasswordVisible);  
     };
 
     return (

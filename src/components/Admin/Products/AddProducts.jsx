@@ -103,7 +103,7 @@ const AddProduct = () => {
       if (Array.isArray(userTypesData)) {
         setUserTypes(userTypesData);
   
-        // Automatically select all user types by default
+ 
         const allUserTypeIds = userTypesData.map((userType) => userType.id);
         setSelectedUserTypes(allUserTypeIds);
   
@@ -146,7 +146,7 @@ const AddProduct = () => {
           productFormData.append("usertypes", String(userTypeId));
         });
       } else if (key === "description" && !formData[key]) {
-        // Skip appending description if it's empty
+      
         continue;
       } else {
         productFormData.append(key, formData[key]);
@@ -198,12 +198,12 @@ const AddProduct = () => {
     const userTypeId = parseInt(value, 10);
   
     setSelectedUserTypes((prevSelected) => {
-      // Toggle the selection of the user type
+    
       const updatedSelection = prevSelected.includes(userTypeId)
-        ? prevSelected.filter((id) => id !== userTypeId) // Remove if already selected
-        : [...prevSelected, userTypeId]; // Add if not selected
+        ? prevSelected.filter((id) => id !== userTypeId)  
+        : [...prevSelected, userTypeId]; 
   
-      // Update the formData with the new selection
+ 
       setFormData((prevData) => ({
         ...prevData,
         usertypes: updatedSelection,

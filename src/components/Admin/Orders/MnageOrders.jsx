@@ -235,6 +235,7 @@ const ManageOrder = () => {
     
             alert("Status Updated Successfully");
             console.log("status.....", response.data);
+            fetchOrders();
         } catch (error) {
             console.error("Error updating status:", error);
             alert("There was an error updating the status. Please try again.");

@@ -97,16 +97,22 @@ const AddCustomeProduct = () => {
     try {
       const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
       console.log("Full response:", response.data);
-
-
+  
       const userTypesData = response.data;
-
-
-      console.log("User types data:", userTypesData);
-
+  
       if (Array.isArray(userTypesData)) {
         setUserTypes(userTypesData);
-        console.log("response", response)
+  
+ 
+        const allUserTypeIds = userTypesData.map((userType) => userType.id);
+        setSelectedUserTypes(allUserTypeIds);
+  
+        setFormData((prevData) => ({
+          ...prevData,
+          usertypes: allUserTypeIds,
+        }));
+  
+        console.log("Selected user types (default):", allUserTypeIds);
       } else {
         console.warn("Unexpected data format:", userTypesData);
         setUserTypes([]);
@@ -116,9 +122,11 @@ const AddCustomeProduct = () => {
       setUserTypes([]);
     }
   };
+  
   useEffect(() => {
     fetchUserTypes();
   }, []);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -189,15 +197,24 @@ const AddCustomeProduct = () => {
   const [selectedUserTypes, setSelectedUserTypes] = useState([]);
   const handleCheckboxChange = (event) => {
     const { value } = event.target;
+    const userTypeId = parseInt(value, 10);
+  
     setSelectedUserTypes((prevSelected) => {
-      const userTypeId = parseInt(value, 10);
-      if (prevSelected.includes(userTypeId)) {
-        return prevSelected.filter((id) => id !== userTypeId);
-      } else {
-        return [...prevSelected, userTypeId];
-      }
+    
+      const updatedSelection = prevSelected.includes(userTypeId)
+        ? prevSelected.filter((id) => id !== userTypeId)  
+        : [...prevSelected, userTypeId]; 
+  
+ 
+      setFormData((prevData) => ({
+        ...prevData,
+        usertypes: updatedSelection,
+      }));
+  
+      return updatedSelection;
     });
   };
+  
 
   return (
     <React.Fragment>
