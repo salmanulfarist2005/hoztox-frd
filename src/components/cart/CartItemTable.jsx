@@ -228,11 +228,11 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
                   </td>
                   <td>
                     {item.diamond_weight} gm<br />
-                    ({item.product.diamond_weight} gm)
+                    ({item.product.diamond_weight} Ct)
                   </td>
                   <td>
                     {item.colour_stones} gm<br />
-                    ({item.product.colour_stones} gm)
+                    ({item.product.colour_stones} Ct)
                   </td>
                   <td>
                     {item.net_weight} gm<br />
@@ -264,8 +264,8 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
           <div className="total-weights-cart">
             <h4>Total Weights</h4>
             <p>Total Gross Weight: {totals.total_gross_weight || 0} gm</p>
-            <p>Total Diamond Weight: {totals.total_diamond_weight || 0} gm</p>
-            <p>Total Color Stones: {totals.total_colour_stones || 0} gm</p>
+            <p>Total Diamond Weight: {totals.total_diamond_weight || 0} Ct</p>
+            <p>Total Color Stones: {totals.total_colour_stones || 0} Ct</p>
             <p>Total Net Weight: {totals.total_net_weight || 0} gm</p>
 
           </div>

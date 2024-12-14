@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductViewFilter = () => {
     const {
@@ -13,13 +13,18 @@ const ProductViewFilter = () => {
         searchTerm,
         activeCategory
     } = useContext(FarzaaContext);
+    
     const navigate = useNavigate();
+
+  
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             navigate('/');
         } 
     }, [navigate]);
+
+   
     const defaultQuantity = 1;
     const [quantity, setQuantity] = useState({});
     const [categories, setCategories] = useState([]);
@@ -27,23 +32,26 @@ const ProductViewFilter = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Pagination States
-    const productsPerPage = 9;
+   
+    const productsPerPage = 15;
     const [currentPage, setCurrentPage] = useState(1);
 
+ 
     const handleQuantityChange = (productId, newQuantity) => {
         setQuantity(prevQuantities => ({
             ...prevQuantities,
             [productId]: Math.max(1, newQuantity),
         }));
     };
+
+ 
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('authToken');
             const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             setProducts(productsResponse.data);
             const initialQuantities = {};
             productsResponse.data.forEach((product) => {
@@ -57,18 +65,19 @@ const ProductViewFilter = () => {
             setLoading(false);
         }
     };
-    
 
     useEffect(() => {
         fetchData();
     }, []);
 
+   
     const filteredProducts = products.filter(product => {
         const matchesCategory = activeCategory ? product.category_name === activeCategory : true;
         const matchesSearch = product.product_name.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
+   
     const totalProducts = filteredProducts.length;
     const totalPages = Math.ceil(totalProducts / productsPerPage);
 
@@ -84,18 +93,26 @@ const ProductViewFilter = () => {
         });
     };
 
+ 
     const startIndex = (currentPage - 1) * productsPerPage;
     const endIndex = currentPage * productsPerPage;
     const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+
+ 
     const [selectedColors, setSelectedColors] = useState({});
+
+   
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+
+ 
     const handleColorSelection = (productId, color) => {
         setSelectedColors((prevSelectedColors) => ({
             ...prevSelectedColors,
             [productId]: color,
         }));
     };
+
     return (
         <div className="product-category-and-view">
             <div className="row gy-4 gx-3 justify-content-center">
@@ -113,17 +130,15 @@ const ProductViewFilter = () => {
                                         </h5>
                                     </div>
                                     <div className="fz-2-single-product-actions">
-                             
-
                                         <button
-                                    className="fz-add-to-cart-btn"
-                                    onClick={() => {
-                                        const selectedColor = selectedColors[item.id] || '';  
-                                        addToJeweleryCart(item.id, quantity[item.id], selectedColor);
-                                    }}
-                                >
-                                    Add to Cart
-                                </button>
+                                            className="fz-add-to-cart-btn"
+                                            onClick={() => {
+                                                const selectedColor = selectedColors[item.id] || '';  
+                                                addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                            }}
+                                        >
+                                            Add to Cart
+                                        </button>
 
                                         <div className="btnactions">
                                             <div className="fz-product-details__quantity cart-product__quantity">
@@ -160,7 +175,6 @@ const ProductViewFilter = () => {
                                     <h5 className="fz-2-single-product-title ">
                                         <Link to={`/products/${item.id}`}>{item.category_name}</Link>
                                     </h5>
-                                   
 
                                     <div className="inf_gm">
                                         <ul>
@@ -234,12 +248,8 @@ const ProductViewFilter = () => {
                                             <button
                                                 className="fz-add-to-cart-btn"
                                                 onClick={() => {
-                                                    const selectedColor = selectedColors[item.id];
-                                                    if (selectedColor) {
-                                                        addToJeweleryCart(item.id, quantity[item.id], selectedColor);
-                                                    } else {
-                                                        alert('Please select a color!');
-                                                    }
+                                                    const selectedColor = selectedColors[item.id] || '';  
+                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor);
                                                 }}
                                             >
                                                 Add to Cart
@@ -256,43 +266,50 @@ const ProductViewFilter = () => {
             </div>
 
             <nav className="fz-shop-pagination">
-                <ul className="page-numbers">
-                    <li>
+    <ul className="page-numbers">
+        <li>
+            <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="page-number-btn"
+            >
+                <span aria-current="page" className="last-page">
+                    <i className="fa-light fa-angle-double-left"></i>
+                </span>
+            </button>
+        </li>
+
+      
+        {Array.from({ length: Math.min(5, totalPages - (Math.floor((currentPage - 1) / 5) * 5)) }, (_, index) => {
+            const page = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
+            return (
+                page <= totalPages && (
+                    <li key={page}>
                         <button
-                            disabled={currentPage === 1}
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className="page-number-btn"
+                            className={`page-number-btn ${currentPage === page ? 'current' : ''}`}
+                            onClick={() => handlePageChange(page)}
                         >
-                            <span aria-current="page" className="last-page">
-                                <i className="fa-light fa-angle-double-left"></i>
-                            </span>
+                            {page}
                         </button>
                     </li>
+                )
+            );
+        })}
 
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <li key={index}>
-                            <button
-                                className={`page-number-btn ${currentPage === index + 1 ? 'current' : ''}`}
-                                onClick={() => handlePageChange(index + 1)}
-                            >
-                                {index + 1}
-                            </button>
-                        </li>
-                    ))}
+        <li>
+            <button
+                disabled={currentPage === totalPages}
+                className="page-number-btn"
+                onClick={() => handlePageChange(currentPage + 1)}
+            >
+                <span aria-current="page" className="last-page">
+                    <i className="fa-light fa-angle-double-right"></i>
+                </span>
+            </button>
+        </li>
+    </ul>
+</nav>
 
-                    <li>
-                        <button
-                            disabled={currentPage === totalPages}
-                            className="page-number-btn"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                            <span aria-current="page" className="last-page">
-                                <i className="fa-light fa-angle-double-right"></i>
-                            </span>
-                        </button>
-                    </li>
-                </ul>
-            </nav>
         </div>
     );
 };

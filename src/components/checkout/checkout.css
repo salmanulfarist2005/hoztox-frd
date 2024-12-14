@@ -120,6 +120,16 @@
     margin-top: 40px;
 
 }
+
+@media (max-width: 1199px) {
+    .total-weights-cart{
+      
+        width: 100%;
+       
+    
+    }
+}
+
 .bg-gold { background-color:#b0784c !important;}
 
 .total-weights h4 {

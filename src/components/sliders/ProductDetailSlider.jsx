@@ -11,7 +11,7 @@ const ProductDetailSlider = () => {
         slidesToShow: 4,
         slidesToScroll: 1,
         asNavFor: null,
-        infinite: false, // Disable infinite scrolling for row effect
+        infinite: false,
         dots: false,
         focusOnSelect: true,
     });
@@ -30,6 +30,10 @@ const ProductDetailSlider = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [mainImage, setMainImage] = useState(null);  
+    const [zoomImage, setZoomImage] = useState(null);  
+    const [isModalOpen, setIsModalOpen] = useState(false);   
+
     useEffect(() => {
         setImgNavSettings((prevSettings) => ({
             ...prevSettings,
@@ -42,15 +46,16 @@ const ProductDetailSlider = () => {
             try {
                 const response = await axios.get(`${BASE_URL}/products/products/${SKU}/`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                    }
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
                 });
-                setProduct(response.data);  
+                setProduct(response.data);
+                setMainImage(response.data.product_image ? `${BASE_URL}${response.data.product_image}` : null); 
             } catch (error) {
                 console.error('Error fetching product details:', error);
                 setError('Could not fetch product details. Please try again later.');
             } finally {
-                setLoading(false);   
+                setLoading(false);
             }
         };
 
@@ -60,48 +65,57 @@ const ProductDetailSlider = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    const mainImage = product.product_image ? `${BASE_URL}${product.product_image}` : null;
     const additionalImages = product.additional_images || [];
-    const slidesToShow = Math.min(additionalImages.length + 1, 4);
+    const slidesToShow = Math.min(additionalImages.length + 1, 4); // Adjust the number of slides to show
+
+    const openZoomModal = (image) => {
+        setZoomImage(image);  
+        setIsModalOpen(true);   
+    };
+
+    const closeZoomModal = () => {
+        setIsModalOpen(false);  
+        setZoomImage(null);    
+    };
+
+    const handleImageClick = (image) => {
+        setMainImage(image);  
+    };
 
     return (
         <>
+            {/* Main Image Slider */}
             <Slider className="fz-product-details__img-slider br-01" {...imgSliderSettings} ref={mainImageRef}>
                 {mainImage && (
-                    <div>
+                    <div onClick={() => openZoomModal(mainImage)} title="Click to zoom">
                         <img src={mainImage} alt="Product Image" />
                     </div>
                 )}
-                {additionalImages.map((image, index) => (
-                    <div key={index}>
-                        <img src={`${BASE_URL}${image.image}`} alt={`Product Additional Image ${index + 1}`} />
-                    </div>
-                ))}
             </Slider>
 
+            {/* Thumbnail Slider */}
             {additionalImages.length > 0 && (
-    <Slider
-        className="fz-product-details__img-nav"
-        {...{ ...imgNavSettings, slidesToShow }}
-        ref={navImageRef}
-    >
-        {mainImage && (
-            <div onClick={() => mainImageRef.current.slickGoTo(0)}>
-                <img src={mainImage} alt="Thumbnail Image" />
-            </div>
-        )}
-        {additionalImages.map((image, index) => (
-            <div
-                className=""
-                key={index}
-                onClick={() => mainImageRef.current.slickGoTo(index + 1)}
-            >
-                <img src={`${BASE_URL}${image.image}`} alt={`Thumbnail Image ${index + 1}`} />
-            </div>
-        ))}
-    </Slider>
-)}
+                <Slider className="fz-product-details__img-nav" {...{ ...imgNavSettings, slidesToShow }} ref={navImageRef}>
+                    {additionalImages.map((image, index) => (
+                        <div key={index} onClick={() => handleImageClick(`${BASE_URL}${image.image}`)}>
+                            <img src={`${BASE_URL}${image.image}`} alt={`Thumbnail Image ${index + 1}`} />
+                        </div>
+                    ))}
+                </Slider>
+            )}
 
+            {/* Zoom Modal */}
+            {isModalOpen && (
+                <div className="zoom-modal" onClick={closeZoomModal}>
+                    <div className="zoom-modal-content">
+                        <img
+                            src={zoomImage}   
+                            alt="Zoomed Product"
+                            className="zoom-image"
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

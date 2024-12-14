@@ -15,7 +15,7 @@ const ManageImage = () => {
     const fetchMediaImages = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/media/images/`);
-            setMediaImages(response.data); // Correctly set to data array
+            setMediaImages(response.data);
         } catch (error) {
             console.error('Error fetching media images:', error);
         }
@@ -53,20 +53,11 @@ const ManageImage = () => {
                 ? prevSelected.filter(id => id !== imageId)
                 : [...prevSelected, imageId]
         );
-
         setIsAllSelected(filteredImages.length === selectedIds.length + 1);
     };
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     const deleteMultipleCategories = async () => {
@@ -93,7 +84,7 @@ const ManageImage = () => {
         if (window.confirm("Are you sure you want to delete this image?")) {
             try {
                 await axios.delete(`${BASE_URL}/products/media/images/${imageId}/`);
-                fetchMediaImages();;
+                fetchMediaImages();
                 alert("Image deleted successfully!");
             } catch (error) {
                 console.error('Error deleting image:', error);
@@ -102,10 +93,14 @@ const ManageImage = () => {
         }
     };
 
+    const getFileName = (imageUrl) => {
+        return imageUrl.split('/').pop();
+    };
+
     return (
         <React.Fragment>
             <div className="main-content">
-                <div className="page-content ">
+                <div className="page-content">
                     <Container fluid>
                         <Breadcrumbs title="Media Images" breadcrumbItem="Manage Media Images" />
                         <Row>
@@ -116,7 +111,9 @@ const ManageImage = () => {
                                             <Row className="g-4 mb-3">
                                                 <Col className="col-sm-auto">
                                                     <div className="d-flex gap-1">
-                                                        <Button color="soft-danger" onClick={deleteMultipleCategories}><i className="ri-delete-bin-2-line"></i></Button>
+                                                        <Button color="soft-danger" onClick={deleteMultipleCategories}>
+                                                            <i className="ri-delete-bin-2-line"></i>
+                                                        </Button>
                                                     </div>
                                                 </Col>
                                                 <Col className="col-sm">
@@ -157,6 +154,7 @@ const ManageImage = () => {
                                                                 </div>
                                                             </th>
                                                             <th className="sort" data-sort="image_name">Image</th>
+                                                            <th className="sort" data-sort="file_name">File Name</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -181,9 +179,17 @@ const ManageImage = () => {
                                                                     />
                                                                 </td>
                                                                 <td>
+                                                                    {getFileName(image.image)}
+                                                                </td>
+                                                                <td>
                                                                     <div className="d-flex gap-2">
                                                                         <div className="remove">
-                                                                            <button onClick={() => deleteImage(image.id)} className="btn btn-sm btn-danger remove-item-btn">Remove</button>
+                                                                            <button
+                                                                                onClick={() => deleteImage(image.id)}
+                                                                                className="btn btn-sm btn-danger remove-item-btn"
+                                                                            >
+                                                                                Remove
+                                                                            </button>
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -192,17 +198,46 @@ const ManageImage = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <button onClick={handlePreviousPage} disabled={currentPage === 1} className="page-item pagination-prev disabled">
-                                                        Previous
-                                                    </button>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <button onClick={handleNextPage} disabled={currentPage === totalPages} className="page-item pagination-next">
-                                                        Next
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <nav className="pagination-container">
+                                                <ul className="pagination">
+                                                    <li>
+                                                        <button
+                                                            disabled={currentPage === 1}
+                                                            onClick={() => handlePageChange(currentPage - 1)}
+                                                            className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                                                        >
+                                                            <i className="fa fa-angle-double-left"></i> 
+                                                        </button>
+                                                    </li>
+
+                                                    {Array.from({ length: Math.min(5, totalPages - Math.floor((currentPage - 1) / 5) * 5) }, (_, index) => {
+                                                        const page = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
+                                                        return (
+                                                            <li key={page}>
+                                                                <button
+                                                                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                                                                    onClick={() => handlePageChange(page)}
+                                                                >
+                                                                    {page}
+                                                                </button>
+                                                            </li>
+                                                        );
+                                                    })}
+
+                                                    <li>
+                                                        <button
+                                                            disabled={currentPage === totalPages}
+                                                            onClick={() => handlePageChange(currentPage + 1)}
+                                                            className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                                                        >
+                                                            <i className="fa fa-angle-double-right"></i>
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+
+
+
                                         </div>
                                     </CardBody>
                                 </Card>
@@ -210,7 +245,7 @@ const ManageImage = () => {
                         </Row>
                     </Container>
                 </div>
-                </div>
+            </div>
         </React.Fragment>
     );
 };

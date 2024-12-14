@@ -112,8 +112,8 @@ const CheckoutSection = () => {
                                     <li><span className="cart-key">Quantity:</span> <span className="cart-value">{item.quantity}</span></li>
                                     <li><span className="cart-key">Color:</span> <span className="cart-value">{item.color.charAt(0).toUpperCase() + item.color.slice(1)}</span></li>
                                     <li><span className="cart-key">Gross Weight:</span> <span className="cart-value">{item.gross_weight} gm</span></li>
-                                    <li><span className="cart-key">Diamond Weight:</span> <span className="cart-value">{item.diamond_weight} gm</span></li>
-                                    <li><span className="cart-key">Color Stones:</span> <span className="cart-value">{item.colour_stones} gm</span></li>
+                                    <li><span className="cart-key">Diamond Weight:</span> <span className="cart-value">{item.diamond_weight} Ct</span></li>
+                                    <li><span className="cart-key">Color Stones:</span> <span className="cart-value">{item.colour_stones} Ct</span></li>
                                     <li><span className="cart-key">Net Weight:</span> <span className="cart-value">{item.net_weight} gm</span></li>
                                 </ul>
                                 <div className="notes-section">
@@ -136,8 +136,8 @@ const CheckoutSection = () => {
                     <div className="total-weights">
                         <h4>Total Weights</h4>
                         <p>Total Gross Weight: {totals.total_gross_weight || 0} gm</p>
-                        <p>Total Diamond Weight: {totals.total_diamond_weight || 0} gm</p>
-                        <p>Total Color Stones: {totals.total_colour_stones || 0} gm</p>
+                        <p>Total Diamond Weight: {totals.total_diamond_weight || 0} Ct</p>
+                        <p>Total Color Stones: {totals.total_colour_stones || 0} Ct</p>
                         <p>Total Net Weight: {totals.total_net_weight || 0} gm</p>
                         <button onClick={handlePlaceOrder} className="fz-1-banner-btn cart-checkout-btn bg-gold">
                             Place Order

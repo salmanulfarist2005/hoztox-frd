@@ -15,9 +15,9 @@ const HeaderSection4 = () => {
   const [jeweleryCartItemAmount, setJeweleryCartItemAmount] = useState(0);
 
   const { isSidebarOpen, handleSidebarClose } = useContext(FarzaaContext);
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate(); 
 
-  // Function to close the modal and navigate
+
   const closeAndNavigate = (path) => {
     handleSidebarClose();
     navigate(path);
@@ -34,11 +34,11 @@ const HeaderSection4 = () => {
       const response = await axios.get(`${BASE_URL}/products/cart-items/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // console.log("Cart API response:", response.data);   
+  
 
     
       setJeweleryCartItemAmount(response.data.length);  
-      // fetchCartItems();
+    
       setCartItemAmount(cartItemCount);  
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -114,6 +114,10 @@ const HeaderSection4 = () => {
                         <Link to="/my-orders" className="dropdown-item">
                           <i className="fa-light fa-box"></i>
                           <span>My Orders</span>
+                        </Link>
+                        <Link to="/my-delivered-orders" className="dropdown-item">
+                          <i className="fa-light fa-box"></i>
+                          <span>Delivered Orders</span>
                         </Link>
                         <Link to="/profile" className="dropdown-item">
                           <i className="fa-light fa-user"></i>

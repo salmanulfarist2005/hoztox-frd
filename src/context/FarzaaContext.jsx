@@ -486,7 +486,7 @@ const FarzaaContextProvider = ({ children }) => {
       };
       setCartItems((prevCartItems) => [...prevCartItems, newCartItem]);
       setWishlist(updatedWishlist); // Update wishlist after removing the item
-      toast.success("Item added to cart!");
+      alert("Item added to cart!");
     }
   };
 
@@ -770,7 +770,7 @@ const FarzaaContextProvider = ({ children }) => {
   
             updatedAddToCartItems = [...prevAddToCartItems, newItem];
             console.log("New item added. Updated cart items:", updatedAddToCartItems);
-            toast.success("Item added to cart!");
+            alert("Item added to cart!");
           } else {
             updatedAddToCartItems = [...prevAddToCartItems];
             updatedAddToCartItems[existingItemIndex].quantity += quantity;
@@ -778,7 +778,7 @@ const FarzaaContextProvider = ({ children }) => {
               updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price;
   
             console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
-            toast.success("Item quantity updated in cart!");
+            alert("Item quantity updated in cart!");
           }
   
           return updatedAddToCartItems;

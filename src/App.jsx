@@ -14,6 +14,7 @@ import Checkout from "./pages/Checkout";
 import Contact from "./pages/Contact";
 import Error from "./pages/Error";
 import UserProfile from "./pages/UserProfilepage/profile";
+import DeliverOrderprofile from "./pages/DeleverOrderPage"
 
 
 
@@ -79,6 +80,8 @@ function App() {
      
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/my-orders" element={<Orderprofile />} />
+        <Route path="/my-delivered-orders" element={<DeliverOrderprofile />} />
+        
         <Route path="/custom-full" element={< CustomeFullPage />} />
 
         {/* .............................................................................................................. */}

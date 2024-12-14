@@ -65,7 +65,7 @@ const CartSection = () => {
                         <div className="cart__body">
                             <div className="table-responsive">
                                 <CartItemTable 
-                                    cartArray={cartData} // Pass fetched cart data
+                                    cartArray={cartData} 
                                     remove={handleRemoveItem} 
                                     quantity={handleQuantityChange} 
                                     additionalNotes={additionalNotes} 

@@ -62,7 +62,7 @@ const BestSellerTabContent = () => {
 
     return (
         <div className="row gy-4 gx-3 justify-content-center">
-            {products.slice(0, 12).map((product) => (
+           {products.slice(-24).map((product) => (
                 <div className="col-xl-3 col-md-4 col-6 col-xxs-6 m-p-1" key={product.id}>
                     <div className="fz-2-single-product">
                         <div className="fz-2-single-product-img">

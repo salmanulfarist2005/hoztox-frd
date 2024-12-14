@@ -6,7 +6,7 @@ import { BASE_URL } from '../helpers/config';
 const SignInFormSection = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);  
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const SignInFormSection = () => {
     };
 
     const togglePasswordVisibility = () => {
-        setIsPasswordVisible(!isPasswordVisible);  
+        setIsPasswordVisible(!isPasswordVisible);
     };
 
     return (
@@ -62,7 +62,7 @@ const SignInFormSection = () => {
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <label className="form-label" htmlFor="username">
+                <label className="form-label" htmlFor="password">
                     Password
                 </label>
                 <div className="password-container">
@@ -85,12 +85,28 @@ const SignInFormSection = () => {
                         )}
                     </span>
                 </div>
-                <p>For queries Call
-
-                    +919072333816</p>
-                <button type="submit" className="fz-1-banner-btn single-form-btn">
-                    Log in
-                </button>
+               
+                    <button type="submit" className="fz-1-banner-btn single-form-btn">
+                        Log in
+                    </button>
+                    <div className='query-info'>
+                    <p className='query1'>For queries Call </p>
+                    <p className='query2'> +919072333816</p>
+                    </div>
+            
+                <div className="register-link-container">
+                    <p>
+                        Don't have an account?
+                        <a
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSeIhaBbqpUSQ1hcY54rVfRsM80WK4ZitMnUoAtDVqeGYW840Q/viewform"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="register-link"
+                        >
+                            Register here
+                        </a>
+                    </p>
+                </div>
 
             </form>
         </div>

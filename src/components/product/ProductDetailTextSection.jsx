@@ -46,8 +46,8 @@ const ProductDetailTextSection = () => {
                     <li><span className="info-property"> SKU </span>: <span className="info-value">{product.SKU}</span></li>                
                     <li><span className="info-property"> Product Color </span>: <span className="info-value">{product.color}</span></li>
                     <li><span className="info-property"> Gross Weight </span>: <span className="info-value">{product.gross_weight} gm</span></li>
-                    <li><span className="info-property"> Diamond </span>: <span className="info-value">{product.diamond_weight} gm</span></li>
-                    <li><span className="info-property"> Color Stone </span>: <span className="info-value">{product.colour_stones} gm</span></li>
+                    <li><span className="info-property"> Diamond </span>: <span className="info-value">{product.diamond_weight} Ct</span></li>
+                    <li><span className="info-property"> Color Stone </span>: <span className="info-value">{product.colour_stones} Ct</span></li>
                     <li><span className="info-property"> Net Weight </span>: <span className="info-value">{product.net_weight} gm</span></li>
                 </ul>
             </div>
