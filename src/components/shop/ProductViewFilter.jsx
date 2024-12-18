@@ -72,10 +72,17 @@ const ProductViewFilter = () => {
 
    
     const filteredProducts = products.filter(product => {
+ 
         const matchesCategory = activeCategory ? product.category_name === activeCategory : true;
-        const matchesSearch = product.product_name.toLowerCase().includes(searchTerm.toLowerCase());
+ 
+        const matchesSearch = 
+            product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            product.SKU.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            product.category_name.toLowerCase().includes(searchTerm.toLowerCase());
+ 
         return matchesCategory && matchesSearch;
     });
+    
 
    
     const totalProducts = filteredProducts.length;

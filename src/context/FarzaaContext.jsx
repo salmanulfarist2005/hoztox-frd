@@ -211,18 +211,25 @@ const FarzaaContextProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
 
+  const performSearch = (term) => {
+    const filtered = allProductList.filter((product) => {
+      // Convert category name to lowercase for comparison
+      const categoryName = product.category?.name?.toLowerCase() || '';
+      return (
+        product.SKU.toLowerCase().includes(term.toLowerCase()) || // Match SKU
+        product.product_name.toLowerCase().includes(term.toLowerCase()) || // Match product name
+        categoryName.includes(term.toLowerCase()) // Match category name
+      );
+    });
+    setFilteredProducts(filtered);
+  };
+  
   const handleSearchChange = (event) => {
     const value = event.target.value;
     setSearchTerm(value);
     performSearch(value);
   };
-
-  const performSearch = (term) => {
-    const filtered = allProductList.filter((product) =>
-      product.name.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  };
+  
 
   useEffect(() => {
     if (searchTerm) {

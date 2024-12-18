@@ -259,10 +259,10 @@ const CustomViewOrder = () => {
                                                                     <td>{order.product?.product_name || "N/A"}</td>
                                                                     <td>{order.product?.category_name}</td>
                                                                     <td>{order.quantity}</td>
-                                                                   
+
                                                                     <td className="bgbutton">{order.new_status}</td>
 
-                                                                    
+
                                                                     <td>
                                                                         <div className="d-flex gap-2">
                                                                             <div className="edit">
@@ -318,7 +318,7 @@ const CustomViewOrder = () => {
                 isOpen={modal_list}
                 toggle={tog_list}
                 centered
-                style={{ maxWidth: '900px', width: '90%' }}
+                style={{ maxWidth: '1100px', width: '90%' }}
             >
                 <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
                     View Product
@@ -388,22 +388,17 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.color?.color}
+                                        value={
+                                            selectedItem.order?.color?.color
+                                                ? selectedItem.order.color.color.charAt(0).toUpperCase() + selectedItem.order.color.color.slice(1)
+                                                : ''
+                                        }
                                         readOnly
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Size</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.product?.product_size}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -415,28 +410,8 @@ const CustomViewOrder = () => {
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Additional Notes</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.order?.additional_notes}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Description</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.order?.product?.description}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+                      
+                     
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Shop Name</label>
                                 <div className="col-md-10">
@@ -488,6 +463,17 @@ const CustomViewOrder = () => {
                                         className="form-control"
                                         type="text"
                                         value={selectedItem.order?.user?.company_email}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Additional Notes</label>
+                                <div className="col-md-10">
+                                    <textarea
+                                        className="form-control"
+                                        rows="4"
+                                        value={selectedItem.order?.additional_notes}
                                         readOnly
                                     />
                                 </div>

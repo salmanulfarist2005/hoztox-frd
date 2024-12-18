@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Col, Container,Input, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -8,7 +9,8 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import { useParams } from 'react-router-dom';
+ 
 const ViewOrder = () => {
     const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
@@ -16,41 +18,31 @@ const ViewOrder = () => {
     const [modal_delete, setModalDelete] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
-    const [orderId, setOrderId] = useState('');
-
-
+    const [editedOrderCode, setEditedOrderCode] = useState('');
+    const [editedQuantity, setEditedQuantity] = useState('');
+    const { orderId } = useParams();
 
     const fetchOrders = async () => {
+        if (!orderId) {
+            console.error("Order ID is not provided.");
+            return;
+        }
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
+            const response = await axios.get(`${BASE_URL}/products/orders/${orderId}/`);
             const data = response.data;
             setOrders(data || []);
-            console.log("response orderssssssss", response.data)
+            console.log("response orderssssssss", response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
     };
+
     useEffect(() => {
         fetchOrders();
 
     }, []);
 
 
-    const handleGenerateOrderId = async () => {
-
-        try {
-            await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
-                ordercode: orderId,
-            });
-            setModalList1(false);
-            setOrderId('');
-            fetchOrders()
-
-        } catch (error) {
-            console.error("Error saving Order ID:", error);
-            alert("There was an error saving the Order ID. Please try again.");
-        }
-    };
 
 
 
@@ -61,16 +53,78 @@ const ViewOrder = () => {
     };
 
     const tog_list1 = (order) => {
-        console.log("Selected Item for Order ID:", order);
         setSelectedItem(order);
-        setOrderId(order.ordercode || '');
+        setEditedOrderCode(order.order.ordercode);
+        setEditedQuantity(order.item.quantity);
         setModalList1(!modal_list1);
+        setModalList(false);
     };
 
 
     const tog_delete = () => {
         setModalDelete(!modal_delete);
     };
+
+    const downloadFullOrderCSV = () => {
+        if (!orderId) {
+            console.error("No orderId provided.");
+            return;
+        }
+
+
+        console.log("Looking for order with orderId:", orderId);
+        console.log("Fetched orders:", orders);
+
+
+        const order = orders.find(order => String(order.id) === String(orderId));
+
+
+        if (!order) {
+            console.error(`Order with orderId ${orderId} not found`);
+            return;
+        }
+
+
+        if (!order.order_items || order.order_items.length === 0) {
+            console.error("No order_items available for this order");
+            return;
+        }
+
+        // Prepare order data for CSV
+        const orderData = order.order_items.map(item => ({
+            OrderId: order.ordercode,
+            ShopName: order.user?.company_name,
+            SKU: item.product?.SKU,
+            ProductNames: item.product?.product_name,
+            ProductCategories: item.product?.category_name,
+            Quantities: item.quantity,
+            ProductColors: item.product?.color,
+            ProductSizes: item.product?.product_size,
+            AdditionalNotes: item.additional_notes,
+            ShippingAddress: order.user?.shipping_address,
+            MobileNumber: order.user?.mobile_number,
+            WhatsAppNumber: order.user?.whatsapp_number,
+            Email: order.user?.company_email,
+        }));
+
+        console.log("Order Data for CSV:", orderData);
+
+        try {
+            const csv = Papa.unparse(orderData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', `order_${order.ordercode}_details.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error while serializing order data to CSV:", error);
+        }
+    };
+
+
+
 
     const downloadCSV = () => {
         if (!selectedItem) return;
@@ -164,7 +218,7 @@ const ViewOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
-        console.log("Search Query:", searchQuery);
+        console.log("Orders:", orders);
         if (searchQuery) {
             const lowercasedQuery = searchQuery.toLowerCase();
             const results = orders.filter(order =>
@@ -181,8 +235,54 @@ const ViewOrder = () => {
         console.log("Filtered Orders after search:", filteredOrders);
     }, [searchQuery, orders]);
 
- 
+    const handleSaveChanges = async () => {
+        try {
+            if (!selectedItem || !selectedItem.item) {
+                throw new Error("Selected item is not valid.");
+            }
     
+            const updatedOrder = {
+                ordercode: editedOrderCode,
+                order_items: [
+                    {
+                        id: selectedItem.item.id,
+                        product: {
+                            id: selectedItem.item.product.id
+                        },
+                        quantity: editedQuantity
+                    }
+                ]
+            };
+    
+            console.log("updatedOrder", updatedOrder);
+    
+            // Send the update request
+            await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder);
+    
+            // Update the orders list locally in the state
+            fetchOrders();
+            setModalList1(false);   
+            alert("Order updated successfully!");
+        } catch (error) {
+            console.error("Error updating order:", error.response ? error.response.data : error.message);
+            alert("Error updating order. Please try again.");
+        }
+    };
+    
+    const handleDeleteOrder = async (orderId) => {
+
+        const confirmed = window.confirm("Are you sure you want to delete this order?");
+        if (confirmed) {
+            try {
+                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`);
+                fetchOrders();
+                alert("Order deleted successfully!");
+            } catch (error) {
+                console.error("Error deleting order:", error.response ? error.response.data : error.message);
+                alert("Failed to delete order.");
+            }
+        }
+    };
 
     return (
         <React.Fragment>
@@ -219,19 +319,21 @@ const ViewOrder = () => {
                                                     </div>
                                                 </Col>
                                             </Row>
-
+                                            <Button color="primary" onClick={downloadFullOrderCSV} className="me-2">
+                                                Download CSV
+                                            </Button>
                                             <div className="table-responsive table-card mt-3 mb-1">
                                                 <table className="table align-middle table-nowrap" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
-                                                            <th className="sort" data-sort="sku">OrderId</th>
-                                                            <th className="sort" data-sort="sku">Shop Name</th>
+
+
                                                             <th className="sort" data-sort="sku">SKU</th>
                                                             <th className="sort" data-sort="product_name">Product Name</th>
                                                             <th className="sort" data-sort="product_category">Product Category</th>
 
                                                             <th className="sort" data-sort="quantity">Quantity</th>
-                                                            <th className="sort" data-sort="action">Status</th>
+
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
@@ -240,30 +342,39 @@ const ViewOrder = () => {
                                                             filteredOrders.map((order) =>
                                                                 order.order_items.map((item) => (
                                                                     <tr key={`${order.id}-${item.id}`}>
-                                                                        <td className="OrderId">{order.ordercode}</td>
-                                                                        <td className="OrderId">{order.user?.company_name}</td>
+
+
                                                                         <td className="sku">{item.product?.SKU}</td>
                                                                         <td className="product_name">{item.product?.product_name}</td>
                                                                         <td className="product_category">{item.product?.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
-                                                                        <td className="quantity">{order.status}</td>
+
 
                                                                         <td>
                                                                             <div className="d-flex gap-2">
-                                                                                <div className="edit">
-                                                                                    <button
-                                                                                        className="btn btn-sm btn-success edit-item-btn"
-                                                                                        onClick={() => tog_list1(order)}
-                                                                                    >
-                                                                                        Generate OrderId
-                                                                                    </button>
-                                                                                </div>
+
                                                                                 <div className="edit">
                                                                                     <button
                                                                                         className="btn btn-sm btn-success edit-item-btn"
                                                                                         onClick={() => tog_list({ order, item })}
                                                                                     >
-                                                                                        View Order
+                                                                                        View  
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="d-flex gap-2">
+                                                                                    <button
+                                                                                        className="btn btn-sm btn-success"
+                                                                                        onClick={() => tog_list1({ order, item })}
+                                                                                    >
+                                                                                        Edit
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div className="edit">
+                                                                                    <button
+                                                                                        className="btn btn-sm btn-danger edit-item-btn"
+                                                                                        onClick={() => handleDeleteOrder(order.id)}
+                                                                                    >
+                                                                                        Delete
                                                                                     </button>
                                                                                 </div>
                                                                             </div>
@@ -299,11 +410,14 @@ const ViewOrder = () => {
                     </Container>
                 </div>
             </div>
+
+
+
             <Modal
                 isOpen={modal_list}
                 toggle={tog_list}
                 centered
-                style={{ maxWidth: '900px', width: '90%' }}
+                style={{ maxWidth: '1100px', width: '90%' }}
             >
                 <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
                     View Product
@@ -372,22 +486,17 @@ const ViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.item?.product?.color}
+                                        value={
+                                            selectedItem.item?.color
+                                                ? selectedItem.item.color.charAt(0).toUpperCase() + selectedItem.item.color.slice(1)
+                                                : ''
+                                        }
                                         readOnly
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Size</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.item?.product?.product_size}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -399,28 +508,8 @@ const ViewOrder = () => {
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Additional Notes</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.item?.additional_notes}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Description</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.item?.product?.description}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Shop Name</label>
                                 <div className="col-md-10">
@@ -433,7 +522,7 @@ const ViewOrder = () => {
                                 </div>
                             </Row>
                             <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Shipping Address</label>
+                                <label className="col-md-2 col-form-label">Address</label>
                                 <div className="col-md-10">
                                     <input
                                         className="form-control"
@@ -476,6 +565,17 @@ const ViewOrder = () => {
                                     />
                                 </div>
                             </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Additional Notes</label>
+                                <div className="col-md-10">
+                                    <textarea
+                                        className="form-control"
+                                        rows="4"
+                                        value={selectedItem.item?.additional_notes}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
                             <Row className="mt-3">
                                 <Col className="text-end">
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
@@ -492,41 +592,36 @@ const ViewOrder = () => {
 
 
 
-                <ModalFooter>
+                {/* <ModalFooter>
                     <Button color="secondary" onClick={tog_list}>Close</Button>
-                </ModalFooter>
+                </ModalFooter> */}
             </Modal>
-
-            <Modal
-                isOpen={modal_list1}
-                toggle={tog_list1}
-                centered
-                style={{ maxWidth: '600px', width: '90%' }}
-            >
-                <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list1}>
-                    Generate Order ID
+            <Modal isOpen={modal_list1} toggle={() => setModalList1(!modal_list1)} centered style={{ maxWidth: '900px', width: '90%' }}>
+                <ModalHeader className="bg-light p-3" toggle={() => setModalList1(!modal_list1)}>
+                    Edit Order
                 </ModalHeader>
                 <ModalBody style={{ padding: '20px' }}>
-                    <Row>
-                        <label htmlFor="orderId" className="col-md-4 col-form-label">Enter Order ID:</label>
-                        <div className="col-md-8">
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="orderId"
-                                value={orderId}
-                                onChange={(e) => setOrderId(e.target.value)}
-                            />
-                        </div>
-                    </Row>
+                    {selectedItem ? (
+                        <>
+                          
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Quantity</label>
+                                <div className="col-md-10">
+                                    <Input
+                                        type="number"
+                                        value={editedQuantity}
+                                        onChange={(e) => setEditedQuantity(e.target.value)}
+                                    />
+                                </div>
+                            </Row>
+                        </>
+                    ) : null}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={handleGenerateOrderId}>Save</Button>
-                    <Button color="secondary" onClick={tog_list1}>Cancel</Button>
+                    <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
+                    <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
                 </ModalFooter>
             </Modal>
-
-
 
         </React.Fragment>
     );

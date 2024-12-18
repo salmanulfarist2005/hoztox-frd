@@ -313,7 +313,7 @@ const FullCustomViewOrder = () => {
                     isOpen={modal_list}
                     toggle={tog_list}
                     centered
-                    style={{ maxWidth: '900px', width: '90%' }}
+                    style={{ maxWidth: '1100px', width: '90%' }}
                 >
                     <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
                         View Product
@@ -415,17 +415,7 @@ const FullCustomViewOrder = () => {
                                     </div>
                                 </Row>
 
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Description</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.order?.description}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                          
                                 <Row className="mb-3">
                                     <label className="col-md-2 col-form-label">Shop Name</label>
                                     <div className="col-md-10">
@@ -477,6 +467,17 @@ const FullCustomViewOrder = () => {
                                             className="form-control"
                                             type="text"
                                             value={selectedItem.order?.user?.company_email}
+                                            readOnly
+                                        />
+                                    </div>
+                                </Row>
+                                <Row className="mb-3">
+                                    <label className="col-md-2 col-form-label">Additional Notes</label>
+                                    <div className="col-md-10">
+                                        <textarea
+                                            className="form-control"
+                                            rows="4"
+                                            value={selectedItem.order?.description}
                                             readOnly
                                         />
                                     </div>

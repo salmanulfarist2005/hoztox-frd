@@ -850,3 +850,20 @@ img {
 .pagination-btn i {
     margin: 0 5px;
 }
+.product-categories li {
+    padding: 4px;
+    color: #000;
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.product-categories li:hover {
+    background-color: #f1f1f1;
+}
+
+.product-categories li.active {
+    color: #b0784c;
+   
+    font-weight: bold;
+    border-radius: 4px;
+}

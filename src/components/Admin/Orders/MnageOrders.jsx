@@ -416,7 +416,7 @@ const ManageOrder = () => {
                     </ModalFooter>
                 </Modal>
 
-                <Modal isOpen={modal_list} toggle={() => setModalList(!modal_list)} centered style={{ maxWidth: '900px', width: '90%' }}>
+                <Modal isOpen={modal_list} toggle={() => setModalList(!modal_list)} centered style={{ maxWidth: '1100px', width: '90%' }}>
                     <ModalHeader className="bg-light p-3" toggle={() => setModalList(!modal_list)}></ModalHeader>
                     <ModalBody style={{ padding: '20px' }}>
                         {console.log("Selected Item:", selectedItem)}
@@ -477,27 +477,21 @@ const ManageOrder = () => {
                                     </div>
                                 </Row>
                                 <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Colour</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.item?.product?.color}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Size</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.item?.product?.product_size}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                                <label className="col-md-2 col-form-label">Product Colour</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={
+                                            selectedItem.item?.color
+                                                ? selectedItem.item.color.charAt(0).toUpperCase() + selectedItem.item.color.slice(1)
+                                                : ''  
+                                        }
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                          
                                 <Row className="mb-3">
                                     <label className="col-md-2 col-form-label">Quantity</label>
                                     <div className="col-md-10">
@@ -509,28 +503,8 @@ const ManageOrder = () => {
                                         />
                                     </div>
                                 </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Additional Notes</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.item?.additional_notes}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Description</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.item?.product?.description}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                        
+                       
                                 <Row className="mb-3">
                                     <label className="col-md-2 col-form-label">Shop Name</label>
                                     <div className="col-md-10">
@@ -586,6 +560,17 @@ const ManageOrder = () => {
                                         />
                                     </div>
                                 </Row>
+                                <Row className="mb-3">
+                                    <label className="col-md-2 col-form-label">Additional Notes</label>
+                                    <div className="col-md-10">
+                                        <textarea
+                                            className="form-control"
+                                            rows="4"
+                                            value={selectedItem.item?.additional_notes}
+                                            readOnly
+                                        />
+                                    </div>
+                                </Row>
                                 <Row className="mt-3">
                                     <Col className="text-end">
                                         <Button color="primary" onClick={downloadCSV} className="me-2">
@@ -601,10 +586,7 @@ const ManageOrder = () => {
                     </ModalBody>
 
 
-
-                    <ModalFooter>
-                        <Button color="secondary" onClick={tog_list}>Close</Button>
-                    </ModalFooter>
+ 
                 </Modal>
 
         </React.Fragment>

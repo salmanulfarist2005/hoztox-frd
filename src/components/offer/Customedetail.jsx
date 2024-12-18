@@ -27,25 +27,28 @@ function CustomeDetail() {
 
     const imgSliderSettings = {
         dots: true,
-        infinite: true,
+        infinite: false,
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
+        arrows: true,
     };
-
+    
     const imgNavSettings = {
         dots: false,
-        infinite: true,
+        infinite: false,
         speed: 500,
         slidesToShow: 3,
         slidesToScroll: 1,
         focusOnSelect: true,
+        arrows: true,
     };
+    
 
     const mainImageRef = useRef(null);
     const navImageRef = useRef(null);
 
-    // Fetch product details using SKU for display
+ 
     const fetchProductDetails = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/customized-products/${SKU}/`);
@@ -78,7 +81,7 @@ function CustomeDetail() {
         }
     };
 
-    // Handle form data changes
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -87,7 +90,7 @@ function CustomeDetail() {
         }));
     };
     const [showConfirmation, setShowConfirmation] = useState(false);
-    // Handle form submission to place an order
+ 
     const handleSubmit = async (e) => {
         setOrderProcessing(true); 
         e.preventDefault();

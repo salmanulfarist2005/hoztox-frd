@@ -466,7 +466,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                 isOpen={modal_list}
                 toggle={tog_list}
                 centered
-                style={{ maxWidth: '900px', width: '90%' }}
+                style={{ maxWidth: '1100px', width: '90%' }}
             >
                 <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
                     View Product
@@ -531,27 +531,22 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                 </div>
                             </Row>
                             <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Colour</label>
+                                <label className="col-md-2 col-form-label">Product Color</label>
                                 <div className="col-md-10">
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.color}
+                                        value={
+                                            selectedItem.order?.color?.color
+                                                ? selectedItem.order.color.color.charAt(0).toUpperCase() + selectedItem.order.color.color.slice(1)
+                                                : ''
+                                        }
                                         readOnly
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Size</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.product?.product_size}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+
+                        
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">

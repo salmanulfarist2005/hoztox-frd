@@ -53,11 +53,12 @@ const SidebarData = [
 
     {
         label: "Orders",
-        icon: "mdi mdi-package-variant-closed", // Package icon for orders
+        icon: "mdi mdi-package-variant-closed",  
         subItem: [
-            { sublabel: "View Orders", link: "/view-order" },
-            { sublabel: "Manage Orders", link: "/manage-order" },
+            // { sublabel: "View Orders", link: "/view-order/:orderId" },
+            // { sublabel: "Manage Orders", link: "/manage-order" },
             { sublabel: "Delivered Orders", link: "/completed-order" },
+            { sublabel: "Manage Orders ", link: "/out-order" },
             
         ],
     },
