@@ -547,7 +547,17 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                 </div>
                             </Row>
 
-                        
+                            <Row className="mb-3">
+                                    <label className="col-md-2 col-form-label">Product Size</label>
+                                    <div className="col-md-10">
+                                        <input
+                                            className="form-control"
+                                            type="text"
+                                            value={selectedItem.order?.size}
+                                            readOnly
+                                        />
+                                    </div>
+                                </Row>
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -559,17 +569,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Additional Notes</label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        rows="4"
-                                        value={selectedItem.order?.additional_notes}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+                          
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Description</label>
                                 <div className="col-md-10">
@@ -632,6 +632,17 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                         className="form-control"
                                         type="text"
                                         value={selectedItem.order?.user?.company_email}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Additional Notes</label>
+                                <div className="col-md-10">
+                                    <textarea
+                                        className="form-control"
+                                        rows="4"
+                                        value={selectedItem.order?.additional_notes}
                                         readOnly
                                     />
                                 </div>

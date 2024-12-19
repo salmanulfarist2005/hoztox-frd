@@ -99,7 +99,7 @@ const ViewOrder = () => {
             ProductCategories: item.product?.category_name,
             Quantities: item.quantity,
             ProductColors: item.product?.color,
-            ProductSizes: item.product?.product_size,
+         
             AdditionalNotes: item.additional_notes,
             ShippingAddress: order.user?.shipping_address,
             MobileNumber: order.user?.mobile_number,
@@ -137,7 +137,7 @@ const ViewOrder = () => {
             ProductCategory: selectedItem.item?.product?.category_name,
             Quantity: selectedItem.item?.quantity,
             ProductColor: selectedItem.item?.product?.color,
-            ProductSize: selectedItem.item?.product?.product_size,
+            
             AdditionalNotes: selectedItem.item?.additional_notes,
             ShippingAddress: selectedItem.order?.user?.shipping_address,
             MobileNumber: selectedItem.order?.user?.mobile_number,
@@ -179,7 +179,7 @@ const ViewOrder = () => {
             ["Product Category", selectedItem.item?.product?.category_name || "N/A"],
             ["Quantity", selectedItem.item?.quantity || "N/A"],
             ["Product Color", selectedItem.item?.product?.color || "N/A"],
-            ["Product Size", selectedItem.item?.product?.product_size || "N/A"],
+     
             ["Additional Notes", selectedItem.item?.additional_notes || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],

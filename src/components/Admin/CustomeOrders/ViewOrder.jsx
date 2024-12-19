@@ -145,7 +145,7 @@ const CustomViewOrder = () => {
             ["Product Category", selectedItem.order?.product?.category_name || "N/A"],
             ["Quantity", selectedItem.order?.quantity || "N/A"],
             ["Product Color", selectedItem.order?.product?.color || "N/A"],
-            ["Product Size", selectedItem.order?.product?.product_size || "N/A"],
+            
             ["Additional Notes", selectedItem.order?.additional_notes || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
@@ -398,7 +398,17 @@ const CustomViewOrder = () => {
                                 </div>
                             </Row>
 
-
+                            <Row className="mb-3">
+                                    <label className="col-md-2 col-form-label">Product Size</label>
+                                    <div className="col-md-10">
+                                        <input
+                                            className="form-control"
+                                            type="text"
+                                            value={selectedItem.order?.size}
+                                            readOnly
+                                        />
+                                    </div>
+                                </Row>
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">

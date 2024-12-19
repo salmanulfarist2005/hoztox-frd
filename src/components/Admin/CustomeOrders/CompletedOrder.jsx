@@ -408,7 +408,7 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                                                                                     className="btn btn-sm btn-success edit-item-btn"
                                                                                     onClick={() => tog_list({ order })}
                                                                                 >
-                                                                                    View 
+                                                                                    View
                                                                                 </button>
                                                                             </div>
                                                                             <div className="edit">

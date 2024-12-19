@@ -154,8 +154,8 @@ const Outview = () => {
             ProductName: item.product?.product_name || "N/A",
             ProductCategory: item.product?.category_name || "N/A",
             Quantity: item.quantity || "N/A",
-            ProductColor: item.product?.color || "N/A",
-            ProductSize: item.product?.product_size || "N/A",
+            ProductColor: item.color || "N/A",
+           
             AdditionalNotes: item.additional_notes || "N/A",
             ShippingAddress: order.user?.shipping_address || "N/A",
             MobileNumber: order.user?.mobile_number || "N/A",

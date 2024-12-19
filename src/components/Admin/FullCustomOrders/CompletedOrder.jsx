@@ -125,7 +125,7 @@ const CompletedOrder = (order) => {
             ["Product Category", selectedItem.order?.category?.category_name || "N/A"],
             ["Quantity", selectedItem.order?.quantity || "N/A"],
             ["Product Color", selectedItem.order?.color?.color || "N/A"],
-            ["Product Size", selectedItem.order?.size || "N/A"],
+           
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
             ["WhatsApp Number", selectedItem.order?.user?.whatsapp_number || "N/A"],
@@ -532,17 +532,7 @@ const CompletedOrder = (order) => {
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Size</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={selectedItem.order?.size}
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+                            
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Gram</label>
                                 <div className="col-md-10">
