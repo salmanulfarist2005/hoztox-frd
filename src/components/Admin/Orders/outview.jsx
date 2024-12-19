@@ -72,95 +72,11 @@ const Outview = () => {
         setModalDelete(!modal_delete);
     };
 
-    const downloadCSV = () => {
-        if (!selectedItem) return;
-
-        const orderData = {
-            OrderId: selectedItem.order?.ordercode,
-            ShopName: selectedItem.order?.user?.company_name,
-            SKU: selectedItem.item?.product?.SKU,
-            ProductName: selectedItem.item?.product?.product_name,
-            ProductCategory: selectedItem.item?.product?.category_name,
-            Quantity: selectedItem.item?.quantity,
-            ProductColor: selectedItem.item?.product?.color,
-            ProductSize: selectedItem.item?.product?.product_size,
-            AdditionalNotes: selectedItem.item?.additional_notes,
-            ShippingAddress: selectedItem.order?.user?.shipping_address,
-            MobileNumber: selectedItem.order?.user?.mobile_number,
-            WhatsAppNumber: selectedItem.order?.user?.whatsapp_number,
-            Email: selectedItem.order?.user?.company_email,
-        };
-
-
-        const csv = Papa.unparse([orderData]);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', 'order_details.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
 
 
 
-    const downloadPDF = () => {
-        if (!selectedItem) return;
-
-        const doc = new jsPDF();
-        doc.setFontSize(12);
 
 
-        const header = [
-            "Field",
-            "Value"
-        ];
-
-
-        const rows = [
-            ["Order ID", selectedItem.order?.ordercode || "N/A"],
-            ["Shop Name", selectedItem.order?.user?.company_name || "N/A"],
-            ["SKU", selectedItem.item?.product?.SKU || "N/A"],
-            ["Product Name", selectedItem.item?.product?.product_name || "N/A"],
-            ["Product Category", selectedItem.item?.product?.category_name || "N/A"],
-            ["Quantity", selectedItem.item?.quantity || "N/A"],
-            ["Product Color", selectedItem.item?.product?.color || "N/A"],
-            ["Product Size", selectedItem.item?.product?.product_size || "N/A"],
-            ["Additional Notes", selectedItem.item?.additional_notes || "N/A"],
-            ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
-            ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
-            ["WhatsApp Number", selectedItem.order?.user?.whatsapp_number || "N/A"],
-            ["Email", selectedItem.order?.user?.company_email || "N/A"]
-        ];
-
-
-        doc.setFontSize(16);
-        doc.text('Order Details', 14, 20);
-        doc.setFontSize(12);
-        doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30);
-
-
-        doc.text(' ', 14, 40);
-
-
-        doc.autoTable({
-            head: [header],
-            body: rows,
-            startY: 50,
-            theme: 'striped',
-            headStyles: { fillColor: [22, 160, 133] },
-            styles: {
-                cellPadding: 4,
-                minCellHeight: 10,
-                overflow: 'linebreak',
-                halign: 'left',
-                valign: 'middle',
-            },
-        });
-
-
-        doc.save('order_details.pdf');
-    };
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
@@ -200,14 +116,14 @@ const Outview = () => {
             const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
                 status: newStatus
             });
-    
-           
+
+
             setOrders((prevOrders) =>
                 prevOrders.map((order) =>
                     order.id === orderid ? { ...order, status: newStatus } : order
                 )
             );
-    
+
             alert("Status Updated Successfully");
             console.log("status.....", response.data);
             fetchOrders();
@@ -216,6 +132,52 @@ const Outview = () => {
             alert("There was an error updating the status. Please try again.");
         }
     };
+    const downloadFullOrderCSV = (orderid) => {
+        console.log("Order ID passed to function:", orderid);
+
+        const order = orders.find(order => String(orderid) === String(order.id));
+
+        if (!order) {
+            console.error(`Order with ID ${orderid} not found.`);
+            return;
+        }
+
+        if (!order.order_items || order.order_items.length === 0) {
+            console.error("No order items available for this order.");
+            return;
+        }
+
+        const orderData = order.order_items.map(item => ({
+            OrderId: order.ordercode || "N/A",
+            ShopName: order.user?.company_name || "N/A",
+            SKU: item.product?.SKU || "N/A",
+            ProductName: item.product?.product_name || "N/A",
+            ProductCategory: item.product?.category_name || "N/A",
+            Quantity: item.quantity || "N/A",
+            ProductColor: item.product?.color || "N/A",
+            ProductSize: item.product?.product_size || "N/A",
+            AdditionalNotes: item.additional_notes || "N/A",
+            ShippingAddress: order.user?.shipping_address || "N/A",
+            MobileNumber: order.user?.mobile_number || "N/A",
+            WhatsAppNumber: order.user?.whatsapp_number || "N/A",
+            Email: order.user?.company_email || "N/A",
+        }));
+
+        try {
+            const csv = Papa.unparse(orderData);
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', `order_${order.ordercode || 'details'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error generating CSV:", error);
+        }
+    };
+
+
 
     return (
         <React.Fragment>
@@ -254,8 +216,8 @@ const Outview = () => {
                                             </Row>
 
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
-                                                    <thead className="table-light">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
+                                                    <thead className="table-light manage-product">
                                                         <tr>
                                                             <th className="sort" data-sort="sku">OrderId</th>
                                                             <th className="sort" data-sort="sku">Shop Name</th>
@@ -265,7 +227,7 @@ const Outview = () => {
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
                                                         {filteredOrders.length > 0 ? (
                                                             filteredOrders.map((order) => (
                                                                 <tr key={order.id}>
@@ -283,7 +245,7 @@ const Outview = () => {
                                                                         )}
                                                                     </td>
                                                                     <td>
-                                                                        <div className="d-flex gap-2">
+                                                                        <div className="d-flex gap-2 min-500">
                                                                             <div className="edit">
                                                                                 <button
                                                                                     className="btn btn-sm btn-success edit-item-btn"
@@ -297,9 +259,17 @@ const Outview = () => {
                                                                                     to={`/view-order/${order.id}`}
                                                                                     className="btn btn-sm btn-success edit-item-btn"
                                                                                 >
-                                                                                    View Order
+                                                                                    View
                                                                                 </Link>
                                                                             </div>
+                                                                            <Button
+                                                                                color="primary"
+                                                                                onClick={() => downloadFullOrderCSV(order.id)}
+                                                                                className="me-2 fontbutton"
+                                                                            >
+                                                                                Download CSV
+                                                                            </Button>
+
                                                                             <div className="edit">
                                                                                 <button
                                                                                     className="btn btn-sm btn-danger edit-item-btn"

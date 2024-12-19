@@ -363,10 +363,10 @@ const ManageUser = () => {
                                         </Row>
 
                                         <div className="table-responsive table-card mt-3 mb-1">
-                                            <table className="table align-middle table-nowrap" id="customerTable">
-                                                <thead className="table-light">
+                                            <table className="table align-middle table-nowrap min-500" id="customerTable">
+                                                <thead className="table-light ">
                                                     <tr>
-                                                    <th scope="col" style={{ width: "50px" }}>
+                                                    <th scope="col"  >
                                                             <div className="form-check">
                                                             <input
                                                                     className="form-check-input"
@@ -384,7 +384,7 @@ const ManageUser = () => {
                                                         <th className="sort" data-sort="action">Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody className="list form-check-all">
+                                                <tbody className="list form-check-all manage-product ">
                                                     {loading ? (
                                                         <tr>
                                                            
@@ -403,7 +403,7 @@ const ManageUser = () => {
                                                                     />
                                                                     </div>
                                                                 </th>
-                                                                <td className="customer_name">{user.full_name}</td>
+                                                                <td className="customer_name ">{user.full_name}</td>
                                                                 <td className="email">{user.email}</td>
                                                                 <td className="phone">{user.mobile_number}</td>
                                                                 <td className="company">{user.company_name}</td>

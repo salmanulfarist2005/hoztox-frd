@@ -221,7 +221,7 @@ const CompletedOrder = () => {
                                             </Row>
 
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th className="sort" data-sort="sku">OrderId</th>
@@ -235,7 +235,7 @@ const CompletedOrder = () => {
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
                                                         {filteredOrders.length > 0 ? (
                                                             filteredOrders.map((order) =>
                                                                 order.order_items.map((item) => (

@@ -139,11 +139,11 @@ const CustomPendingOrder = () => {
                                                 </Col>
                                             </Row>
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
                                                     <thead className="table-light">
-                                                        <tr>
-                                                            <th className="sort" data-sort="order_id">SKU</th>
-                                                            <th className="sort" data-sort="shop_name">Shop Name</th>
+                                                        <tr className=''>
+                                                            <th className="sort " data-sort="order_id">SKU</th>
+                                                            <th className="sort " data-sort="shop_name">Shop Name</th>
                                                             <th className="sort" data-sort="size">Product Name</th>
                                                             <th className="sort" data-sort="gram">Product Category</th>
                                                             <th className="sort" data-sort="cent">Quantity</th>
@@ -154,7 +154,7 @@ const CustomPendingOrder = () => {
 
 
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
                                                         {filteredOrders.length > 0 ? (
                                                             filteredOrders.map((order) => (
                                                                 <tr key={order.id}>
@@ -172,7 +172,7 @@ const CustomPendingOrder = () => {
                                                                             </div>
                                                                             <div className="edit">
                                                                                 <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                                    className="btn btn-sm btn-success edit-item-btn min-l-500"
                                                                                     onClick={() => tog_list({ order })}
                                                                                 >
                                                                                     View Order

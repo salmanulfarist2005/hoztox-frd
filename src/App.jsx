@@ -139,7 +139,7 @@ function App() {
         <Route path="/manage-images" element={<ManagemagePage />} />
         {/* ............................ */}
 
-        <Route path="/password-chanage" element={<ChangepasswordPage />} />
+        <Route path="/password-change" element={<ChangepasswordPage />} />
    
 
 

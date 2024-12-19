@@ -130,7 +130,7 @@ const Sidebar = (props) => {
   useEffect(() => {
     new MetisMenu("#side-menu-item");
     activeMenu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, []);
 
   useEffect(() => {

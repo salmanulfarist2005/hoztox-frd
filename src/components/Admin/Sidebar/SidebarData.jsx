@@ -1,13 +1,13 @@
 const SidebarData = [
     {
         label: "Dashboard",
-        icon: "mdi mdi-home-variant-outline", // Dashboard icon
+        icon: "mdi mdi-home-variant-outline",  
         url: "/dashboard",
     },
 
     {
         label: "Products",
-        icon: "mdi mdi-cart-outline", // Shopping cart icon
+        icon: "mdi mdi-cart-outline",  
         subItem: [
             { sublabel: "Add products", link: "/add-product" },
             { sublabel: "Add Products by CSV", link: "/add-product-csv" },
@@ -17,7 +17,7 @@ const SidebarData = [
 
     {
         label: "Customized Products",
-        icon: "mdi mdi-palette-swatch", // Palette icon for customization
+        icon: "mdi mdi-palette-swatch", 
         subItem: [
             { sublabel: "Add products", link: "/add-custom-product" },
             { sublabel: "Manage Products", link: "/manage-custom-products" },
@@ -26,7 +26,7 @@ const SidebarData = [
 
     {
         label: "Product Categories",
-        icon: "mdi mdi-label-outline", // Label icon for categories
+        icon: "mdi mdi-label-outline",  
         subItem: [
             { sublabel: "Add Category", link: "/add-category" },
             { sublabel: "Manage Category", link: "/manage-category" },
@@ -35,7 +35,7 @@ const SidebarData = [
 
     {
         label: "Users",
-        icon: "mdi mdi-account-group-outline", // Account group icon for users
+        icon: "mdi mdi-account-group-outline",  
         subItem: [
             { sublabel: "Add a User", link: "/add-user" },
             { sublabel: "Manage User", link: "/manage-user" },
@@ -45,7 +45,7 @@ const SidebarData = [
 
     {
         label: "Color",
-        icon: "mdi mdi-palette", // Palette icon for color management
+        icon: "mdi mdi-palette",  
         subItem: [
             { sublabel: "Add Color", link: "/color" },
         ],
@@ -55,8 +55,7 @@ const SidebarData = [
         label: "Orders",
         icon: "mdi mdi-package-variant-closed",  
         subItem: [
-            // { sublabel: "View Orders", link: "/view-order/:orderId" },
-            // { sublabel: "Manage Orders", link: "/manage-order" },
+ 
             { sublabel: "Delivered Orders", link: "/completed-order" },
             { sublabel: "Manage Orders ", link: "/out-order" },
             
@@ -65,7 +64,7 @@ const SidebarData = [
 
     {
         label: "Customized Orders",
-        icon: "mdi mdi-gift-outline", // Gift icon for customized orders
+        icon: "mdi mdi-gift-outline",  
         subItem: [
             { sublabel: "Pending Orders", link: "/custom-pending-order" },
             { sublabel: "View Orders", link: "/custom-view-order" },
@@ -88,7 +87,7 @@ const SidebarData = [
         label: "Management",
         icon: "mdi mdi-account-circle-outline",  
         subItem: [
-            { sublabel: "Change Password", link: "/password-change" },
+            { sublabel: "Change Password", link: "/password-change" },  
         ],
     },
 ];

@@ -867,3 +867,29 @@ img {
     font-weight: bold;
     border-radius: 4px;
 }
+
+@media (max-width: 400px) {
+.min-500 {
+    width: 600px !important;
+  }
+  .manage-product {width: 600px !important;}
+  .manage-product th { font-size: 13px;}
+  .manage-product tr td { font-size: 13px;}
+
+}
+@media (max-width: 400px) {
+    .min-l-500{
+        width: 100px !important;
+      }
+     
+    }
+    @media (max-width: 400px) {
+        .min-ll-500{
+            width: 150px !important;
+          }
+         
+        }
+
+.fontbutton{
+ font-size: 13px !important;
+ }

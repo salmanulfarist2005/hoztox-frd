@@ -273,7 +273,7 @@ const ManageCategory = () => {
                                                 </Col>
                                             </Row>
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th scope="col" style={{ width: "50px" }}>
@@ -292,7 +292,7 @@ const ManageCategory = () => {
                                                             <th className="sort" data-sort="customer_status">Actions</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody className="list form-check-all manage-product">
                                                         {currentCategories.map((cat, index) => (
                                                             <tr key={index}>
                                                                 <td>

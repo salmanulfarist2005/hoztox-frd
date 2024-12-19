@@ -225,21 +225,21 @@ const ManageProducts = () => {
         );
     };
 
- 
+
     const [imagesToRemove, setImagesToRemove] = useState([]);
 
-   
+
     const handleExistingImageRemove = (index) => {
         const product = products.find(prod => prod.id === productId);
         const imageToRemove = product.additional_images[index];
 
-      
+
         setImagesToRemove((prev) => [...prev, imageToRemove.id]);
 
-     
+
         product.additional_images.splice(index, 1);
 
-        setProducts([...products]);  
+        setProducts([...products]);
     };
 
     const renderImagePreviewAdditional = () => {
@@ -309,53 +309,53 @@ const ManageProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!productId) return;
-    
+
         const updatedFormData = {
             ...formData,
             usertypes: selectedUserTypes,
             product_image: mainImage || formData.product_image,
         };
-    
+
         try {
             const formDataToSubmit = new FormData();
-    
+
             Object.keys(updatedFormData).forEach((key) => {
                 if (key !== 'product_image' && key !== 'additional_images') {
                     formDataToSubmit.append(key, updatedFormData[key]);
                 }
             });
-    
+
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
-    
+
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
             });
-    
+
             const product = products.find(prod => prod.id === productId);
             if (product && product.additional_images) {
                 product.additional_images.forEach((existingImage) => {
                     if (!imagesToRemove.includes(existingImage.id)) {
-                        formDataToSubmit.append('additional_images', existingImage.image);  
+                        formDataToSubmit.append('additional_images', existingImage.image);
                     }
                 });
             }
-    
+
             imagesToRemove.forEach((imageId) => {
                 formDataToSubmit.append('images_to_remove[]', imageId);
             });
-    
+
             // Send the update request
             await axios.put(`${BASE_URL}/products/products/${productId}/update/`, formDataToSubmit, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             // Update the local state with the updated product
             setProducts(prevProducts => prevProducts.map(prod => prod.id === productId ? { ...prod, ...updatedFormData } : prod));
-    
+
             alert("Product updated successfully!");
             setFormData({
                 SKU: "",
@@ -369,24 +369,24 @@ const ManageProducts = () => {
                 description: "",
                 usertypes: []
             });
-    
+
             setImages([]);
             setSelectedUserTypes([]);
             setImagesToRemove([]);
             setmodal_list(false);
-    
+
         } catch (error) {
             console.error("Error updating product:", error.response ? error.response.data : error.message);
         }
     };
-    
+
 
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
-  
+
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -515,8 +515,8 @@ const ManageProducts = () => {
                                             </Row>
 
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
-                                                    <thead className="table-light">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
+                                                    <thead className="table-light manage-product">
                                                         <tr>
                                                             <th scope="col" style={{ width: "50px" }}>
                                                                 <div className="form-check">
@@ -529,14 +529,17 @@ const ManageProducts = () => {
                                                                     />
                                                                 </div>
                                                             </th>
-                                                            <th className="sort" data-sort="customer_name">Product Name</th>
+                                                            <th className="sort" data-sort="customer_name"  >
+                                                                Product Name
+                                                            </th>
+
                                                             <th className="sort" data-sort="email">SKU</th>
                                                             <th className="sort" data-sort="phone">Product Category</th>
 
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
                                                         {currentProducts.map((product) => (
                                                             <tr key={product.id}>
                                                                 <td>

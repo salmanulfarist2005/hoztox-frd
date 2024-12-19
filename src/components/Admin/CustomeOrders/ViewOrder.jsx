@@ -236,7 +236,7 @@ const CustomViewOrder = () => {
                                                 </Col>
                                             </Row>
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th className="sort" data-sort="shop_name">Order Id</th>
@@ -249,7 +249,7 @@ const CustomViewOrder = () => {
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
                                                         {filteredOrders.length > 0 ? (
                                                             filteredOrders.map((order) => (
                                                                 <tr key={order.id}>
@@ -264,10 +264,10 @@ const CustomViewOrder = () => {
 
 
                                                                     <td>
-                                                                        <div className="d-flex gap-2">
+                                                                        <div className="d-flex gap-2 ">
                                                                             <div className="edit">
                                                                                 <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                                    className="btn btn-sm btn-success edit-item-btn min-ll-500"
                                                                                     onClick={() => tog_list1(order)}
                                                                                 >
                                                                                     Generate OrderId
@@ -275,7 +275,7 @@ const CustomViewOrder = () => {
                                                                             </div>
                                                                             <div className="edit">
                                                                                 <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                                    className="btn btn-sm btn-success edit-item-btn min-l-500"
                                                                                     onClick={() => tog_list({ order })}
                                                                                 >
                                                                                     View Order

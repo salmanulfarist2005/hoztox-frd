@@ -307,7 +307,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                 </Col>
                                             </Row>
                                             <div className="table-responsive table-card mt-3 mb-1">
-                                                <table className="table align-middle table-nowrap" id="customerTable">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
                                                     <thead className="table-light">
                                                         <tr>
                                                             <th className="sort" data-sort="shop_name">Order Id</th>
@@ -321,7 +321,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody className="list form-check-all">
+                                                    <tbody className="list form-check-all manage-product">
 
 
                                                         {filteredOrders.length > 0 ? (
@@ -372,7 +372,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                                 </Button>
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="d-flex gap-2 align-items-center">
+                                                                            <div className="d-flex gap-2 align-items-center ">
                                                                                 <span
                                                                                     className={`badge ${getBadgeClass(order.new_status)} px-3 py-2`}
                                                                                     style={{
@@ -389,6 +389,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                                 </span>
 
                                                                                 <Button
+                                                                                className='min-ll-500'
                                                                                     size="sm"
                                                                                     color="primary"
                                                                                     onClick={() => {
@@ -408,7 +409,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                                     className="btn btn-sm btn-success edit-item-btn"
                                                                                     onClick={() => tog_list({ order })}
                                                                                 >
-                                                                                    View Order
+                                                                                    View  
                                                                                 </button>
                                                                             </div>
                                                                             <div className="edit">
