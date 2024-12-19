@@ -19,7 +19,7 @@ const SpecialOfferSection = () => {
 
                     <div className="col-lg-5 col-6 col-xxs-12 align-self-end">
                         <div className="fz-spcial-offer__img">
-                            <img src="assets/images/ring.png" alt="Ring Image"/>
+                            <img src="https://shop.caratreediamonds.com/assets/images/ring.png" alt="Ring Image"/>
                         </div>
                     </div>
                 </div>
