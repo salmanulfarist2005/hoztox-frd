@@ -1,4 +1,4 @@
-// HeaderSection4.jsx
+ 
 
 import React, { useContext, useState, useEffect } from "react";
 import HeaderNav from "../navigation/HeaderNav";
@@ -104,7 +104,7 @@ const HeaderSection4 = () => {
                     <button onClick={toggleDropdown} className=" d-lg-flex" aria-expanded={dropdownOpen}>
                     <a className="fz-hamburger " title="Profile">
                       <i className="fa-light fa-user"></i>
-                      {/* <span className="d-none d-lg-block" >Profile</span> */}
+               
                       </a>
                     </button>
                     </a>
