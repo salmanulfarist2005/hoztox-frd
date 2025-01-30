@@ -54,7 +54,7 @@ const Login = () => {
                 <h2 className="sign-in">Sign in</h2>
 
                 <label className="form-label" htmlFor="username">
-                    User Name
+                    Email
                 </label>
                 <input
                     type="email"
