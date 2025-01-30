@@ -48,7 +48,7 @@ const HeaderSection3 = () => {
       });
       setJeweleryCartItemAmount(response.data); 
       console.error('response.data', response.data);
-      // fetchCartItems(); 
+ 
     } catch (error) {
       console.error('Error fetching cart items:', error);
     }
