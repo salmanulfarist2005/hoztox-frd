@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import logolight from "../../assets/images/logo-light.png";
-// import logodark from "../../assets/images/logo-dark.png";
+ 
 import axios from 'axios';
 import { Container, Row, Col, Card, CardBody, Form } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
