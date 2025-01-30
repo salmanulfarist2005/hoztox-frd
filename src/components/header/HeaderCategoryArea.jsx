@@ -56,9 +56,9 @@ const HeaderCategoryArea = ({ header, title }) => {
                 {chunk.map((category, index) => (
                   <li key={index}>
                     <div>
-                    {/* <Link to={`/shop/${category.slug}`}> */}
+                
                     {category.category_name}
-                    {/* </Link> */}
+            
                     </div>
                   </li>
                 ))}
