@@ -69,7 +69,7 @@ const HeaderSection4 = () => {
         <div className="col-lg-4 col-md-6 col-9">
         <div className="fz-header-left-content d-flex align-items-center" style={{ width: '150px' }}>
             <Link to="/home">
-              <img src="../assets/images/logo-2.svg" alt="logo" className="fz-logo" />
+              <img src="https://portal.caratreediamonds.com/assets/images/logo-2.svg" alt="logo" className="fz-logo" />
             </Link>
           </div>
         </div>

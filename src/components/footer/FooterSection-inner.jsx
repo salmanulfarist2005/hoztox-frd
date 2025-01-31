@@ -12,7 +12,8 @@ const FooterSectioninner = ({ logo }) => {
             <div className="fz-footer-about">
               <div className="fz-logo">
                 <Link to="/home">
-                  <img src="../assets/images/logo-2.svg" alt="logo" />
+                  <img src="https://portal.caratreediamonds.com/assets/images/logo-2.svg" alt="logo" />
+                  
                 </Link>
               </div> 
                </div>
