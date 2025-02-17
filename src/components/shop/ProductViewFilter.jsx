@@ -9,7 +9,7 @@ const ProductViewFilter = () => {
         handleCategoryFilter,
         addToJeweleryWishlist,
         addToJeweleryCart,
-        searchedProducts,
+      
         searchTerm,
         activeCategory
     } = useContext(FarzaaContext);
