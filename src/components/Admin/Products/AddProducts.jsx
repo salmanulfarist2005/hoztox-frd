@@ -130,8 +130,18 @@ const AddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
+    if (name === "diamond_weight") {
+      const decimalRegex = /^\d+(\.\d{0,2})?$/;
+      if (value && !decimalRegex.test(value)) {
+        alert("Diamond weight must have at most 2 decimal places.");
+        return;
+      }
+    }
+  
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+  
 
 
   const handleSubmit = async (e) => {
@@ -189,7 +199,7 @@ const AddProduct = () => {
   };
   
 
-
+  
 
 
   const [selectedUserTypes, setSelectedUserTypes] = useState([]);
