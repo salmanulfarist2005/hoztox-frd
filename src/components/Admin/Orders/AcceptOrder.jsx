@@ -267,7 +267,7 @@ const AcceptOrder = () => {
                                                                         <td className="OrderId">{order.user?.company_name}</td>
                                                                         <td className="sku">{item.product?.SKU}</td>
                                                                         <td className="product_name">{item.product?.product_name}</td>
-                                                                        <td className="product_category">{item.product?.category_name}</td>
+                                                                        <td className="product_category">{item.product?.category?.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
                                                                         <td>
                                                                             {order.status && (
@@ -415,7 +415,7 @@ const AcceptOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.item?.product?.category_name}
+                                        value={selectedItem.item?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
