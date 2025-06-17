@@ -214,11 +214,25 @@ const Sidebar = (props) => {
                   )}
                 </React.Fragment>
               ))}
+              
+              {/* Logout menu item styled consistently with other menu items */}
+              <li className="logout-menu-item">
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLogout();
+                  }}
+                  className="logout-link"
+                >
+                  <i
+                    className="fas fa-sign-out-alt"
+                    style={{ marginRight: "5px" }}
+                  ></i>
+                  <span>Logout</span>
+                </a>
+              </li>
             </ul>
-         
-            <button onClick={handleLogout} className="btn btn-danger d-logout">
-              Logout
-            </button>
           </div>
         </SimpleBar>
       </div>
