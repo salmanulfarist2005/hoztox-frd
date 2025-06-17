@@ -1,4 +1,4 @@
-// HeaderSection4.jsx
+ 
 
 import React, { useContext, useState, useEffect } from "react";
 import HeaderNav from "../navigation/HeaderNav";
@@ -74,6 +74,7 @@ const HeaderSection4 = () => {
   }, [isLoggedIn, setCartItemAmount]);
 
   return (
+
     <>
     
       <style jsx>{`
@@ -81,9 +82,6 @@ const HeaderSection4 = () => {
           position: relative;
           display: inline-block;
         }
-
-
-
         .animated-dropdown {
           position: absolute;
           top: 100%;
@@ -234,6 +232,7 @@ const HeaderSection4 = () => {
                             {/* <span className="d-none d-lg-block" >Profile</span> */}
                           </a>
                         </button>
+
                       </a>
 
                       {/* Animated Dropdown Menu */}

@@ -9,7 +9,7 @@ const ProductViewFilter = () => {
         handleCategoryFilter,
         addToJeweleryWishlist,
         addToJeweleryCart,
-        searchedProducts,
+      
         searchTerm,
         activeCategory
     } = useContext(FarzaaContext);
@@ -33,7 +33,7 @@ const ProductViewFilter = () => {
     const [error, setError] = useState(null);
 
    
-    const productsPerPage = 15;
+    const productsPerPage = 18;
     const [currentPage, setCurrentPage] = useState(1);
 
  

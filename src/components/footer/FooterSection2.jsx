@@ -12,7 +12,7 @@ const FooterSection2 = () => {
               <div className="fz-footer-about">
                 <div className="fz-logo">
                   <Link to="/home">
-                    <img src="https://shop.caratreediamonds.com/assets/images/logo-2.svg" alt="logo" />
+                    <img src="https://portal.caratreediamonds.com/assets/images/logo-2.svg" alt="logo" />
                   </Link>
                 </div> 
                  </div>

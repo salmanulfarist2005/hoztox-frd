@@ -48,7 +48,7 @@ const HeaderSection3 = () => {
       });
       setJeweleryCartItemAmount(response.data); 
       console.error('response.data', response.data);
-      // fetchCartItems(); 
+ 
     } catch (error) {
       console.error('Error fetching cart items:', error);
     }
@@ -69,7 +69,7 @@ const HeaderSection3 = () => {
           <div className="fz-header-left-content d-flex align-items-center">
             <div className="fz-logo-container logo-top">
               <Link to="/home">
-                <img src="../assets/images/logo-2.svg" alt="logo" className="fz-logo" />
+                <img src="https://portal.caratreediamonds.com/assets/images/logo-2.svg" alt="logo" className="fz-logo" />
               </Link>
             </div>
             <HeaderCategoryArea header={""} title={""} />

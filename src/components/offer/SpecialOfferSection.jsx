@@ -13,13 +13,13 @@ const SpecialOfferSection = () => {
                             <h2 className="fz-special-offer-title">Custom Made</h2> 
                             <p> &nbsp;</p>                         
                             
-                            <Link to="" className="fz-special-offer-btn">Start Your Custom Design</Link>
+                            <Link to="" className="fz-special-offer-btn">Start YourCustom Design</Link>
                         </div>
                     </div>
 
                     <div className="col-lg-5 col-6 col-xxs-12 align-self-end">
                         <div className="fz-spcial-offer__img">
-                            <img src="https://shop.caratreediamonds.com/assets/images/ring.png" alt="Ring Image"/>
+                            <img src="https://portal.caratreediamonds.com/assets/images/ring.png" alt="Ring Image"/>
                         </div>
                     </div>
                 </div>

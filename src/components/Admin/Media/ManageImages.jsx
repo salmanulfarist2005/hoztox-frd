@@ -24,19 +24,26 @@ const ManageImage = () => {
     useEffect(() => {
         fetchMediaImages();
     }, []);
-
-    const filteredImages = mediaImages && mediaImages.length > 0 ? mediaImages.filter(image =>
-        image.image.toLowerCase().includes(searchTerm.toLowerCase())
-    ) : [];
+    const getFileName = (imageUrl) => {
+        return imageUrl.split('/').pop();
+    };
+    const filteredImages = mediaImages.filter(image => 
+        getFileName(image.image).toLowerCase().includes(searchTerm.toLowerCase())  
+    );
+    
+    
 
     const totalPages = Math.ceil(filteredImages.length / itemsPerPage);
     const indexOfLastImage = currentPage * itemsPerPage;
     const indexOfFirstImage = indexOfLastImage - itemsPerPage;
     const currentImages = filteredImages.slice(indexOfFirstImage, indexOfLastImage);
+    
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1);  
     };
+    
 
     const handleSelectAllChange = () => {
         if (isAllSelected) {
@@ -93,9 +100,7 @@ const ManageImage = () => {
         }
     };
 
-    const getFileName = (imageUrl) => {
-        return imageUrl.split('/').pop();
-    };
+ 
 
     return (
         <React.Fragment>
@@ -155,6 +160,7 @@ const ManageImage = () => {
                                                             </th>
                                                             <th className="sort" data-sort="image_name">Image</th>
                                                             <th className="sort" data-sort="file_name">File Name</th>
+
                                                              <th className="sort" data-sort="file_name"></th>
                                                         </tr>
                                                     </thead>
