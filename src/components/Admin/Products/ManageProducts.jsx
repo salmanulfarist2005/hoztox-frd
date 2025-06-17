@@ -560,14 +560,40 @@ const ManageProducts = () => {
 
                                                                 <td>
                                                                     <div className="d-flex gap-2">
-                                                                        <div className="edit">
-                                                                            <button onClick={() => handleEditClick(product)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
-                                                                        </div>
-                                                                        <div className="remove">
-                                                                            <button onClick={() => deleteCategory(product.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                                        </div>
+                                                                        {/* Edit Icon */}
+                                                                        <button
+                                                                            onClick={() => handleEditClick(product)}
+                                                                            title="Edit"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                        </button>
+
+                                                                        {/* Delete Icon */}
+                                                                        <button
+                                                                            onClick={() => deleteCategory(product.id)}
+                                                                            title="Delete"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#deleteRecordModal"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                        </button>
                                                                     </div>
                                                                 </td>
+
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -818,8 +844,8 @@ const ManageProducts = () => {
                     </CardBody>
                     <ModalFooter>
                         <div className="hstack gap-2 justify-content-end">
-                            <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button>
-                            <button type="submit" className="btn btn-success" id="add-btn">Update product</button>
+                            {/* <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button> */}
+                            <Button color='primary' type="submit" className="btn btn-success" id="add-btn">Update product</Button>
 
                         </div>
                     </ModalFooter>

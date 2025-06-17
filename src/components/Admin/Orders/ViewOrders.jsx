@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button, Card, CardBody, CardHeader, Col, Container,Input, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Col, Container, Input, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -10,7 +10,7 @@ import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { useParams } from 'react-router-dom';
- 
+
 const ViewOrder = () => {
     const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
@@ -99,7 +99,7 @@ const ViewOrder = () => {
             ProductCategories: item.product?.category_name,
             Quantities: item.quantity,
             ProductColors: item.product?.color,
-         
+
             AdditionalNotes: item.additional_notes,
             ShippingAddress: order.user?.shipping_address,
             MobileNumber: order.user?.mobile_number,
@@ -137,7 +137,7 @@ const ViewOrder = () => {
             ProductCategory: selectedItem.item?.product?.category_name,
             Quantity: selectedItem.item?.quantity,
             ProductColor: selectedItem.item?.product?.color,
-            
+
             AdditionalNotes: selectedItem.item?.additional_notes,
             ShippingAddress: selectedItem.order?.user?.shipping_address,
             MobileNumber: selectedItem.order?.user?.mobile_number,
@@ -179,7 +179,7 @@ const ViewOrder = () => {
             ["Product Category", selectedItem.item?.product?.category_name || "N/A"],
             ["Quantity", selectedItem.item?.quantity || "N/A"],
             ["Product Color", selectedItem.item?.product?.color || "N/A"],
-     
+
             ["Additional Notes", selectedItem.item?.additional_notes || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
@@ -240,7 +240,7 @@ const ViewOrder = () => {
             if (!selectedItem || !selectedItem.item) {
                 throw new Error("Selected item is not valid.");
             }
-    
+
             const updatedOrder = {
                 ordercode: editedOrderCode,
                 order_items: [
@@ -253,22 +253,22 @@ const ViewOrder = () => {
                     }
                 ]
             };
-    
+
             console.log("updatedOrder", updatedOrder);
-    
+
             // Send the update request
             await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder);
-    
+
             // Update the orders list locally in the state
             fetchOrders();
-            setModalList1(false);   
+            setModalList1(false);
             alert("Order updated successfully!");
         } catch (error) {
             console.error("Error updating order:", error.response ? error.response.data : error.message);
             alert("Error updating order. Please try again.");
         }
     };
-    
+
     const handleDeleteOrder = async (orderId) => {
 
         const confirmed = window.confirm("Are you sure you want to delete this order?");
@@ -298,6 +298,11 @@ const ViewOrder = () => {
                                         <div id="customerList">
                                             <Row className="g-4 mb-3">
                                                 <Col className="col-sm">
+                                                    <Button color="primary" onClick={downloadFullOrderCSV} className="me-2">
+                                                        Download CSV
+                                                    </Button>
+                                                </Col>
+                                                <Col className="col-sm">
                                                     <div className="d-flex justify-content-sm-end">
                                                         <div className="search-box ms-2" style={{ position: 'relative' }}>
                                                             <input
@@ -318,10 +323,9 @@ const ViewOrder = () => {
                                                         </div>
                                                     </div>
                                                 </Col>
+
                                             </Row>
-                                            <Button color="primary" onClick={downloadFullOrderCSV} className="me-2">
-                                                Download CSV
-                                            </Button>
+
                                             <div className="table-responsive table-card mt-3 mb-1">
                                                 <table className="table align-middle table-nowrap" id="customerTable">
                                                     <thead className="table-light">
@@ -352,33 +356,54 @@ const ViewOrder = () => {
 
                                                                         <td>
                                                                             <div className="d-flex gap-2">
+                                                                                <button
+                                                                                    onClick={() => tog_list1({ order, item })}
+                                                                                    title="Edit"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
+                                                                                >
+                                                                                    <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                                </button>
+                                                                                {/* View Icon */}
+                                                                                <button
+                                                                                    onClick={() => tog_list({ order, item })}
+                                                                                    title="View"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
+                                                                                >
+                                                                                    <i className="ri-eye-line" style={{ fontSize: '18px', color: '#3b82f6' }}></i>
+                                                                                </button>
 
-                                                                                <div className="edit">
-                                                                                    <button
-                                                                                        className="btn btn-sm btn-success edit-item-btn"
-                                                                                        onClick={() => tog_list({ order, item })}
-                                                                                    >
-                                                                                        View  
-                                                                                    </button>
-                                                                                </div>
-                                                                                <div className="d-flex gap-2">
-                                                                                    <button
-                                                                                        className="btn btn-sm btn-success"
-                                                                                        onClick={() => tog_list1({ order, item })}
-                                                                                    >
-                                                                                        Edit
-                                                                                    </button>
-                                                                                </div>
-                                                                                <div className="edit">
-                                                                                    <button
-                                                                                        className="btn btn-sm btn-danger edit-item-btn"
-                                                                                        onClick={() => handleDeleteOrder(order.id)}
-                                                                                    >
-                                                                                        Delete
-                                                                                    </button>
-                                                                                </div>
+                                                                                {/* Edit Icon */}
+
+
+                                                                                {/* Delete Icon */}
+                                                                                <button
+                                                                                    onClick={() => handleDeleteOrder(order.id)}
+                                                                                    title="Delete"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
+                                                                                >
+                                                                                    <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                                </button>
                                                                             </div>
                                                                         </td>
+
                                                                     </tr>
                                                                 ))
                                                             )
@@ -603,7 +628,7 @@ const ViewOrder = () => {
                 <ModalBody style={{ padding: '20px' }}>
                     {selectedItem ? (
                         <>
-                          
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -619,7 +644,7 @@ const ViewOrder = () => {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-                    <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
+                    {/* <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button> */}
                 </ModalFooter>
             </Modal>
 

@@ -52,6 +52,8 @@ import CompletedCustumOrdersPage from "./pages/Dashboard/CompletedOrderPage"
 import CompletedCustumOrdersFullPage from "./pages/Dashboard/CompletedOrderPageFull"
 import CompletedNOrder from "./pages/Dashboard/CompletedOrder"
 import OutviewPage from "./pages/Dashboard/OutviewPage"
+import AcceptOrderPage from "./pages/Dashboard/AcceptOrder";
+import AcceptViewOrdersPage from "./pages/Dashboard/AcceptViewOrdersy";
 // import ProductCategoryList from "./components/shop/ProductCategoryList"
 function App() {
   
@@ -108,7 +110,9 @@ function App() {
         {/* ................................................................ */}
         <Route path="/out-order" element={< OutviewPage />} />
         <Route path="/view-order/:orderId" element={<ViewOrdersPage />} />
+         <Route path="/view-order-accept/:orderId" element={<AcceptViewOrdersPage />} />
         <Route path="/manage-order" element={< MnageOrdersPage />} />
+         <Route path="/accept-order" element={< AcceptOrderPage />} />
         <Route path="/completed-order" element={< CompletedNOrder />} />
         
         {/* ............................ */}

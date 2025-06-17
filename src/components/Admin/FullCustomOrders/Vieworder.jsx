@@ -259,22 +259,41 @@ const FullCustomViewOrder = () => {
                                                                     <td>{order.quantity}</td>
 
                                                                     <td className="bgbutton">{order.new_status}</td>
-                                                                    <td>
-                                                                        <div className="d-flex gap-2">
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                   <td>
+                                                                                <div className="d-flex gap-2" style={{ minWidth: '200px', alignItems: 'center' }}>
+                                                                            
+                                                                               <button
                                                                                     onClick={() => tog_list1(order)}
+                                                                                    style={{
+                                                                                        backgroundColor: '#e5e7eb',
+                                                                                        border: '1px solid #d1d5db',
+                                                                                        padding: '4px 8px',
+                                                                                        borderRadius: '4px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block',
+                                                                                        color: '#374151',
+                                                                                        fontSize: '14px',
+                                                                                        transition: 'background-color 0.2s'
+                                                                                    }}
+                                                                                    onMouseOver={(e) => e.target.style.backgroundColor = '#d1d5db'}
+                                                                                    onMouseOut={(e) => e.target.style.backgroundColor = '#e5e7eb'}
                                                                                 >
-                                                                                    Generate OrderId
+                                                                                    Generate Order ID
                                                                                 </button>
-                                                                            </div>
+                                                                         
                                                                             <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                               <button
                                                                                     onClick={() => tog_list({ order })}
+                                                                                    title="View"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    View Order
+                                                                                    <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
                                                                                 </button>
                                                                             </div>
                                                                         </div>

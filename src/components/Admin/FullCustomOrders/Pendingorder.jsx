@@ -173,11 +173,18 @@ const FullCustomPendingOrder = () => {
 
                                                                             </div>
                                                                             <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
+                                                                               <button
                                                                                     onClick={() => tog_list({ order })}
+                                                                                    title="View"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    View Order
+                                                                                    <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -391,7 +398,7 @@ const FullCustomPendingOrder = () => {
                                         <Button color="primary" onClick={handleApprove} className="me-2">
                                             Approve
                                         </Button>
-                                        <Button color="danger" onClick={handleReject}>
+                                        <Button color="primary" onClick={handleReject}>
                                             Reject
                                         </Button>
                                     </Col>

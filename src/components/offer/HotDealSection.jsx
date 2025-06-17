@@ -8,10 +8,6 @@ const HotDealSection = () => {
     const { addToJeweleryWishlist, addToJeweleryCart, jeweleryArray } = useContext(FarzaaContext)
     const [products, setProducts] = useState([]);
 
-
-
-
-
     const fetchProducts = async () => {
         try {
             const token = localStorage.getItem('authToken');
@@ -30,11 +26,6 @@ const HotDealSection = () => {
     useEffect(() => {
         fetchProducts();
     }, []);
-
-
-
-
-
 
 
     const defaultQuantity = 1;

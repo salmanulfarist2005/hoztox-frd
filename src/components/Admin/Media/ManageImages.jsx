@@ -155,6 +155,7 @@ const ManageImage = () => {
                                                             </th>
                                                             <th className="sort" data-sort="image_name">Image</th>
                                                             <th className="sort" data-sort="file_name">File Name</th>
+                                                             <th className="sort" data-sort="file_name"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -181,14 +182,24 @@ const ManageImage = () => {
                                                                 <td>
                                                                     {getFileName(image.image)}
                                                                 </td>
+
+
+
                                                                 <td>
                                                                     <div className="d-flex gap-2">
                                                                         <div className="remove">
                                                                             <button
                                                                                 onClick={() => deleteImage(image.id)}
-                                                                                className="btn btn-sm btn-danger remove-item-btn"
+                                                                                title="Delete"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
                                                                             >
-                                                                                Remove
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -206,7 +217,7 @@ const ManageImage = () => {
                                                             onClick={() => handlePageChange(currentPage - 1)}
                                                             className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
                                                         >
-                                                            <i className="fa fa-angle-double-left"></i> 
+                                                            <i className="fa fa-angle-double-left"></i>
                                                         </button>
                                                     </li>
 

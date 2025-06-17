@@ -56,27 +56,27 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
 
     const handleSaveChanges = async () => {
         if (!selectedItem) return;
-    
+
         try {
-            
+
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
             });
-    
-  
+
+
             setOrders((prevOrders) => {
-             
+
                 const updatedOrders = prevOrders.map((order) =>
                     order.id === selectedItem.id
-                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }   
+                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }
                         : order
                 );
-    
-                 
-                return updatedOrders.sort((a, b) => a.id - b.id);   
+
+
+                return updatedOrders.sort((a, b) => a.id - b.id);
             });
-    
+
             alert("Updated Successfully");
             setModalList1(false);
         } catch (error) {
@@ -84,7 +84,7 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
             alert("There was an error saving the changes. Please try again.");
         }
     };
-    
+
     const downloadCSV = () => {
         if (!selectedItem) return;
 
@@ -355,23 +355,38 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                                                                                     ))}
                                                                                 </Input>
 
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    color="success"
+                                                                                <button
                                                                                     onClick={() => handleConfirm(order.id)}
+                                                                                    title="Confirm"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    Confirm
-                                                                                </Button>
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    color="secondary"
+                                                                                    <i className="ri-check-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                                </button>
+
+                                                                                <button
                                                                                     onClick={() => setEditingOrderId(null)}
+                                                                                    title="Cancel"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    Cancel
-                                                                                </Button>
+                                                                                    <i className="ri-close-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                                </button>
+
+
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="d-flex gap-2 align-items-center">
+                                                                            <div className="d-flex gap-2 align-items-center ">
                                                                                 <span
                                                                                     className={`badge ${getBadgeClass(order.new_status)} px-3 py-2`}
                                                                                     style={{
@@ -387,46 +402,78 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                                                                                     )?.label || order.new_status}
                                                                                 </span>
 
-                                                                                <Button
-                                                                                className='min-ll-500'
+                                                                                <button
+                                                                                    className='min-ll-500'
                                                                                     size="sm"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         setEditingOrderId(order.id);
                                                                                         setStatus(order.new_status);
                                                                                     }}
+                                                                                    style={{
+                                                                                        backgroundColor: '#e5e7eb',
+                                                                                        border: '1px solid #d1d5db',
+                                                                                        padding: '4px 8px',
+                                                                                        borderRadius: '4px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block',
+                                                                                        color: '#374151',
+                                                                                        fontSize: '14px',
+                                                                                        transition: 'background-color 0.2s'
+                                                                                    }}
                                                                                 >
                                                                                     Change Status
-                                                                                </Button>
+                                                                                </button>
                                                                             </div>
                                                                         )}
                                                                     </td>
+
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
-                                                                                    onClick={() => tog_list({ order })}
-                                                                                >
-                                                                                    View
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success"
-                                                                                    onClick={() => tog_list1(order)}
-                                                                                >
-                                                                                    Edit
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-danger edit-item-btn"
-                                                                                    onClick={() => handleDeleteOrder(order.id)}
-                                                                                >
-                                                                                    Delete
-                                                                                </button>
-                                                                            </div>
+                                                                            {/* View Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list({ order })}
+                                                                                title="View"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                            </button>
+
+                                                                            {/* Edit Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list1(order)}
+                                                                                title="Edit"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                            </button>
+
+                                                                            {/* Delete Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => handleDeleteOrder(order.id)}
+                                                                                title="Delete"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                            </button>
                                                                         </div>
                                                                     </td>
                                                                 </tr>
@@ -461,7 +508,7 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                     </Container>
                 </div>
             </div>
-            <CompletedCustumOrdersFullPage/>
+            <CompletedCustumOrdersFullPage />
             <Modal
                 isOpen={modal_list}
                 toggle={tog_list}
@@ -687,8 +734,8 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                     ) : null}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-                    <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
+                    <Button color="primary" onClick={handleSaveChanges}>Save </Button>
+                    
                 </ModalFooter>
             </Modal>
         </React.Fragment>
