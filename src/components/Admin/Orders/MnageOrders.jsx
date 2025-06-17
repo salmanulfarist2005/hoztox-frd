@@ -220,28 +220,30 @@ const ManageOrder = () => {
         }
     }, [searchQuery, orders]);
 
-    const handleStatusChange = async (orderid, newStatus) => {
-        try {
-            const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
-                status: newStatus
-            });
-    
-           
-            setOrders((prevOrders) =>
-                prevOrders.map((order) =>
-                    order.id === orderid ? { ...order, status: newStatus } : order
-                )
-            );
-    
-            alert("Status Updated Successfully");
-            console.log("status.....", response.data);
-            fetchOrders();
-        } catch (error) {
-            console.error("Error updating status:", error);
-            alert("There was an error updating the status. Please try again.");
-        }
-    };
-    
+const handleStatusChange = async (orderid, newStatus) => {
+    const confirmed = window.confirm(`Are you sure you want to change the status to "${newStatus}"?`);
+    if (!confirmed) return; // Exit if user cancels
+
+    try {
+        const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
+            status: newStatus
+        });
+
+        setOrders((prevOrders) =>
+            prevOrders.map((order) =>
+                order.id === orderid ? { ...order, status: newStatus } : order
+            )
+        );
+
+        alert("Status Updated Successfully");
+        console.log("status.....", response.data);
+        fetchOrders();
+    } catch (error) {
+        console.error("Error updating status:", error);
+        alert("There was an error updating the status. Please try again.");
+    }
+};
+
     return (
         <React.Fragment>
             <div className="main-content">
@@ -311,12 +313,14 @@ const ManageOrder = () => {
                                                                         <td>
                                                                                 {order.status && (
                                                                                     <select
-                                                                                        value={order.status || "pending"}
-                                                                                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                                                                    >
-                                                                                        <option value="pending">Pending</option>
-                                                                                        <option value="delivered">Delivered</option>
-                                                                                    </select>
+                                                                                value={order.status || "pending"}
+                                                                                onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                                                                className="border rounded p-1 focus:ring-2 focus:ring-blue-400 text-sm"
+                                                                            >
+                                                                                <option value="pending">Pending</option>
+                                                                                <option value="accepted">Accepted</option>
+                                                                                <option value="delivered">Delivered</option>
+                                                                            </select>
                                                                                 )}
                                                                             </td>
                                                                         <td>
@@ -412,7 +416,7 @@ const ManageOrder = () => {
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-                        <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
+                        {/* <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button> */}
                     </ModalFooter>
                 </Modal>
 
@@ -576,9 +580,7 @@ const ManageOrder = () => {
                                         <Button color="primary" onClick={downloadCSV} className="me-2">
                                             Download CSV
                                         </Button>
-                                        <Button color="primary" onClick={downloadPDF}>
-                                            Download PDF
-                                        </Button>
+                                        
                                     </Col>
                                 </Row>
                             </>

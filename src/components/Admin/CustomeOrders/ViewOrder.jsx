@@ -145,7 +145,7 @@ const CustomViewOrder = () => {
             ["Product Category", selectedItem.order?.product?.category_name || "N/A"],
             ["Quantity", selectedItem.order?.quantity || "N/A"],
             ["Product Color", selectedItem.order?.product?.color || "N/A"],
-            
+
             ["Additional Notes", selectedItem.order?.additional_notes || "N/A"],
             ["Shipping Address", selectedItem.order?.user?.shipping_address || "N/A"],
             ["Mobile Number", selectedItem.order?.user?.mobile_number || "N/A"],
@@ -264,21 +264,40 @@ const CustomViewOrder = () => {
 
 
                                                                     <td>
-                                                                        <div className="d-flex gap-2 ">
+                                                                        <div className="d-flex gap-2" style={{ minWidth: '200px', alignItems: 'center' }}>
+
+                                                                            <button
+                                                                                onClick={() => tog_list1(order)}
+                                                                                style={{
+                                                                                    backgroundColor: '#e5e7eb',
+                                                                                    border: '1px solid #d1d5db',
+                                                                                    padding: '4px 8px',
+                                                                                    borderRadius: '4px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block',
+                                                                                    color: '#374151',
+                                                                                    fontSize: '14px',
+                                                                                    transition: 'background-color 0.2s'
+                                                                                }}
+                                                                                onMouseOver={(e) => e.target.style.backgroundColor = '#d1d5db'}
+                                                                                onMouseOut={(e) => e.target.style.backgroundColor = '#e5e7eb'}
+                                                                            >
+                                                                                Generate Order ID
+                                                                            </button>
+
                                                                             <div className="edit">
                                                                                 <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn min-ll-500"
-                                                                                    onClick={() => tog_list1(order)}
-                                                                                >
-                                                                                    Generate OrderId
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn min-l-500"
                                                                                     onClick={() => tog_list({ order })}
+                                                                                    title="View"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    View Order
+                                                                                    <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -377,7 +396,7 @@ const CustomViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.order?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
@@ -399,16 +418,16 @@ const CustomViewOrder = () => {
                             </Row>
 
                             <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Size</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.size}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                                <label className="col-md-2 col-form-label">Product Size</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.size}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -420,8 +439,8 @@ const CustomViewOrder = () => {
                                     />
                                 </div>
                             </Row>
-                      
-                     
+
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Shop Name</label>
                                 <div className="col-md-10">
@@ -493,9 +512,7 @@ const CustomViewOrder = () => {
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
                                         Download CSV
                                     </Button>
-                                    <Button color="primary" onClick={downloadPDF}>
-                                        Download PDF
-                                    </Button>
+                                 
                                 </Col>
                             </Row>
                         </>
@@ -541,7 +558,7 @@ const CustomViewOrder = () => {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={handleGenerateOrderId}>Save</Button>
-                    <Button color="secondary" onClick={tog_list1}>Cancel</Button>
+
                 </ModalFooter>
             </Modal>
 

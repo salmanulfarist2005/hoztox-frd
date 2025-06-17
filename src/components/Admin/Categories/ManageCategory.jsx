@@ -287,8 +287,9 @@ const ManageCategory = () => {
                                                                     />
                                                                 </div>
                                                             </th>
-                                                            <th className="sort" data-sort="customer_name">Category Name</th>
                                                             <th className="sort" data-sort="customer_email">Image</th>
+                                                            <th className="sort" data-sort="customer_name">Category Name</th>
+                                                            
                                                             <th className="sort" data-sort="customer_status">Actions</th>
                                                         </tr>
                                                     </thead>
@@ -301,32 +302,59 @@ const ManageCategory = () => {
                                                                             className="form-check-input"
                                                                             type="checkbox"
                                                                             value={cat.id}
-                                                                            checked={selectedIds.includes(cat.id)} // Check if the category is selected
+                                                                            checked={selectedIds.includes(cat.id)} 
                                                                             onChange={(e) => handleCheckboxChange(cat.id)}
                                                                         />
                                                                     </div>
                                                                 </td>
-                                                                <td>{cat.category_name}</td>
-                                                                <td>
+                                                                      <td>
                                                                     <img
                                                                         src={BASE_URL + cat.image}
                                                                         alt={cat.category_name}
-                                                                        style={{ maxWidth: '100px' }}
+                                                                        style={{ maxWidth: '80px' }}
                                                                     />
                                                                 </td>
+                                                                <td>{cat.category_name}</td>
+                                                          
 
 
 
                                                                 <td>
                                                                     <div className="d-flex gap-2">
-                                                                        <div className="edit">
-                                                                            <button onClick={() => handleEdit(cat)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
-                                                                        </div>
-                                                                        <div className="remove">
-                                                                            <button onClick={() => deleteCategory(cat.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                                        </div>
+                                                                        {/* Edit Icon Button */}
+                                                                        <button
+                                                                            onClick={() => handleEdit(cat)}
+                                                                            title="Edit"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                        </button>
+
+                                                                        {/* Delete Icon Button */}
+                                                                        <button
+                                                                            onClick={() => deleteCategory(cat.id)}
+                                                                            title="Delete"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#deleteRecordModal"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                        </button>
                                                                     </div>
                                                                 </td>
+
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -355,51 +383,51 @@ const ManageCategory = () => {
                         </Row>
                     </Container>
                 </div>
-                </div>
-                <Modal
-                    isOpen={modal_list}
-                    toggle={() => setmodal_list(!modal_list)}
-                    centered
-                    style={{ maxWidth: '900px', width: '90%' }}
-                >
-                    <ModalHeader className="bg-light p-3" toggle={() => setmodal_list(false)}> Edit Category </ModalHeader>
-                    <form onSubmit={updateCategory}>
-                        <CardBody style={{ padding: '20px' }}>
-                            <Row className="mb-3">
-                                <label htmlFor="category_name" className="col-md-2 col-form-label">Category Name</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="category_name"
-                                        placeholder="Category Name"
-                                        value={formData.category_name || ''}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label htmlFor="example-image-input" className="col-md-2 col-form-label">Category Logo /Image</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="file"
-                                        id="example-image-input"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                    />
-                                    {renderImagePreviews()}
-                                </div>
-                            </Row>
-                        </CardBody>
-                        <ModalFooter>
-                            <div className="hstack gap-2 justify-content-end">
-                                <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button>
-                                <button type="submit" className="btn btn-success">Update</button>
+            </div>
+            <Modal
+                isOpen={modal_list}
+                toggle={() => setmodal_list(!modal_list)}
+                centered
+                style={{ maxWidth: '900px', width: '90%' }}
+            >
+                <ModalHeader className="bg-light p-3" toggle={() => setmodal_list(false)}> Edit Category </ModalHeader>
+                <form onSubmit={updateCategory}>
+                    <CardBody style={{ padding: '20px' }}>
+                        <Row className="mb-3">
+                            <label htmlFor="category_name" className="col-md-2 col-form-label">Category Name</label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="category_name"
+                                    placeholder="Category Name"
+                                    value={formData.category_name || ''}
+                                    onChange={handleInputChange}
+                                />
                             </div>
-                        </ModalFooter>
-                    </form>
-                </Modal>
+                        </Row>
+                        <Row className="mb-3">
+                            <label htmlFor="example-image-input" className="col-md-2 col-form-label">Category Logo /Image</label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="file"
+                                    id="example-image-input"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                />
+                                {renderImagePreviews()}
+                            </div>
+                        </Row>
+                    </CardBody>
+                    <ModalFooter>
+                        <div className="hstack gap-2 justify-content-end">
+                            {/* <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button> */}
+                            <Button color='primary' type="submit" className="btn btn-success">Update</Button>
+                        </div>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
 
         </React.Fragment>

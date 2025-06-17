@@ -261,7 +261,7 @@ const AddProduct = () => {
                             value={formData.product_name}
                             placeholder="Product Name"
                             onChange={handleChange}
-                            required
+                           
                           />
                         </div>
                       </Row>
@@ -289,7 +289,7 @@ const AddProduct = () => {
                             placeholder="Gross Weight"
                             value={formData.gross_weight}
                             onChange={handleChange}
-                            required
+                            
                           />
                         </div>
                       </Row>
@@ -329,7 +329,7 @@ const AddProduct = () => {
                             placeholder="Net Weight"
                             value={formData.net_weight}
                             onChange={handleChange}
-                            required
+                            
                           />
                         </div>
                       </Row>
@@ -343,7 +343,7 @@ const AddProduct = () => {
                             name="product_image"
                             accept="image/*"
                             onChange={(e) => setFormData({ ...formData, product_image: e.target.files[0] })}
-                            required
+                            
                           />
                         </div>
                       </Row>

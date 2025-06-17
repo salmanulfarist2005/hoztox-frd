@@ -108,7 +108,7 @@ const CustomPendingOrder = () => {
             <div className="main-content">
                 <div className="page-content ">
                     <Container fluid>
-                    <Breadcrumbs title="Orders" breadcrumbItem="Custom Pending Orders" />
+                        <Breadcrumbs title="Orders" breadcrumbItem="Custom Pending Orders" />
 
                         <Row>
                             <Col lg={12}>
@@ -172,10 +172,17 @@ const CustomPendingOrder = () => {
                                                                             </div>
                                                                             <div className="edit">
                                                                                 <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn min-l-500"
                                                                                     onClick={() => tog_list({ order })}
+                                                                                    title="View"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    View Order
+                                                                                    <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -204,192 +211,192 @@ const CustomPendingOrder = () => {
                                             </div>
                                         </div>
                                     </CardBody>
-                                
+
                                 </Card>
                             </Col>
                         </Row>
-                     
+
                     </Container>
-                   
+
                 </div>
-                </div>
-                <FullCustomPendingOrder/>
-                <Modal
-                    isOpen={modal_list}
-                    toggle={tog_list}
-                    centered
-                    style={{ maxWidth: '1100px', width: '90%' }}
-                >
-                    <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
-                        View Product
-                    </ModalHeader>
-                    <ModalBody style={{ padding: '20px' }}>
-                        {console.log("Selected Item:", selectedItem)}
-                        {selectedItem ? (
-                            <>
+            </div>
+            <FullCustomPendingOrder />
+            <Modal
+                isOpen={modal_list}
+                toggle={tog_list}
+                centered
+                style={{ maxWidth: '1100px', width: '90%' }}
+            >
+                <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={tog_list}>
+                    View Product
+                </ModalHeader>
+                <ModalBody style={{ padding: '20px' }}>
+                    {console.log("Selected Item:", selectedItem)}
+                    {selectedItem ? (
+                        <>
 
-                                <Row className="mb-3 mt-2">
-                                    <label className="col-md-2 col-form-label">Product Image</label>
-                                    <div className="col-md-10">
-                                        <img
-                                            src={`${BASE_URL}${selectedItem.order?.product?.product_image}`}
-                                            alt={`Image of ${selectedItem.order?.product?.product_name}`} // Improved alt text
-                                            style={{ width: '100px', height: '100px' }}
-                                        />
-                                    </div>
-                                </Row>
+                            <Row className="mb-3 mt-2">
+                                <label className="col-md-2 col-form-label">Product Image</label>
+                                <div className="col-md-10">
+                                    <img
+                                        src={`${BASE_URL}${selectedItem.order?.product?.product_image}`}
+                                        alt={`Image of ${selectedItem.order?.product?.product_name}`} // Improved alt text
+                                        style={{ width: '100px', height: '100px' }}
+                                    />
+                                </div>
+                            </Row>
 
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">SKU</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.product?.SKU}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Name</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.product?.product_name}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Category</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.product?.category_name}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Color</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.color?.color}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Size</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.size}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Quantity</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.quantity}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                            
-                         
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Shop Name</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.company_name}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Shipping Address</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.shipping_address}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Mobile Number</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.mobile_number}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">WhatsApp Number</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.whatsapp_number}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Email</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.user?.company_email}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Additional Notes</label>
-                                    <div className="col-md-10">
-                                        <textarea
-                                            className="form-control"
-                                            rows="4"
-                                            value={selectedItem.order?.product?.description}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
-                                <Row className="mt-3">
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">SKU</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.product?.SKU}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Name</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.product?.product_name}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Category</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.product?.category?.category_name}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Color</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.color?.color}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Product Size</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.size}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Quantity</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.quantity}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
 
-                                    <Col className="text-end">
-                                        <Button color="primary" onClick={handleApprove} className="me-2">
-                                            Approve
-                                        </Button>
-                                        <Button color="danger" onClick={handleReject}>
-                                            Reject
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </>
-                        ) : (
-                            <div>No order selected.</div>
-                        )}
-                    </ModalBody>
-                </Modal>
+
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Shop Name</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.company_name}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Shipping Address</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.shipping_address}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Mobile Number</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.mobile_number}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">WhatsApp Number</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.whatsapp_number}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Email</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.user?.company_email}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mb-3">
+                                <label className="col-md-2 col-form-label">Additional Notes</label>
+                                <div className="col-md-10">
+                                    <textarea
+                                        className="form-control"
+                                        rows="4"
+                                        value={selectedItem.order?.product?.description}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
+                            <Row className="mt-3">
+
+                                <Col className="text-end">
+                                    <Button color="primary" onClick={handleApprove} className="me-2">
+                                        Approve
+                                    </Button>
+                                    <Button color="primary" onClick={handleReject} >
+                                        Reject
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </>
+                    ) : (
+                        <div>No order selected.</div>
+                    )}
+                </ModalBody>
+            </Modal>
 
 
         </React.Fragment>

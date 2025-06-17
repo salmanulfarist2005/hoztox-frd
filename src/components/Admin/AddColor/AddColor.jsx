@@ -141,7 +141,7 @@ const AddColor = () => {
                                             <Row className="g-4 mb-3">
                                                 <Col className="col-sm-auto">
                                                     <div className="d-flex gap-1">
-                                                        <Button color="success" onClick={toggleAddModal} id="create-btn">
+                                                        <Button color="primary" onClick={toggleAddModal} id="create-btn">
                                                             <i className="ri-add-line align-bottom me-1"></i> Add Color
                                                         </Button>
                                                     </div>
@@ -184,10 +184,38 @@ const AddColor = () => {
                                                                     <td>{color.color}</td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            <button onClick={() => toggleEditModal(color)} className="btn btn-sm btn-success">Edit</button>
-                                                                            <button onClick={() => deleteColor(color.id)} className="btn btn-sm btn-danger">Remove</button>
+                                                                            {/* Edit Icon */}
+                                                                            <button
+                                                                                onClick={() => toggleEditModal(color)}
+                                                                                title="Edit"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                            </button>
+
+                                                                            {/* Delete Icon */}
+                                                                            <button
+                                                                                onClick={() => deleteColor(color.id)}
+                                                                                title="Delete"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                            </button>
                                                                         </div>
                                                                     </td>
+
                                                                 </tr>
                                                             ))
                                                         ) : (
@@ -206,57 +234,57 @@ const AddColor = () => {
                         </Row>
                     </Container>
                 </div>
-                </div>
-                {/* Add Color Modal */}
-                <Modal isOpen={modal_list} toggle={toggleAddModal} centered>
-                    <ModalHeader toggle={toggleAddModal}>Add Color</ModalHeader>
-                    <form onSubmit={addColor}>
-                    <ModalBody style={{ padding: '20px' }}>  
-                            <div className="mb-3">
-                                <label htmlFor="color" className="form-label">Color Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="color"
-                                    name="color"
-                                    value={formData.color}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="secondary" onClick={toggleAddModal}>Cancel</Button>
-                            <Button color="primary" type="submit">Add</Button>
-                        </ModalFooter>
-                    </form>
-                </Modal>
+            </div>
+            {/* Add Color Modal */}
+            <Modal isOpen={modal_list} toggle={toggleAddModal} centered>
+                <ModalHeader toggle={toggleAddModal}>Add Color</ModalHeader>
+                <form onSubmit={addColor}>
+                    <ModalBody style={{ padding: '20px' }}>
+                        <div className="mb-3">
+                            <label htmlFor="color" className="form-label">Color Name</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="color"
+                                name="color"
+                                value={formData.color}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        {/* <Button color="secondary" onClick={toggleAddModal}>Cancel</Button> */}
+                        <Button color="primary" type="submit">Add</Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
-                {/* Edit Color Modal */}
-                {/* Edit Color Modal */}
-                <Modal isOpen={modal_list1} toggle={toggleEditModal} centered>
-                    <ModalHeader toggle={toggleEditModal}>Edit Color</ModalHeader>
-                    <form onSubmit={updateColor}>
-                    <ModalBody style={{ padding: '20px' }}>  
-                            <div className="mb-3">
-                                <label htmlFor="color" className="form-label">Color Name</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="color"
-                                    name="color"  // Removed the extra space here
-                                    value={formData.color}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="secondary" onClick={toggleEditModal}>Cancel</Button>
-                            <Button color="primary" type="submit">Update</Button>
-                        </ModalFooter>
-                    </form>
-                </Modal>
+            {/* Edit Color Modal */}
+            {/* Edit Color Modal */}
+            <Modal isOpen={modal_list1} toggle={toggleEditModal} centered>
+                <ModalHeader toggle={toggleEditModal}>Edit Color</ModalHeader>
+                <form onSubmit={updateColor}>
+                    <ModalBody style={{ padding: '20px' }}>
+                        <div className="mb-3">
+                            <label htmlFor="color" className="form-label">Color Name</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="color"
+                                name="color"  // Removed the extra space here
+                                value={formData.color}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        {/* <Button color="secondary" onClick={toggleEditModal}>Cancel</Button> */}
+                        <Button color="primary" type="submit">Update</Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
         </React.Fragment>
     );

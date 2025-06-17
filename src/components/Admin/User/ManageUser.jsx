@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
- 
+
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
@@ -20,7 +20,7 @@ const ManageUser = () => {
         mobile_number: '',
         whatsapp_number: '',
         company_name: '',
- 
+
         shipping_address: '',
         company_logo: null,
         company_email: '',
@@ -35,19 +35,18 @@ const ManageUser = () => {
 
 
 
-   
-        const fetchUsers = async () => {
-            try {
+    const fetchUsers = async () => {
+        try {
 
-                const response = await axios.get(`${BASE_URL}/products/users/`);
-                setUsers(response.data);
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        useEffect(() => {
+            const response = await axios.get(`${BASE_URL}/products/users/`);
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
         fetchUsers();
     }, []);
 
@@ -85,21 +84,21 @@ const ManageUser = () => {
                 company_logo: file, // Store the new file object
             }));
         } else {
-         
+
             setCurrentLogo(formData.company_logo);
         }
     };
-    
-    
+
+
     const tog_list = (user) => {
         if (!user || !user.id) {
             console.error("Invalid user data:", user);
             return;
         }
-    
+
         console.log("Editing user:", user);
         setUserId(user.id);
-    
+
         setFormData({
             full_name: user.full_name || '',
             email: user.email || '',
@@ -111,68 +110,68 @@ const ManageUser = () => {
             company_email: user.company_email || '',
             company_website: user.company_website || '',
             username: user.username || '',
-            password: '',  
+            password: '',
             confirm_password: '',
             usertypes: user.usertypes || '',
         });
-    
+
         setCurrentLogo(user.company_logo || '');
         setSelectedUserType(user.usertypes?.toString() || '');
         setModalList(true); // Open modal
     };
-    
+
 
     const [userId, setUserId] = useState(null);
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!userId) {
             console.error("User ID is not defined.");
-            return; 
+            return;
         }
-    
+
         const formDataToSubmit = new FormData();
-    
+
         // Append a new logo if it's selected
         if (formData.company_logo instanceof File) {
             formDataToSubmit.append('company_logo', formData.company_logo);
         }
-    
+
         // Only append the existing logo if it’s the same one (not changed)
         if (!formData.company_logo || formData.company_logo instanceof File) {
             formDataToSubmit.append('company_logo', currentLogo); // currentLogo should hold the URL of the existing logo
         }
-    
+
         // Append other fields to FormData
         Object.keys(formData).forEach(key => {
             if (key !== 'company_logo') { // Avoid appending logo here again
                 formDataToSubmit.append(key, formData[key]);
             }
         });
-    
+
         // Handle selected user type
         if (selectedUserType) {
             formDataToSubmit.append('usertypes', selectedUserType);
         }
-    
+
         try {
             const response = await axios.put(`${BASE_URL}/products/users/${userId}/`, formDataToSubmit, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             if (response.status === 200) {
                 alert("User updated successfully!");
-                
+
                 // Directly update the user in the state
-                setUsers(prevUsers => 
-                    prevUsers.map(user => 
+                setUsers(prevUsers =>
+                    prevUsers.map(user =>
                         user.id === userId ? { ...user, ...formData } : user
                     )
                 );
             }
-    
+
             // Reset form data
             setFormData({
                 full_name: '',
@@ -189,7 +188,7 @@ const ManageUser = () => {
                 confirm_password: '',
                 usertypes: '',
             });
-            setCurrentLogo(null); 
+            setCurrentLogo(null);
             setSelectedUserType('');
             setUserId(null);
             setModalList(false);
@@ -199,10 +198,10 @@ const ManageUser = () => {
             alert("Error updating user. Please try again.");
         }
     };
-    
-    
-    
-    
+
+
+
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -211,7 +210,7 @@ const ManageUser = () => {
 
     const [currentLogo, setCurrentLogo] = useState(null);
 
-    
+
 
     const handleUserTypeChange = (event) => {
         setSelectedUserType(event.target.value);
@@ -243,44 +242,44 @@ const ManageUser = () => {
         return user && (
             user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
-            
+
         );
     });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
- 
+
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
- 
+
     const indexOfLastUser = currentPage * itemsPerPage;
     const indexOfFirstUser = indexOfLastUser - itemsPerPage;
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
- 
+
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-          setCurrentPage(currentPage + 1);
+            setCurrentPage(currentPage + 1);
         }
-      };
-      
-      const handlePreviousPage = () => {
+    };
+
+    const handlePreviousPage = () => {
         if (currentPage > 1) {
-          setCurrentPage(currentPage - 1);
+            setCurrentPage(currentPage - 1);
         }
-      };
+    };
 
-      const [isAllSelected, setIsAllSelected] = useState(false);
-      const [selectedIds, setSelectedIds] = useState([]);
-      const handleSelectAllChange = () => {
-          if (isAllSelected) {
-              setSelectedIds([]);
-          } else {
-              setSelectedIds(filteredUsers.map(user => user.id));
-          }
-          setIsAllSelected(!isAllSelected);
-      };
+    const [isAllSelected, setIsAllSelected] = useState(false);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const handleSelectAllChange = () => {
+        if (isAllSelected) {
+            setSelectedIds([]);
+        } else {
+            setSelectedIds(filteredUsers.map(user => user.id));
+        }
+        setIsAllSelected(!isAllSelected);
+    };
 
-      const handleCheckboxChanges = (userId) => {
+    const handleCheckboxChanges = (userId) => {
         setSelectedIds(prevSelected =>
             prevSelected.includes(userId)
                 ? prevSelected.filter(id => id !== userId)
@@ -297,8 +296,8 @@ const ManageUser = () => {
         }
         if (window.confirm("Are you sure you want to delete the selected users?")) {
             try {
-                await Promise.all(selectedIds.map(id => 
-                     axios.delete(`${BASE_URL}/products/users/${userId}/delete/`)
+                await Promise.all(selectedIds.map(id =>
+                    axios.delete(`${BASE_URL}/products/users/${userId}/delete/`)
                 ));
                 fetchUsers();
                 alert("Selected Users deleted successfully!");
@@ -312,7 +311,7 @@ const ManageUser = () => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
                 await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`);
-                fetchUsers(); 
+                fetchUsers();
                 alert("User deleted successfully!");
             } catch (error) {
                 console.error('Error deleting user:', error);
@@ -323,128 +322,151 @@ const ManageUser = () => {
     };
     return (
         <React.Fragment>
-               <div className="main-content">
-               <div className="page-content ">
-                <Container fluid>
-                    <Breadcrumbs title="Users" breadcrumbItem="Manage User" />
+            <div className="main-content">
+                <div className="page-content ">
+                    <Container fluid>
+                        <Breadcrumbs title="Users" breadcrumbItem="Manage User" />
 
-                    <Row>
-                        <Col lg={12}>
-                            <Card>
-                                <CardBody>
-                                    <div id="customerList">
-                                        <Row className="g-4 mb-3">
-                                        <Col className="col-sm-auto">
-                                                <div className="d-flex gap-1">
-                                                <Button color="soft-danger" onClick={deleteMultipleCategories}><i className="ri-delete-bin-2-line"></i></Button>
-                                                </div>
-                                            </Col>
-                                            <Col className="col-sm">
-                                                <div className="d-flex justify-content-sm-end">
-                                                    <div className="search-box ms-2" style={{ position: 'relative' }}>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control search"
-                                                            placeholder="Search..."
-                                                            style={{ paddingRight: '30px' }}
-                                                            value={searchTerm}
-                                                            onChange={handleSearchChange}
-                                                        />
-                                                        <i className="ri-search-line search-icon" style={{
-                                                            position: 'absolute',
-                                                            right: '10px',
-                                                            top: '50%',
-                                                            transform: 'translateY(-50%)',
-                                                            pointerEvents: 'none'
-                                                        }}></i>
+                        <Row>
+                            <Col lg={12}>
+                                <Card>
+                                    <CardBody>
+                                        <div id="customerList">
+                                            <Row className="g-4 mb-3">
+                                                <Col className="col-sm-auto">
+                                                    <div className="d-flex gap-1">
+                                                        <Button color="soft-danger" onClick={deleteMultipleCategories}><i className="ri-delete-bin-2-line"></i></Button>
                                                     </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-
-                                        <div className="table-responsive table-card mt-3 mb-1">
-                                            <table className="table align-middle table-nowrap min-500" id="customerTable">
-                                                <thead className="table-light ">
-                                                    <tr>
-                                                    <th scope="col"  >
-                                                            <div className="form-check">
+                                                </Col>
+                                                <Col className="col-sm">
+                                                    <div className="d-flex justify-content-sm-end">
+                                                        <div className="search-box ms-2" style={{ position: 'relative' }}>
                                                             <input
-                                                                    className="form-check-input"
-                                                                    type="checkbox"
-                                                                    id="checkAll"
-                                                                    checked={isAllSelected}
-                                                                    onChange={handleSelectAllChange}
-                                                                />
-                                                            </div>
-                                                        </th>
-                                                        <th className="sort" data-sort="customer_name">Full Name</th>
-                                                        <th className="sort" data-sort="email">Email</th>
-                                                        <th className="sort" data-sort="phone">Mobile Number</th>
-                                                        <th className="sort" data-sort="company">Company Name</th>
-                                                        <th className="sort" data-sort="action">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className="list form-check-all manage-product ">
-                                                    {loading ? (
+                                                                type="text"
+                                                                className="form-control search"
+                                                                placeholder="Search..."
+                                                                style={{ paddingRight: '30px' }}
+                                                                value={searchTerm}
+                                                                onChange={handleSearchChange}
+                                                            />
+                                                            <i className="ri-search-line search-icon" style={{
+                                                                position: 'absolute',
+                                                                right: '10px',
+                                                                top: '50%',
+                                                                transform: 'translateY(-50%)',
+                                                                pointerEvents: 'none'
+                                                            }}></i>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+
+                                            <div className="table-responsive table-card mt-3 mb-1">
+                                                <table className="table align-middle table-nowrap min-500" id="customerTable">
+                                                    <thead className="table-light ">
                                                         <tr>
-                                                           
-                                                        </tr>
-                                                    ) : (
-                                                        currentUsers.map((user) => (
-                                                            <tr key={user.id}>
-                                                                <th scope="row">
-                                                                    <div className="form-check">
+                                                            <th scope="col"  >
+                                                                <div className="form-check">
                                                                     <input
                                                                         className="form-check-input"
                                                                         type="checkbox"
-                                                                        value={user.id}
-                                                                        checked={selectedIds.includes(user.id)}  
-                                                                        onChange={(e) => handleCheckboxChanges(user.id)}
+                                                                        id="checkAll"
+                                                                        checked={isAllSelected}
+                                                                        onChange={handleSelectAllChange}
                                                                     />
-                                                                    </div>
-                                                                </th>
-                                                                <td className="customer_name ">{user.full_name}</td>
-                                                                <td className="email">{user.email}</td>
-                                                                <td className="phone">{user.mobile_number}</td>
-                                                                <td className="company">{user.company_name}</td>
-                                                                <td>
-                                                                    <div className="d-flex gap-2">
-                                                                        <button
-                                                                            className="btn btn-sm btn-success edit-item-btn"
-                                                                            onClick={() => tog_list(user)}
-                                                                        >
-                                                                            Edit
-                                                                        </button>
-                                                                        <button onClick={() => deleteCategory(user.id)}  className="btn btn-sm btn-danger remove-item-btn">Remove</button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div className="d-flex justify-content-end">
-                                            <div className="pagination-wrap hstack gap-2">
-                                                <Link  onClick={() =>  handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                    Previous
-                                                </Link>
-                                                <ul className="pagination listjs-pagination mb-0"></ul>
-                                                <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                    Next
-                                                </Link>
-                                            </div>
-                                        </div>
+                                                                </div>
+                                                            </th>
+                                                            <th className="sort" data-sort="customer_name">Full Name</th>
+                                                            <th className="sort" data-sort="email">Email</th>
+                                                            <th className="sort" data-sort="phone">Mobile Number</th>
+                                                            <th className="sort" data-sort="company">Company Name</th>
+                                                            <th className="sort" data-sort="action">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="list form-check-all manage-product ">
+                                                        {loading ? (
+                                                            <tr>
 
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
+                                                            </tr>
+                                                        ) : (
+                                                            currentUsers.map((user) => (
+                                                                <tr key={user.id}>
+                                                                    <th scope="row">
+                                                                        <div className="form-check">
+                                                                            <input
+                                                                                className="form-check-input"
+                                                                                type="checkbox"
+                                                                                value={user.id}
+                                                                                checked={selectedIds.includes(user.id)}
+                                                                                onChange={(e) => handleCheckboxChanges(user.id)}
+                                                                            />
+                                                                        </div>
+                                                                    </th>
+                                                                    <td className="customer_name ">{user.full_name}</td>
+                                                                    <td className="email">{user.email}</td>
+                                                                    <td className="phone">{user.mobile_number}</td>
+                                                                    <td className="company">{user.company_name}</td>
+                                                                    <td>
+                                                                        <div className="d-flex gap-2">
+                                                                            {/* Edit Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list(user)}
+                                                                                title="Edit"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                            </button>
+
+                                                                            {/* Delete Icon */}
+                                                                            <button
+                                                                                onClick={() => deleteCategory(user.id)}
+                                                                                title="Delete"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div className="d-flex justify-content-end">
+                                                <div className="pagination-wrap hstack gap-2">
+                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
+                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
+                                                        Previous
+                                                    </Link>
+                                                    <ul className="pagination listjs-pagination mb-0"></ul>
+                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
+                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
+                                                        Next
+                                                    </Link>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
             </div>
             <Modal
                 isOpen={modal_list}
@@ -454,7 +476,7 @@ const ManageUser = () => {
             >
                 <ModalHeader className="bg-light p-3" toggle={() => setModalList(false)}> Edit User </ModalHeader>
                 <CardBody style={{ padding: '20px' }}>
-                <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <Row className="mb-3">
                             <label htmlFor="full_name" className="col-md-2 col-form-label">Full Name</label>
                             <div className="col-md-10">
@@ -523,7 +545,7 @@ const ManageUser = () => {
                                 />
                             </div>
                         </Row>
-                    
+
                         <Row className="mb-3">
                             <label htmlFor="shipping_address" className="col-md-2 col-form-label">Address</label>
                             <div className="col-md-10">
@@ -622,49 +644,81 @@ const ManageUser = () => {
 
                         <Row className="mb-3">
                             <label htmlFor="password" className="col-md-2 col-form-label">Password</label>
-                            <div className="col-md-10">
+                            <div className="col-md-10 position-relative">
                                 <input
-                                    className={`form-control ${passwordVisible ? 'show-password' : ''}`}
+                                    className="form-control"
                                     type={passwordVisible ? "text" : "password"}
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
                                     placeholder="Password"
                                 />
+                                <span
+                                    onClick={togglePasswordVisibility}
+                                    style={{
+                                        position: "absolute",
+                                       right: "25px",
+                                        top: "50%",
+                                        transform: "translateY(-50%)",
+                                        cursor: "pointer",
+                                        color: "#6b7280"
+                                    }}
+                                >
+                                    <i className={passwordVisible ? "ri-eye-off-line" : "ri-eye-line"}></i>
+                                </span>
                             </div>
                         </Row>
+
                         <Row className="mb-3">
                             <label htmlFor="confirm_password" className="col-md-2 col-form-label">Confirm Password</label>
-                            <div className="col-md-10">
+                            <div className="col-md-10 position-relative">
                                 <input
-                                    className={`form-control ${passwordVisible ? 'show-password' : ''}`}
+                                    className="form-control"
                                     type={passwordVisible ? "text" : "password"}
                                     name="confirm_password"
                                     value={formData.confirm_password}
                                     onChange={handleChange}
                                     placeholder="Confirm Password"
                                 />
+                                <span
+                                    onClick={togglePasswordVisibility}
+                                    style={{
+                                        position: "absolute",
+                                        right: "25px",
+                                        top: "35%",
+                                        transform: "translateY(-50%)",
+                                        cursor: "pointer",
+                                        color: "#6b7280"
+                                    }}
+                                >
+                                    <i className={passwordVisible ? "ri-eye-off-line" : "ri-eye-line"}></i>
+                                </span>
                             </div>
                         </Row>
                         <Row className="mb-3 d-flex justify-content-start">
-                            <div className="col-md-10 offset-md-2 d-flex">
-                                <button type="button" onClick={handleGeneratePassword} className="btn btn-secondary me-2">Generate Password</button>
-                                <button type="button" onClick={togglePasswordVisibility} className="btn btn-outline-secondary">
-                                    {passwordVisible ? 'Hide Password' : 'Show Password'}
+                            <div className="col-md-10 offset-md-2">
+                                <button
+                                    type="button"
+                                    onClick={handleGeneratePassword}
+                                    className="btn btn-secondary"
+                                >
+                                    Generate Password
                                 </button>
                             </div>
                         </Row>
-                        <ModalFooter>
-                    <div className="hstack gap-2 justify-content-end">
-                        <button type="button" className="btn btn-light" onClick={() => setModalList(false)}>Close</button>
-                        <button type="submit" className="btn btn-success" id="add-btn">Update User</button>
 
-                    </div>
-                </ModalFooter>
+
+                        <ModalFooter>
+                            <div className="hstack gap-2 justify-content-end">
+                                {/* <button type="button" className="btn btn-light" onClick={() => setModalList(false)}>Close</button> */}
+                                <Button type="submit" color='primary' className="btn btn-success" id="add-btn">Update User</Button>
+
+                            </div>
+                        </ModalFooter>
                     </form>
 
-                    </CardBody>
-             
+                </CardBody>
+
 
             </Modal>
         </React.Fragment>

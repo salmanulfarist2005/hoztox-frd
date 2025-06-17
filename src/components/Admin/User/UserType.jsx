@@ -83,32 +83,32 @@ const UserType = () => {
 
     const updateUserType = async (e) => {
         e.preventDefault();
-    
+
         if (!currentUserType || !currentUserType.id) {
             console.error('No current user type selected.');
             return;
         }
-    
+
         try {
             // Send the update request
             await axios.put(`${BASE_URL}/products/usertypes/${currentUserType.id}/`, formData);
-    
+
             // Update the user type in the state directly
-            setUserTypes((prevUserTypes) => 
-                prevUserTypes.map((userType) => 
+            setUserTypes((prevUserTypes) =>
+                prevUserTypes.map((userType) =>
                     userType.id === currentUserType.id ? { ...userType, ...formData } : userType
                 )
             );
-    
+
             tog_list1(null); // Close the modal or list view
-    
+
             alert("User type updated successfully!");
         } catch (error) {
             console.error('Error updating user type:', error);
             alert("Error updating user type. Please try again.");
         }
     };
-    
+
 
     const deleteUserType = async (userTypeId) => {
         if (window.confirm("Are you sure you want to delete this user type?")) {
@@ -208,10 +208,11 @@ const UserType = () => {
                                             <Row className="g-4 mb-3">
                                                 <Col className="col-sm-auto">
                                                     <div className="d-flex gap-1">
-                                                        <Button color="success" className="add-btn" onClick={() => tog_list()} id="create-btn"><i className="ri-add-line align-bottom me-1"></i> Add</Button>
-                                                        <Button color="soft-danger"
+                                                            <Button color="soft-danger"
                                                             onClick={deleteMultipleUserTypes}
                                                         ><i className="ri-delete-bin-2-line"></i></Button>
+                                                        <Button color="primary" className="add-btn" onClick={() => tog_list()} id="create-btn"><i className="ri-add-line align-bottom me-1"></i> Add</Button>
+                                                    
                                                     </div>
                                                 </Col>
                                                 <Col className="col-sm">
@@ -275,14 +276,40 @@ const UserType = () => {
                                                                     <td>{userType.usertype}</td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            <div className="edit">
-                                                                                <button onClick={() => tog_list1(userType)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
-                                                                            </div>
-                                                                            <div className="remove">
-                                                                                <button onClick={() => deleteUserType(userType.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                                            </div>
+                                                                            {/* Edit Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list1(userType)}
+                                                                                title="Edit"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                            </button>
+
+                                                                            {/* Delete Icon */}
+                                                                            <button
+                                                                                onClick={() => deleteUserType(userType.id)}
+                                                                                title="Delete"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#deleteRecordModal"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                            </button>
                                                                         </div>
                                                                     </td>
+
                                                                 </tr>
                                                             ))
                                                         ) : (
@@ -319,7 +346,7 @@ const UserType = () => {
             <Modal isOpen={modal_list} toggle={() => tog_list()} centered>
                 <ModalHeader className="bg-light p-3" toggle={() => tog_list()}>Add User Type</ModalHeader>
                 <form onSubmit={addUserType}>
-                <ModalBody style={{ padding: '20px' }}> 
+                    <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
                             <label htmlFor="usertype-field" className="form-label">User Type</label>
                             <input type="text" name="usertype" value={formData.usertype} onChange={handleInputChange} id="usertype-field" className="form-control" placeholder="Enter User Type" required />
@@ -338,7 +365,7 @@ const UserType = () => {
                     Edit User Type
                 </ModalHeader>
                 <form onSubmit={updateUserType}>
-                    <ModalBody style={{ padding: '20px' }}>  
+                    <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
                             <label htmlFor="usertype-field" className="form-label">User Type</label>
                             <input
@@ -355,8 +382,8 @@ const UserType = () => {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <button type="button" className="btn btn-light" onClick={() => tog_list1(null)}>Close</button>
-                        <button type="submit" className="btn btn-success">Update</button>
+                        {/* <button type="button" className="btn btn-light" onClick={() => tog_list1(null)}>Close</button> */}
+                        <Button color="primary"  type="submit" className="btn btn-success">Update</Button>
                     </ModalFooter>
                 </form>
             </Modal>

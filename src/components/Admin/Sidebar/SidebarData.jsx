@@ -56,8 +56,10 @@ const SidebarData = [
         icon: "mdi mdi-package-variant-closed",  
         subItem: [
  
-            { sublabel: "Delivered Orders", link: "/completed-order" },
+           
             { sublabel: "Manage Orders ", link: "/out-order" },
+             { sublabel: "Accepted Orders", link: "/accept-order" },
+            { sublabel: "Delivered Orders", link: "/completed-order" },
             
         ],
     },

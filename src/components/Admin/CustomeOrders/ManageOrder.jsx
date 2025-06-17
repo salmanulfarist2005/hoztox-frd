@@ -29,7 +29,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
             setOrders(response.data || []);
             console.log("response", response.data);
-            
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -57,27 +57,27 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
 
     const handleSaveChanges = async () => {
         if (!selectedItem) return;
-    
+
         try {
-            // Perform the update request
+
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
             });
-    
-            // After updating, update the state to reflect the changes
+
+
             setOrders((prevOrders) => {
-                // Update the specific order based on the selected item
+
                 const updatedOrders = prevOrders.map((order) =>
                     order.id === selectedItem.id
-                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }  // Update the changed fields
+                        ? { ...order, ordercode: editedOrderCode, quantity: editedQuantity }
                         : order
                 );
-    
-                // Optionally, you can sort the orders by an appropriate field, for example, order ID
-                return updatedOrders.sort((a, b) => a.id - b.id);  // Sorting by `id`, adjust based on your needs
+
+
+                return updatedOrders.sort((a, b) => a.id - b.id);
             });
-    
+
             alert("Updated Successfully");
             setModalList1(false);
         } catch (error) {
@@ -85,7 +85,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             alert("There was an error saving the changes. Please try again.");
         }
     };
-    
+
     const downloadCSV = () => {
         if (!selectedItem) return;
 
@@ -337,7 +337,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                     <td>{order.user?.company_name || "N/A"}</td>
                                                                     <td>{order.product?.SKU || "N/A"}</td>
                                                                     <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name || "N/A"}</td>
+                                                                    <td>{order.product?.category?.category_name || "N/A"}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
                                                                         {editingOrderId === order.id ? (
@@ -356,20 +356,35 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                                     ))}
                                                                                 </Input>
 
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    color="success"
+                                                                                <button
                                                                                     onClick={() => handleConfirm(order.id)}
+                                                                                    title="Confirm"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    Confirm
-                                                                                </Button>
-                                                                                <Button
-                                                                                    size="sm"
-                                                                                    color="secondary"
+                                                                                    <i className="ri-check-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                                </button>
+
+                                                                                <button
                                                                                     onClick={() => setEditingOrderId(null)}
+                                                                                    title="Cancel"
+                                                                                    style={{
+                                                                                        background: 'none',
+                                                                                        border: 'none',
+                                                                                        padding: '5px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block'
+                                                                                    }}
                                                                                 >
-                                                                                    Cancel
-                                                                                </Button>
+                                                                                    <i className="ri-close-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                                </button>
+
+
                                                                             </div>
                                                                         ) : (
                                                                             <div className="d-flex gap-2 align-items-center ">
@@ -388,48 +403,80 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                                     )?.label || order.new_status}
                                                                                 </span>
 
-                                                                                <Button
-                                                                                className='min-ll-500'
+                                                                                <button
+                                                                                    className='min-ll-500'
                                                                                     size="sm"
                                                                                     color="primary"
                                                                                     onClick={() => {
                                                                                         setEditingOrderId(order.id);
                                                                                         setStatus(order.new_status);
                                                                                     }}
+                                                                                    style={{
+                                                                                        backgroundColor: '#e5e7eb',
+                                                                                        border: '1px solid #d1d5db',
+                                                                                        padding: '4px 8px',
+                                                                                        borderRadius: '4px',
+                                                                                        cursor: 'pointer',
+                                                                                        display: 'inline-block',
+                                                                                        color: '#374151',
+                                                                                        fontSize: '14px',
+                                                                                        transition: 'background-color 0.2s'
+                                                                                    }}
                                                                                 >
                                                                                     Change Status
-                                                                                </Button>
+                                                                                </button>
                                                                             </div>
                                                                         )}
                                                                     </td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success edit-item-btn"
-                                                                                    onClick={() => tog_list({ order })}
-                                                                                >
-                                                                                    View  
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-success"
-                                                                                    onClick={() => tog_list1(order)}
-                                                                                >
-                                                                                    Edit
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="edit">
-                                                                                <button
-                                                                                    className="btn btn-sm btn-danger edit-item-btn"
-                                                                                    onClick={() => handleDeleteOrder(order.id)}
-                                                                                >
-                                                                                    Delete
-                                                                                </button>
-                                                                            </div>
+                                                                            {/* View Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list({ order })}
+                                                                                title="View"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                            </button>
+
+                                                                            {/* Edit Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => tog_list1(order)}
+                                                                                title="Edit"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                            </button>
+
+                                                                            {/* Delete Button with Icon */}
+                                                                            <button
+                                                                                onClick={() => handleDeleteOrder(order.id)}
+                                                                                title="Delete"
+                                                                                style={{
+                                                                                    background: 'none',
+                                                                                    border: 'none',
+                                                                                    padding: '5px',
+                                                                                    cursor: 'pointer',
+                                                                                    display: 'inline-block'
+                                                                                }}
+                                                                            >
+                                                                                <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
+                                                                            </button>
                                                                         </div>
                                                                     </td>
+
                                                                 </tr>
                                                             ))
                                                         ) : (
@@ -526,7 +573,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.order?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
@@ -548,16 +595,16 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                             </Row>
 
                             <Row className="mb-3">
-                                    <label className="col-md-2 col-form-label">Product Size</label>
-                                    <div className="col-md-10">
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            value={selectedItem.order?.size}
-                                            readOnly
-                                        />
-                                    </div>
-                                </Row>
+                                <label className="col-md-2 col-form-label">Product Size</label>
+                                <div className="col-md-10">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        value={selectedItem.order?.size}
+                                        readOnly
+                                    />
+                                </div>
+                            </Row>
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Quantity</label>
                                 <div className="col-md-10">
@@ -569,7 +616,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     />
                                 </div>
                             </Row>
-                          
+
                             <Row className="mb-3">
                                 <label className="col-md-2 col-form-label">Description</label>
                                 <div className="col-md-10">
@@ -652,9 +699,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
                                         Download CSV
                                     </Button>
-                                    <Button color="primary" onClick={downloadPDF}>
-                                        Download PDF
-                                    </Button>
+                                    
                                 </Col>
                             </Row>
                         </>
@@ -694,8 +739,8 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     ) : null}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-                    <Button color="secondary" onClick={() => setModalList1(false)}>Close</Button>
+                    <Button color="primary" onClick={handleSaveChanges}>Save </Button>
+
                 </ModalFooter>
             </Modal>
         </React.Fragment>

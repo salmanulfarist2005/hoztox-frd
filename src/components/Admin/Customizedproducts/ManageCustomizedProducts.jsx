@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
- 
+
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
@@ -25,12 +25,12 @@ const ManageCustomProducts = () => {
         SKU: "",
         product_name: "",
         category: "",
- 
+
         gross_weight: "",
         diamond_weight: "",
         colour_stones: "",
         net_weight: "",
-  
+
         product_image: null,
         description: "",
         usertypes: []
@@ -88,12 +88,12 @@ const ManageCustomProducts = () => {
             SKU: product.SKU,
             product_name: product.product_name,
             category: product.category,
-           
+
             gross_weight: product.gross_weight,
             diamond_weight: product.diamond_weight,
             colour_stones: product.colour_stones,
             net_weight: product.net_weight,
-        
+
             product_image: product.product_image, // Main image
             description: product.description,
             usertypes: product.usertypes
@@ -340,34 +340,34 @@ const ManageCustomProducts = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!productId) return;
-    
+
         // Prepare the updated form data
         const updatedFormData = {
             ...formData,
             usertypes: selectedUserTypes,
             product_image: mainImage || formData.product_image,
         };
-    
+
         try {
             const formDataToSubmit = new FormData();
-    
+
             // Append the form data except for images and additional images
             Object.keys(updatedFormData).forEach((key) => {
                 if (key !== 'product_image' && key !== 'additional_images') {
                     formDataToSubmit.append(key, updatedFormData[key]);
                 }
             });
-    
+
             // Append the main image if it exists
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
-    
+
             // Append any new additional images
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
             });
-    
+
             // Re-append the existing additional images that haven't been removed
             const product = products.find(prod => prod.id === productId);
             if (product && product.additional_images) {
@@ -377,28 +377,28 @@ const ManageCustomProducts = () => {
                     }
                 });
             }
-    
+
             // Append the list of images to remove
             imagesToRemove.forEach((imageId) => {
                 formDataToSubmit.append('images_to_remove[]', imageId);
             });
-    
+
             // Make the API request
             await axios.put(`${BASE_URL}/products/customized_products/${productId}/update/`, formDataToSubmit, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             alert("Product updated successfully!");
-    
+
             // Instead of calling fetchProducts, directly update the products state
             setProducts((prevProducts) => {
-                return prevProducts.map((prod) => 
+                return prevProducts.map((prod) =>
                     prod.id === productId ? { ...prod, ...updatedFormData } : prod
                 );
             });
-    
+
             // Clear form data
             setFormData({
                 SKU: "",
@@ -412,17 +412,17 @@ const ManageCustomProducts = () => {
                 description: "",
                 usertypes: []
             });
-    
+
             setImages([]);
             setSelectedUserTypes([]);
             setImagesToRemove([]);
             setmodal_list(false);
-    
+
         } catch (error) {
             console.error("Error updating product:", error.response ? error.response.data : error.message);
         }
     };
-    
+
 
     useEffect(() => {
         fetchProducts();
@@ -574,7 +574,7 @@ const ManageCustomProducts = () => {
                                                             <th className="sort" data-sort="customer_name">Product Name</th>
                                                             <th className="sort" data-sort="email">SKU</th>
                                                             <th className="sort" data-sort="phone">Product Category</th>
-                                                    
+
                                                             <th className="sort" data-sort="action">Action</th>
                                                         </tr>
                                                     </thead>
@@ -595,18 +595,44 @@ const ManageCustomProducts = () => {
                                                                 <td>{product.product_name}</td>
                                                                 <td>{product.SKU}</td>
                                                                 <td>{product.category_name}</td>
-                                                              
+
 
                                                                 <td>
                                                                     <div className="d-flex gap-2">
-                                                                        <div className="edit">
-                                                                            <button onClick={() => handleEditClick(product)} className="btn btn-sm btn-success edit-item-btn">Edit</button>
-                                                                        </div>
-                                                                        <div className="remove">
-                                                                            <button onClick={() => deleteCategory(product.id)} className="btn btn-sm btn-danger remove-item-btn" data-bs-toggle="modal" data-bs-target="#deleteRecordModal">Remove</button>
-                                                                        </div>
+                                                                        {/* Edit Icon Button */}
+                                                                        <button
+                                                                            onClick={() => handleEditClick(product)}
+                                                                            title="Edit"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
+                                                                        </button>
+
+                                                                        {/* Delete Icon Button */}
+                                                                        <button
+                                                                            onClick={() => deleteCategory(product.id)}
+                                                                            title="Delete"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#deleteRecordModal"
+                                                                            style={{
+                                                                                background: 'none',
+                                                                                border: 'none',
+                                                                                padding: '5px',
+                                                                                cursor: 'pointer',
+                                                                                display: 'inline-block'
+                                                                            }}
+                                                                        >
+                                                                            <i className="ri-delete-bin-line" style={{ fontSize: '18px', color: '#ef4444' }}></i>
+                                                                        </button>
                                                                     </div>
                                                                 </td>
+
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -633,236 +659,236 @@ const ManageCustomProducts = () => {
                         </Row>
                     </Container>
                 </div>
-                </div>
-                <Modal
-                    isOpen={modal_list}
-                    toggle={() => {
-                        tog_list();
-                    }}
-                    centered
-                    style={{ maxWidth: '900px', width: '90%' }}
-                >
-                    <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={() => { tog_list(); }}> Edit Product </ModalHeader>
-                    <form className="tablelist-form" onSubmit={handleSubmit} >
-                        <CardBody style={{ padding: '20px' }}>
+            </div>
+            <Modal
+                isOpen={modal_list}
+                toggle={() => {
+                    tog_list();
+                }}
+                centered
+                style={{ maxWidth: '900px', width: '90%' }}
+            >
+                <ModalHeader className="bg-light p-3" id="exampleModalLabel" toggle={() => { tog_list(); }}> Edit Product </ModalHeader>
+                <form className="tablelist-form" onSubmit={handleSubmit} >
+                    <CardBody style={{ padding: '20px' }}>
 
 
 
-                            <Row className="mb-3 mt-2">
-                                <label
-                                    htmlFor="example-text-input"
-                                    className="col-md-2 col-form-label"
+                        <Row className="mb-3 mt-2">
+                            <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label"
+                            >
+                                SKU
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="SKU"
+                                    placeholder="SKU"
+                                    value={formData.SKU}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </Row>
+                        <Row className="mb-3">
+                            <label
+                                htmlFor="example-text-input"
+                                className="col-md-2 col-form-label"
+                            >
+                                Product Name
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="product_name"
+                                    value={formData.product_name}
+                                    placeholder="Product Name"
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        </Row>
+                        <Row className="mb-3">
+                            <label htmlFor="product-category" className="col-md-2 col-form-label">
+                                Product Category
+                            </label>
+                            <div className="col-md-10">
+                                <select
+                                    className="form-control"
+                                    value={formData.category}
+                                    name="category"
+                                    onChange={handleChange}
+                                    required
                                 >
-                                    SKU
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="SKU"
-                                        placeholder="SKU"
-                                        value={formData.SKU}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label
-                                    htmlFor="example-text-input"
-                                    className="col-md-2 col-form-label"
-                                >
-                                    Product Name
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        name="product_name"
-                                        value={formData.product_name}
-                                        placeholder="Product Name"
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label htmlFor="product-category" className="col-md-2 col-form-label">
-                                    Product Category
-                                </label>
-                                <div className="col-md-10">
-                                    <select
-                                        className="form-control"
-                                        value={formData.category}
-                                        name="category"
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="" disabled>Select Product Category</option>
-                                        {category.map((category) => (
-                                            <option key={category.id} value={category.id}>{category.category_name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </Row>
-                            
-                            <Row className="mb-3 d-flex align-items-center">
-                                <label htmlFor="example-text-input" className="col-md-2 col-form-label">
-                                    Product Weight
-                                </label>
-
-                                <div className="col-md-10 d-flex justify-content-between">
-
-                                    <div className="me-2 flex-grow-1">
-                                    <label htmlFor=" " className=" ">
-                                    Gross Weight (gm)
-                                    </label>
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            name="gross_weight"
-                                            placeholder="Gross Weight"
-                                            value={formData.gross_weight}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="me-2 flex-grow-1">
-                                    <label htmlFor=" " className=" ">
-                                    Diamond Weight (gm)
-                                    </label>
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            name="diamond_weight"
-                                            placeholder="Diamond Weight"
-                                            value={formData.diamond_weight}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="me-2 flex-grow-1">
-                                    <label htmlFor=" " className=" ">
-                                    Colour Stones (gm)
-                                    </label>
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            name="colour_stones"
-                                            placeholder="Colour Stones"
-                                            value={formData.colour_stones}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="flex-grow-1">
-                                    <label htmlFor=" " className=" ">
-                                    Net Weight (gm)
-                                    </label>
-                                        <input
-                                            className="form-control"
-                                            type="text"
-                                            name="net_weight"
-                                            placeholder="Net Weight"
-                                            value={formData.net_weight}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            </Row>
-
- 
-                            <Row className="mb-3">
-                                <label
-                                    htmlFor="example-image-input"
-                                    className="col-md-2 col-form-label"
-                                >
-                                    Product Image
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="file"
-                                        name="product_image"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleImageChange}
-                                    />
-                                    {renderImagePreviews()}
-                                </div>
-                            </Row>
-
-                            <Row className="mb-3">
-                                <label
-                                    htmlFor="example-image-local-input"
-                                    className="col-md-2 col-form-label"
-                                >
-                                    Product Gallery
-                                </label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="file"
-                                        id="example-image-local-input"
-                                        accept="image/*"
-                                        multiple
-                                        onChange={handleImageAdd}
-                                    />
-                                    {renderImagePreviewAdditional()}
-                                </div>
-                            </Row>
-
-
-
-
-                            <Row className="mb-3">
-                                <label htmlFor="example-text-input" className="col-md-2 col-form-label">
-                                    Description
-                                </label>
-                                <div className="col-md-10">
-                                    <textarea
-                                        className="form-control"
-                                        name="description"
-                                        placeholder="Description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        rows="5"
-                                        required
-                                    ></textarea>
-                                </div>
-                            </Row>
-                            <Row className="mb-3">
-                                <label htmlFor="usertypes" className="col-md-2 d-flex  align-items-center">User Types</label>
-                                <div className="col-md-10 d-flex flex-wrap">
-                                    {userTypes.map((userType) => (
-                                        <div key={userType.id} className="form-check me-4">
-                                            <input
-                                                type="checkbox"
-                                                className="form-check-input"
-                                                id={`usertype-${userType.id}`}
-                                                value={userType.id}
-                                                onChange={handleCheckboxChange}
-                                                checked={selectedUserTypes.includes(userType.id)}  
-                                            />
-                                            <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
-                                                {userType.usertype}
-                                            </label>
-                                        </div>
+                                    <option value="" disabled>Select Product Category</option>
+                                    {category.map((category) => (
+                                        <option key={category.id} value={category.id}>{category.category_name}</option>
                                     ))}
+                                </select>
+                            </div>
+                        </Row>
 
+                        <Row className="mb-3 d-flex align-items-center">
+                            <label htmlFor="example-text-input" className="col-md-2 col-form-label">
+                                Product Weight
+                            </label>
+
+                            <div className="col-md-10 d-flex justify-content-between">
+
+                                <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                        Gross Weight (gm)
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="gross_weight"
+                                        placeholder="Gross Weight"
+                                        value={formData.gross_weight}
+                                        onChange={handleChange}
+                                        required
+                                    />
                                 </div>
-                            </Row>
-                        </CardBody>
-                        <ModalFooter>
-                            <div className="hstack gap-2 justify-content-end">
-                                <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button>
-                                <button type="submit" className="btn btn-success" id="add-btn">Update product</button>
+                                <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                        Diamond Weight (gm)
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="diamond_weight"
+                                        placeholder="Diamond Weight"
+                                        value={formData.diamond_weight}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="me-2 flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                        Colour Stones (gm)
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="colour_stones"
+                                        placeholder="Colour Stones"
+                                        value={formData.colour_stones}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex-grow-1">
+                                    <label htmlFor=" " className=" ">
+                                        Net Weight (gm)
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="net_weight"
+                                        placeholder="Net Weight"
+                                        value={formData.net_weight}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </Row>
+
+
+                        <Row className="mb-3">
+                            <label
+                                htmlFor="example-image-input"
+                                className="col-md-2 col-form-label"
+                            >
+                                Product Image
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="file"
+                                    name="product_image"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageChange}
+                                />
+                                {renderImagePreviews()}
+                            </div>
+                        </Row>
+
+                        <Row className="mb-3">
+                            <label
+                                htmlFor="example-image-local-input"
+                                className="col-md-2 col-form-label"
+                            >
+                                Product Gallery
+                            </label>
+                            <div className="col-md-10">
+                                <input
+                                    className="form-control"
+                                    type="file"
+                                    id="example-image-local-input"
+                                    accept="image/*"
+                                    multiple
+                                    onChange={handleImageAdd}
+                                />
+                                {renderImagePreviewAdditional()}
+                            </div>
+                        </Row>
+
+
+
+
+                        <Row className="mb-3">
+                            <label htmlFor="example-text-input" className="col-md-2 col-form-label">
+                                Description
+                            </label>
+                            <div className="col-md-10">
+                                <textarea
+                                    className="form-control"
+                                    name="description"
+                                    placeholder="Description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows="5"
+                                    required
+                                ></textarea>
+                            </div>
+                        </Row>
+                        <Row className="mb-3">
+                            <label htmlFor="usertypes" className="col-md-2 d-flex  align-items-center">User Types</label>
+                            <div className="col-md-10 d-flex flex-wrap">
+                                {userTypes.map((userType) => (
+                                    <div key={userType.id} className="form-check me-4">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`usertype-${userType.id}`}
+                                            value={userType.id}
+                                            onChange={handleCheckboxChange}
+                                            checked={selectedUserTypes.includes(userType.id)}
+                                        />
+                                        <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
+                                            {userType.usertype}
+                                        </label>
+                                    </div>
+                                ))}
 
                             </div>
-                        </ModalFooter>
-                    </form>
-                </Modal>
+                        </Row>
+                    </CardBody>
+                    <ModalFooter>
+                        <div className="hstack gap-2 justify-content-end">
+                            {/* <button type="button" className="btn btn-light" onClick={() => setmodal_list(false)}>Close</button> */}
+                            <Button color='primary' type="submit" className="btn btn-success" id="add-btn">Update product</Button>
+
+                        </div>
+                    </ModalFooter>
+                </form>
+            </Modal>
         </React.Fragment>
     );
 };

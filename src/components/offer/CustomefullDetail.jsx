@@ -39,31 +39,57 @@ const CustomFull = () => {
   };
 
   const renderImagePreviews = () => {
-    return images.map((image, index) => (
-      <div key={index} style={{ position: 'relative', margin: '5px' }}>
-        <img
-          src={URL.createObjectURL(image)}
-          alt={`preview ${index + 1}`}
-          style={{ width: '100px', height: '100px' }}
-        />
-        <button
-          onClick={() => handleRemoveImage(index)}
-          style={{
-            position: 'absolute',
-            top: '5px',
-            right: '5px',
-            background: 'gray',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          X
-        </button>
-      </div>
-    ));
-  };
+  return (
+    <div style={{ 
+      display: 'flex', 
+      flexWrap: 'wrap', 
+      gap: '10px',
+      alignItems: 'center'
+    }}>
+      {images.map((image, index) => (
+        <div key={index} style={{ 
+          position: 'relative', 
+          flexShrink: 0 // Prevents images from shrinking
+        }}>
+          <img
+            src={URL.createObjectURL(image)}
+            alt={`preview ${index + 1}`}
+            style={{ 
+              width: '100px', 
+              height: '100px',
+              objectFit: 'cover', // Ensures images maintain aspect ratio
+              borderRadius: '8px',
+              border: '2px solid #ddd'
+            }}
+          />
+          <button
+            onClick={() => handleRemoveImage(index)}
+            style={{
+              position: 'absolute',
+              top: '-5px',
+              right: '-5px',
+              background: '#ccc',
+              color: 'black',
+              border: 'none',
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              cursor: 'pointer',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+};
 
   const fetchCategory = async () => {
     try {
@@ -116,7 +142,7 @@ const CustomFull = () => {
     e.preventDefault();
     const productFormData = new FormData();
     
-    // Populate FormData with formData and images
+   
     productFormData.append("quantity", quantity);
     for (const key in formData) {
         productFormData.append(key, formData[key]);
@@ -232,7 +258,7 @@ const CustomFull = () => {
                           placeholder="Weight (Gram)"
                           value={formData.gram}
                           onChange={handleChange}
-                          required
+                    
                         />
                       </div>
                     </Row>
@@ -247,7 +273,7 @@ const CustomFull = () => {
                           placeholder="Cent "
                           value={formData.cent}
                           onChange={handleChange}
-                          required
+                      
                         />
                       </div>
                     </Row>
@@ -262,7 +288,7 @@ const CustomFull = () => {
                           placeholder="Product Size"
                           value={formData.size}
                           onChange={handleChange}
-                          required
+                     
                         />
                       </div>
                     </Row>
@@ -276,7 +302,7 @@ const CustomFull = () => {
                           placeholder="Due Date"
                           value={formData.due_date}
                           onChange={handleChange}
-                          required
+                      
                         />
                       </div>
                     </Row>
@@ -289,7 +315,7 @@ const CustomFull = () => {
                           rows="3"
                           value={formData.description}
                           onChange={handleChange}
-                          required
+                       
                         ></textarea>
                       </div>
                     </Row>
@@ -302,7 +328,7 @@ const CustomFull = () => {
                           accept="image/*"
                           multiple
                           onChange={handleImageChange}
-                          required
+                       
                         />
                       </div>
                     </Row>
