@@ -274,7 +274,7 @@ const CustomPendingOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.order?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>

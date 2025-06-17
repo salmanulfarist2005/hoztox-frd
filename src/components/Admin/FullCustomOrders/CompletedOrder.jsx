@@ -684,9 +684,7 @@ const CompletedOrder = (order) => {
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
                                         Download CSV
                                     </Button>
-                                    <Button color="primary" onClick={downloadPDF}>
-                                        Download PDF
-                                    </Button>
+                                   
                                 </Col>
                             </Row>
 

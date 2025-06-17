@@ -337,7 +337,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                     <td>{order.user?.company_name || "N/A"}</td>
                                                                     <td>{order.product?.SKU || "N/A"}</td>
                                                                     <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name || "N/A"}</td>
+                                                                    <td>{order.product?.category?.category_name || "N/A"}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
                                                                         {editingOrderId === order.id ? (
@@ -573,7 +573,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.order?.product?.category_name}
+                                        value={selectedItem.order?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
@@ -699,9 +699,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
                                         Download CSV
                                     </Button>
-                                    <Button color="primary" onClick={downloadPDF}>
-                                        Download PDF
-                                    </Button>
+                                    
                                 </Col>
                             </Row>
                         </>

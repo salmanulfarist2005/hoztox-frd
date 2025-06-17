@@ -91,21 +91,44 @@ const ViewOrder = () => {
         }
 
         // Prepare order data for CSV
-        const orderData = order.order_items.map(item => ({
-            OrderId: order.ordercode,
-            ShopName: order.user?.company_name,
-            SKU: item.product?.SKU,
-            ProductNames: item.product?.product_name,
-            ProductCategories: item.product?.category_name,
-            Quantities: item.quantity,
-            ProductColors: item.product?.color,
+        const orderData = orders.flatMap(order =>
+            order.order_items.map(item => ({
+              
+                OrderCode: order.ordercode || '',
+                
+                Status: order.status || '',
 
-            AdditionalNotes: item.additional_notes,
-            ShippingAddress: order.user?.shipping_address,
-            MobileNumber: order.user?.mobile_number,
-            WhatsAppNumber: order.user?.whatsapp_number,
-            Email: order.user?.company_email,
-        }));
+                // Totals
+                TotalGrossWeight: order.total_gross_weight || '',
+                TotalNetWeight: order.total_net_weight || '',
+                TotalDiamondWeight: order.total_diamond_weight || '',
+                TotalColourStones: order.total_colour_stones || '',
+
+                // User Info
+                UserFullName: order.user?.full_name || '',
+                CompanyName: order.user?.company_name || '',
+                CompanyEmail: order.user?.company_email || '',
+                CompanyWebsite: order.user?.company_website || '',
+                ShippingAddress: order.user?.shipping_address || '',
+                MobileNumber: order.user?.mobile_number || '',
+                WhatsAppNumber: order.user?.whatsapp_number || '',
+                Email: order.user?.email || '',
+
+                // Order Item Info
+               
+                SKU: item.product?.SKU || '',
+                ProductName: item.product?.product_name || '',
+                Category: item.product?.category?.category_name || '', // Assuming `category` is an object
+                Quantity: item.quantity || '',
+                AdditionalNotes: item.additional_notes || '',
+
+                // Optional Product Details (add as needed)
+                ProductGrossWeight: item.product?.gross_weight || '',
+                ProductNetWeight: item.product?.net_weight || '',
+                ProductDiamondWeight: item.product?.diamond_weight || '',
+                ProductColourStones: item.product?.colour_stones || '',
+            }))
+        );
 
         console.log("Order Data for CSV:", orderData);
 
@@ -129,21 +152,49 @@ const ViewOrder = () => {
     const downloadCSV = () => {
         if (!selectedItem) return;
 
-        const orderData = {
-            OrderId: selectedItem.order?.ordercode,
-            ShopName: selectedItem.order?.user?.company_name,
-            SKU: selectedItem.item?.product?.SKU,
-            ProductName: selectedItem.item?.product?.product_name,
-            ProductCategory: selectedItem.item?.product?.category_name,
-            Quantity: selectedItem.item?.quantity,
-            ProductColor: selectedItem.item?.product?.color,
+       const orderData = {
+    // Order Info
+   
+    OrderCode: selectedItem.order?.ordercode || '',
+    CreatedAt: selectedItem.order?.created_at || '',
+    Status: selectedItem.order?.status || '',
 
-            AdditionalNotes: selectedItem.item?.additional_notes,
-            ShippingAddress: selectedItem.order?.user?.shipping_address,
-            MobileNumber: selectedItem.order?.user?.mobile_number,
-            WhatsAppNumber: selectedItem.order?.user?.whatsapp_number,
-            Email: selectedItem.order?.user?.company_email,
-        };
+    // Totals
+    TotalGrossWeight: selectedItem.order?.total_gross_weight || '',
+    TotalNetWeight: selectedItem.order?.total_net_weight || '',
+    TotalDiamondWeight: selectedItem.order?.total_diamond_weight || '',
+    TotalColourStones: selectedItem.order?.total_colour_stones || '',
+
+    // User Info
+    FullName: selectedItem.order?.user?.full_name || '',
+    CompanyName: selectedItem.order?.user?.company_name || '',
+    CompanyEmail: selectedItem.order?.user?.company_email || '',
+    CompanyWebsite: selectedItem.order?.user?.company_website || '',
+    ShippingAddress: selectedItem.order?.user?.shipping_address || '',
+    MobileNumber: selectedItem.order?.user?.mobile_number || '',
+    WhatsAppNumber: selectedItem.order?.user?.whatsapp_number || '',
+    Email: selectedItem.order?.user?.email || '',
+    ProfileImage: selectedItem.order?.user?.prof_image || '',
+    CompanyLogo: selectedItem.order?.user?.company_logo || '',
+
+    // Order Item Info
+   
+    Quantity: selectedItem.item?.quantity || '',
+    ProductColor: selectedItem.item?.color || '',
+    AdditionalNotes: selectedItem.item?.additional_notes || '',
+
+    // Product Info
+    
+    SKU: selectedItem.item?.product?.SKU || '',
+    ProductName: selectedItem.item?.product?.product_name || '',
+    ProductCategory: selectedItem.item?.product?.category?.name || selectedItem.item?.product?.category_name || '',
+    ProductGrossWeight: selectedItem.item?.product?.gross_weight || '',
+    ProductNetWeight: selectedItem.item?.product?.net_weight || '',
+    ProductDiamondWeight: selectedItem.item?.product?.diamond_weight || '',
+    ProductColourStones: selectedItem.item?.product?.colour_stones || '',
+    ProductImages: selectedItem.item?.product?.additional_images?.join(', ') || '', // optional: join array to string
+};
+
 
 
         const csv = Papa.unparse([orderData]);
@@ -500,26 +551,12 @@ const ViewOrder = () => {
                                     <input
                                         className="form-control"
                                         type="text"
-                                        value={selectedItem.item?.product?.category_name}
+                                        value={selectedItem.item?.product?.category?.category_name}
                                         readOnly
                                     />
                                 </div>
                             </Row>
-                            <Row className="mb-3">
-                                <label className="col-md-2 col-form-label">Product Colour</label>
-                                <div className="col-md-10">
-                                    <input
-                                        className="form-control"
-                                        type="text"
-                                        value={
-                                            selectedItem.item?.color
-                                                ? selectedItem.item.color.charAt(0).toUpperCase() + selectedItem.item.color.slice(1)
-                                                : ''
-                                        }
-                                        readOnly
-                                    />
-                                </div>
-                            </Row>
+                            
 
 
                             <Row className="mb-3">
@@ -606,9 +643,7 @@ const ViewOrder = () => {
                                     <Button color="primary" onClick={downloadCSV} className="me-2">
                                         Download CSV
                                     </Button>
-                                    <Button color="primary" onClick={downloadPDF}>
-                                        Download PDF
-                                    </Button>
+                                     
                                 </Col>
                             </Row>
                         </>
