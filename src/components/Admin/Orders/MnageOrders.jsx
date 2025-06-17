@@ -559,7 +559,7 @@ const handleStatusChange = async (orderid, newStatus) => {
                                         <input
                                             className="form-control"
                                             type="text"
-                                            value={selectedItem.order?.user?.company_email}
+                                            value={selectedItem.order?.user?.email}
                                             readOnly
                                         />
                                     </div>

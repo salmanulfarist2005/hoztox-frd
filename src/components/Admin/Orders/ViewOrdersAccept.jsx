@@ -406,7 +406,7 @@ const ViewOrderAccept = () => {
 
                                                                         <td className="sku">{item.product?.SKU}</td>
                                                                         <td className="product_name">{item.product?.product_name}</td>
-                                                                        <td className="product_category">{item.product?.category_name}</td>
+                                                                        <td className="product_category">{item.product?.category.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
 
 
