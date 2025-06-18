@@ -20,8 +20,14 @@ function UserProfile() {
             navigate('/');
         } 
     }, [navigate]);
+
+
+    
     const fetchUserData = async () => {
         try {
+             console.log('Token used for request:', token);
+             console.log('Authorization Header:', `Bearer ${token}`);
+
             const response = await axios.get(`${BASE_URL}/products/current-user/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -55,7 +61,7 @@ function UserProfile() {
             console.error("Error fetching user data:", error);
             toast.error("Failed to load user data");
         } finally {
-            setIsLoading(false);
+            setIsLoading(false);FF
         }
     };
 
