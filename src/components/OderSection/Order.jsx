@@ -508,7 +508,7 @@ const downloadAllOrdersCSV = () => {
                                                 {order.order_items.map(item => (
                                                     <div key={item?.id} className="order-item-details normal-order-item">
                                                         <div className="order-img order-img-order">
-                                                            <img src={BASE_URL + item?.product.product_image} alt="" />
+                                                            <img src={item?.product?.product_image} alt="" />
                                                         </div>
 
                                                         <div className="order-description">
