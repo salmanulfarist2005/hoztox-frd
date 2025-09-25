@@ -9,7 +9,7 @@ const ProductCategoryList = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isCollapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setCollapsed] = useState(true);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
 
   const fetchCategories = async () => {
@@ -70,7 +70,7 @@ const ProductCategoryList = () => {
         )}
       </div>
 
-      {!isCollapsed && (
+      {(viewportWidth >= 992 || !isCollapsed) && (
         <ul className="product-categories mt-2">
           {categories.length > 0 ? (
             categories.map((categoryObj) => (
