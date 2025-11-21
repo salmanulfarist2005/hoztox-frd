@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
 
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
@@ -10,6 +10,8 @@ import { BASE_URL } from '../../helpers/config';
 
 const ManageProducts = () => {
     const [products, setProducts] = useState([]);
+    const navigate = useNavigate();
+    
     const [images, setImages] = useState([]);
 
     const [productId, setProductId] = useState([]);
@@ -33,11 +35,24 @@ const ManageProducts = () => {
 
     const [category, setCategory] = useState([]);
 
+    useEffect(() => {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            navigate('/');
+        }
+    }, [navigate]);
+
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/products_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/products_list/`,{
+                headers:{
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const data = response.data;
             setProducts(data);
+
             console.log("products", response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -111,6 +126,7 @@ const ManageProducts = () => {
     }
     const fetchCategory = async () => {
         try {
+            
             const response = await axios.get(`${BASE_URL}/products/categories/`);
             const category = response.data;
 
