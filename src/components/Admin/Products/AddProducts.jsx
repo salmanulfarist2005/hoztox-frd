@@ -33,6 +33,7 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
+  const [errors, setErrors] = useState({});
 
 
 
@@ -130,13 +131,9 @@ const AddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    if (name === "diamond_weight") {
-      const decimalRegex = /^\d+(\.\d{0,2})?$/;
-      if (value && !decimalRegex.test(value)) {
-        alert("Diamond weight must have at most 2 decimal places.");
-        return;
-      }
+    // Clear error for this field on change
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
     }
   
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -144,8 +141,35 @@ const AddProduct = () => {
   
 
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // SKU required
+    if (!formData.SKU.trim()) {
+      newErrors.SKU = 'SKU is required.';
+    }
+
+    // Product name required
+    if (!formData.product_name.trim()) {
+      newErrors.product_name = 'Product name is required.';
+    }
+
+    // Category required
+    if (!formData.category) {
+      newErrors.category = 'Product category is required.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (!validateForm()) {
+      return;
+    }
   
     const productFormData = new FormData();
     console.log("productFormData", formData);
@@ -190,11 +214,32 @@ const AddProduct = () => {
         description: "",  
         usertypes: [],
       });
-  
+      setErrors({});
       setImages([]);
       setSelectedUserTypes([]);
     } catch (error) {
       console.error("Error adding product:", error.response ? error.response.data : error.message);
+      // Handle backend validation errors (e.g., SKU already exists)
+      if (error.response && error.response.data) {
+        const backendErrors = {};
+        // Map backend keys to frontend field names (e.g., 'sku' -> 'SKU')
+        Object.keys(error.response.data).forEach((key) => {
+          const frontendKey = key.toUpperCase(); // Assume backend uses lowercase, map to uppercase
+          const msg = Array.isArray(error.response.data[key]) 
+            ? error.response.data[key].join(', ') 
+            : error.response.data[key];
+          backendErrors[frontendKey] = msg;
+        });
+        // Handle non-field errors if present
+        if (error.response.data.non_field_errors) {
+          alert(Array.isArray(error.response.data.non_field_errors) 
+            ? error.response.data.non_field_errors.join(', ') 
+            : error.response.data.non_field_errors);
+        }
+        setErrors(backendErrors);
+      } else {
+        alert('An error occurred while adding the product. Please try again.');
+      }
     }
   };
   
@@ -222,6 +267,17 @@ const AddProduct = () => {
       return updatedSelection;
     });
   };
+
+  const renderError = (field) => {
+    if (errors[field]) {
+      return (
+        <div className="invalid-feedback d-block text-danger">
+          {errors[field]}
+        </div>
+      );
+    }
+    return null;
+  };
   
 
 
@@ -237,10 +293,10 @@ const AddProduct = () => {
                   <CardBody>
                     <form onSubmit={handleSubmit}>
                       <Row className="mb-3 mt-2">
-                        <label htmlFor="SKU" className="col-md-2 col-form-label">SKU</label>
+                        <label htmlFor="SKU" className="col-md-2 col-form-label">SKU <span className="text-danger">*</span></label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.SKU ? 'is-invalid' : ''}`}
                             type="text"
                             name="SKU"
                             placeholder="SKU"
@@ -248,14 +304,14 @@ const AddProduct = () => {
                             onChange={handleChange}
                             required
                           />
-
+                          {renderError('SKU')}
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="product_name" className="col-md-2 col-form-label">Product Name</label>
+                        <label htmlFor="product_name" className="col-md-2 col-form-label">Product Name <span className="text-danger">*</span></label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.product_name ? 'is-invalid' : ''}`}
                             type="text"
                             name="product_name"
                             value={formData.product_name}
@@ -263,17 +319,19 @@ const AddProduct = () => {
                             onChange={handleChange}
                            
                           />
+                          {renderError('product_name')}
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="category" className="col-md-2 col-form-label">Product Category</label>
+                        <label htmlFor="category" className="col-md-2 col-form-label">Product Category <span className="text-danger">*</span></label>
                         <div className="col-md-10">
-                          <select className="form-control" value={formData.category} name="category" onChange={handleChange} required>
+                          <select className={`form-control ${errors.category ? 'is-invalid' : ''}`} value={formData.category} name="category" onChange={handleChange} required>
                             <option value="" disabled>Select Product Category</option>
                             {categories.map((category) => (
                               <option key={category.id} value={category.id}>{category.category_name}</option>
                             ))}
                           </select>
+                          {renderError('category')}
                         </div>
                       </Row>
 
@@ -284,7 +342,7 @@ const AddProduct = () => {
                         <div className="col-md-10">
                           <input
                             className="form-control"
-                            type="number"
+                            type="text"
                             name="gross_weight"
                             placeholder="Gross Weight"
                             value={formData.gross_weight}
@@ -298,7 +356,7 @@ const AddProduct = () => {
                         <div className="col-md-10">
                           <input
                             className="form-control"
-                            type="number"
+                            type="text"
                             name="diamond_weight"
                             placeholder="Diamond Weight"
                             value={formData.diamond_weight}
@@ -324,7 +382,7 @@ const AddProduct = () => {
                         <div className="col-md-10">
                           <input
                             className="form-control"
-                            type="number"
+                            type="text"
                             name="net_weight"
                             placeholder="Net Weight"
                             value={formData.net_weight}
