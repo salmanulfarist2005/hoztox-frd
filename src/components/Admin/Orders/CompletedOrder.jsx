@@ -244,14 +244,11 @@ const CompletedOrder = () => {
                                                                         <td className="OrderId">{order.user?.company_name}</td>
                                                                         <td className="sku">{item.product?.SKU}</td>
                                                                         <td className="product_name">{item.product?.product_name}</td>
-                                                                        <td className="product_category">{item.product?.category_name}</td>
+                                                                        <td className="product_category">{item.product?.category?.category_name}</td>
                                                                         <td className="quantity">{item.quantity}</td>
                                                                         <td className="quantity">{order.status}</td>
 
                                                                         <td>
-
-
-
                                                                              <div className="d-flex gap-2" style={{ minWidth: '200px', alignItems: 'center' }}>
                                                                                 
                                                                                     <button

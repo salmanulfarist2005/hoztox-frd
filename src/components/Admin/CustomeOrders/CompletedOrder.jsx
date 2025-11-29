@@ -336,7 +336,7 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                                                                     <td>{order.user?.company_name || "N/A"}</td>
                                                                     <td>{order.product?.SKU || "N/A"}</td>
                                                                     <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name || "N/A"}</td>
+                                                                    <td>{order.product?.category?.category_name || "N/A"}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
                                                                         {editingOrderId === order.id ? (

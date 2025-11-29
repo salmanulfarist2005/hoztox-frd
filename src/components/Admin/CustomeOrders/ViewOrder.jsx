@@ -257,7 +257,7 @@ const CustomViewOrder = () => {
                                                                     <td>{order.user?.company_name}</td>
                                                                     <td>{order.product?.SKU}</td>
                                                                     <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name}</td>
+                                                                    <td>{order.product?.category?.category_name}</td>
                                                                     <td>{order.quantity}</td>
 
                                                                     <td className="bgbutton">{order.new_status}</td>
