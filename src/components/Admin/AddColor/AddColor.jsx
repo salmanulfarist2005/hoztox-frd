@@ -6,7 +6,6 @@ import {
 } from 'reactstrap';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
-
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
@@ -19,12 +18,14 @@ const AddColor = () => {
     const [modal_list1, setModalList1] = useState(false);
     const [formData, setFormData] = useState({ color: '' });
     const [searchTerm, setSearchTerm] = useState("");
+    const [errors, setErrors] = useState({});
 
     const toggleAddModal = () => {
         setModalList(!modal_list);
         setIsEditMode(false);
         clearForm();
     };
+
     const toggleEditModal = (color) => {
         setModalList1(!modal_list1);
         setIsEditMode(true);
@@ -36,7 +37,6 @@ const AddColor = () => {
             clearForm();
         }
     };
-
 
     const fetchColors = async () => {
         try {
@@ -55,7 +55,6 @@ const AddColor = () => {
         }
     };
 
-
     useEffect(() => {
         fetchColors();
     }, []);
@@ -64,23 +63,47 @@ const AddColor = () => {
         color.color && color.color.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors((prevErrors) => {
+                const newErrors = { ...prevErrors };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
+        
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     };
 
-
-    // Define the handleSearchChange function
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.color || !formData.color.trim()) {
+            newErrors.color = 'This field is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const addColor = async (e) => {
         e.preventDefault();
+
+        // Client-side validation
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             await axios.post(`${BASE_URL}/products/colors/`, { color: formData.color });
             fetchColors();
@@ -88,15 +111,81 @@ const AddColor = () => {
             alert("Color added successfully!");
         } catch (error) {
             console.error('Error adding color:', error);
+            
+            // Handle backend validation errors
+            if (error.response && error.response.data) {
+                const backendErrors = {};
+                const errorData = error.response.data;
+                
+                // Check for general error message
+                if (errorData.error) {
+                    const errorMsg = errorData.error;
+                    if (errorMsg.toLowerCase().includes('color') || 
+                        errorMsg.toLowerCase().includes('already exists') ||
+                        errorMsg.toLowerCase().includes('exist') ||
+                        errorMsg.toLowerCase().includes('unique')) {
+                        backendErrors.color = errorMsg;
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+                
+                // Handle field-specific errors from serializer
+                Object.keys(errorData).forEach((key) => {
+                    if (key === 'error') return;
+                    
+                    let msg = Array.isArray(errorData[key]) 
+                        ? errorData[key].join(', ') 
+                        : errorData[key];
+                    
+                    if (key === 'color') {
+                        const msgLower = msg.toLowerCase();
+                        if (msgLower.includes('already exists') || 
+                            msgLower.includes('exist') ||
+                            msgLower.includes('unique') ||
+                            msgLower.includes('duplicate')) {
+                            msg = 'This color already exists. Please use a unique color name.';
+                        }
+                    }
+                    
+                    backendErrors[key] = msg;
+                });
+                
+                // Handle non-field errors
+                if (errorData.non_field_errors) {
+                    const nonFieldMsg = Array.isArray(errorData.non_field_errors) 
+                        ? errorData.non_field_errors.join(', ') 
+                        : errorData.non_field_errors;
+                    
+                    if (nonFieldMsg.toLowerCase().includes('color') && 
+                        (nonFieldMsg.toLowerCase().includes('exists') || 
+                         nonFieldMsg.toLowerCase().includes('unique'))) {
+                        backendErrors.color = 'This color already exists. Please use a unique color name.';
+                    } else {
+                        alert(nonFieldMsg);
+                    }
+                }
+                
+                setErrors(backendErrors);
+            } else {
+                alert('Error adding color. Please try again.');
+            }
         }
     };
 
     const updateColor = async (e) => {
         e.preventDefault();
+
+        // Client-side validation
+        if (!validateForm()) {
+            return;
+        }
+
         if (!currentColor || !currentColor.id) {
             console.error('No color selected.');
             return;
         }
+
         try {
             await axios.put(`${BASE_URL}/products/colors/${currentColor.id}/`, { color: formData.color });
             fetchColors();
@@ -104,6 +193,65 @@ const AddColor = () => {
             alert("Color updated successfully!");
         } catch (error) {
             console.error('Error updating color:', error);
+            
+            // Handle backend validation errors
+            if (error.response && error.response.data) {
+                const backendErrors = {};
+                const errorData = error.response.data;
+                
+                // Check for general error message
+                if (errorData.error) {
+                    const errorMsg = errorData.error;
+                    if (errorMsg.toLowerCase().includes('color') || 
+                        errorMsg.toLowerCase().includes('already exists') ||
+                        errorMsg.toLowerCase().includes('exist') ||
+                        errorMsg.toLowerCase().includes('unique')) {
+                        backendErrors.color = errorMsg;
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+                
+                // Handle field-specific errors
+                Object.keys(errorData).forEach((key) => {
+                    if (key === 'error') return;
+                    
+                    let msg = Array.isArray(errorData[key]) 
+                        ? errorData[key].join(', ') 
+                        : errorData[key];
+                    
+                    if (key === 'color') {
+                        const msgLower = msg.toLowerCase();
+                        if (msgLower.includes('already exists') || 
+                            msgLower.includes('exist') ||
+                            msgLower.includes('unique') ||
+                            msgLower.includes('duplicate')) {
+                            msg = 'This color already exists. Please use a unique color name.';
+                        }
+                    }
+                    
+                    backendErrors[key] = msg;
+                });
+                
+                // Handle non-field errors
+                if (errorData.non_field_errors) {
+                    const nonFieldMsg = Array.isArray(errorData.non_field_errors) 
+                        ? errorData.non_field_errors.join(', ') 
+                        : errorData.non_field_errors;
+                    
+                    if (nonFieldMsg.toLowerCase().includes('color') && 
+                        (nonFieldMsg.toLowerCase().includes('exists') || 
+                         nonFieldMsg.toLowerCase().includes('unique'))) {
+                        backendErrors.color = 'This color already exists. Please use a unique color name.';
+                    } else {
+                        alert(nonFieldMsg);
+                    }
+                }
+                
+                setErrors(backendErrors);
+            } else {
+                alert('Error updating color. Please try again.');
+            }
         }
     };
 
@@ -123,9 +271,19 @@ const AddColor = () => {
     const clearForm = () => {
         setFormData({ color: '' });
         setCurrentColor({ id: null, color: "" });
+        setErrors({});
     };
 
-
+    const renderError = (field) => {
+        if (errors[field]) {
+            return (
+                <div className="invalid-feedback d-block text-danger" style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                    {errors[field]}
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <React.Fragment>
@@ -184,7 +342,6 @@ const AddColor = () => {
                                                                     <td>{color.color}</td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            {/* Edit Icon */}
                                                                             <button
                                                                                 onClick={() => toggleEditModal(color)}
                                                                                 title="Edit"
@@ -199,7 +356,6 @@ const AddColor = () => {
                                                                                 <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
                                                                             </button>
 
-                                                                            {/* Delete Icon */}
                                                                             <button
                                                                                 onClick={() => deleteColor(color.id)}
                                                                                 title="Delete"
@@ -215,7 +371,6 @@ const AddColor = () => {
                                                                             </button>
                                                                         </div>
                                                                     </td>
-
                                                                 </tr>
                                                             ))
                                                         ) : (
@@ -224,7 +379,6 @@ const AddColor = () => {
                                                             </tr>
                                                         )}
                                                     </tbody>
-
                                                 </table>
                                             </div>
                                         </div>
@@ -235,52 +389,56 @@ const AddColor = () => {
                     </Container>
                 </div>
             </div>
+
             {/* Add Color Modal */}
             <Modal isOpen={modal_list} toggle={toggleAddModal} centered>
                 <ModalHeader toggle={toggleAddModal}>Add Color</ModalHeader>
                 <form onSubmit={addColor}>
                     <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
-                            <label htmlFor="color" className="form-label">Color Name</label>
+                            <label htmlFor="color-add" className="form-label">
+                                Color Name <span className="text-danger">*</span>
+                            </label>
                             <input
                                 type="text"
-                                className="form-control"
-                                id="color"
+                                className={`form-control ${errors.color ? 'is-invalid' : ''}`}
+                                id="color-add"
                                 name="color"
                                 value={formData.color}
                                 onChange={handleInputChange}
-                                required
                             />
+                            {renderError('color')}
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        {/* <Button color="secondary" onClick={toggleAddModal}>Cancel</Button> */}
+                        <Button color="secondary" onClick={toggleAddModal}>Cancel</Button>
                         <Button color="primary" type="submit">Add</Button>
                     </ModalFooter>
                 </form>
             </Modal>
 
             {/* Edit Color Modal */}
-            {/* Edit Color Modal */}
-            <Modal isOpen={modal_list1} toggle={toggleEditModal} centered>
-                <ModalHeader toggle={toggleEditModal}>Edit Color</ModalHeader>
+            <Modal isOpen={modal_list1} toggle={() => toggleEditModal(null)} centered>
+                <ModalHeader toggle={() => toggleEditModal(null)}>Edit Color</ModalHeader>
                 <form onSubmit={updateColor}>
                     <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
-                            <label htmlFor="color" className="form-label">Color Name</label>
+                            <label htmlFor="color-edit" className="form-label">
+                                Color Name <span className="text-danger">*</span>
+                            </label>
                             <input
                                 type="text"
-                                className="form-control"
-                                id="color"
-                                name="color"  // Removed the extra space here
+                                className={`form-control ${errors.color ? 'is-invalid' : ''}`}
+                                id="color-edit"
+                                name="color"
                                 value={formData.color}
                                 onChange={handleInputChange}
-                                required
                             />
+                            {renderError('color')}
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        {/* <Button color="secondary" onClick={toggleEditModal}>Cancel</Button> */}
+                        <Button color="secondary" onClick={() => toggleEditModal(null)}>Cancel</Button>
                         <Button color="primary" type="submit">Update</Button>
                     </ModalFooter>
                 </form>

@@ -124,6 +124,27 @@ const AddProduct = () => {
     fetchUserTypes();
   }, []);
 
+  // Handle numeric input validation for weight fields
+  const handleNumericChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Allow only numbers and one decimal point
+    const regex = /^\d*\.?\d*$/;
+    
+    if (regex.test(value) || value === '') {
+      // Clear error for this field on change
+      if (errors[name]) {
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[name];
+          return newErrors;
+        });
+      }
+      
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     
@@ -219,24 +240,53 @@ const AddProduct = () => {
       // Handle backend validation errors
       if (error.response && error.response.data) {
         const backendErrors = {};
+        const errorData = error.response.data;
         
-        Object.keys(error.response.data).forEach((key) => {
+        // Check for general error message (like {error: "Product with this SKU already exists."})
+        if (errorData.error) {
+          const errorMsg = errorData.error;
+          if (errorMsg.toLowerCase().includes('sku')) {
+            backendErrors.SKU = errorMsg;
+          } else {
+            alert(errorMsg);
+          }
+        }
+        
+        // Handle field-specific errors
+        Object.keys(errorData).forEach((key) => {
+          if (key === 'error') return; // Skip as already handled above
+          
           // Map backend keys to frontend field names
-          const frontendKey = key === 'sku' ? 'SKU' : key;
-          const msg = Array.isArray(error.response.data[key]) 
-            ? error.response.data[key].join(', ') 
-            : error.response.data[key];
+          let frontendKey = key;
+          if (key === 'sku' || key.toLowerCase() === 'sku') {
+            frontendKey = 'SKU';
+          }
+          
+          let msg = Array.isArray(errorData[key]) 
+            ? errorData[key].join(', ') 
+            : errorData[key];
+          
           backendErrors[frontendKey] = msg;
         });
         
         // Handle non-field errors if present
-        if (error.response.data.non_field_errors) {
-          alert(Array.isArray(error.response.data.non_field_errors) 
-            ? error.response.data.non_field_errors.join(', ') 
-            : error.response.data.non_field_errors);
+        if (errorData.non_field_errors) {
+          alert(Array.isArray(errorData.non_field_errors) 
+            ? errorData.non_field_errors.join(', ') 
+            : errorData.non_field_errors);
         }
         
         setErrors(backendErrors);
+        
+        // Scroll to the first error
+        const firstErrorField = Object.keys(backendErrors)[0];
+        if (firstErrorField) {
+          const element = document.querySelector(`[name="${firstErrorField}"]`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.focus();
+          }
+        }
       } else {
         alert('An error occurred while adding the product. Please try again.');
       }
@@ -348,7 +398,7 @@ const AddProduct = () => {
                             name="gross_weight"
                             placeholder="Gross Weight"
                             value={formData.gross_weight}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>
@@ -362,7 +412,7 @@ const AddProduct = () => {
                             name="diamond_weight"
                             placeholder="Diamond Weight"
                             value={formData.diamond_weight}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>
@@ -376,7 +426,7 @@ const AddProduct = () => {
                             name="colour_stones"
                             placeholder="Colour Stones"
                             value={formData.colour_stones}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>
@@ -390,7 +440,7 @@ const AddProduct = () => {
                             name="net_weight"
                             placeholder="Net Weight"
                             value={formData.net_weight}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>

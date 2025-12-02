@@ -17,9 +17,19 @@ const UserType = () => {
     const [modal_list1, setmodal_list1] = useState(false);
 
     const [formData, setFormData] = useState({ usertype: '' });
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedUserTypes, setSelectedUserTypes] = useState([]);
+    const [isAllSelected, setIsAllSelected] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
 
-    function tog_list() { setmodal_list(!modal_list); setIsEditMode(false); clearForm(); }
+    function tog_list() { 
+        setmodal_list(!modal_list); 
+        setIsEditMode(false); 
+        clearForm(); 
+    }
+
     const tog_list1 = (userType) => {
         setmodal_list1(!modal_list1);
         setIsEditMode(true);
@@ -31,9 +41,6 @@ const UserType = () => {
             setFormData({ usertype: '' });
         }
     };
-
-
-
 
     const fetchUserTypes = async () => {
         try {
@@ -65,8 +72,6 @@ const UserType = () => {
         }));
     };
 
-
-
     const addUserType = async (e) => {
         e.preventDefault();
         try {
@@ -90,17 +95,15 @@ const UserType = () => {
         }
 
         try {
-            // Send the update request
             await axios.put(`${BASE_URL}/products/usertypes/${currentUserType.id}/`, formData);
 
-            // Update the user type in the state directly
             setUserTypes((prevUserTypes) =>
                 prevUserTypes.map((userType) =>
                     userType.id === currentUserType.id ? { ...userType, ...formData } : userType
                 )
             );
 
-            tog_list1(null); // Close the modal or list view
+            tog_list1(null);
 
             alert("User type updated successfully!");
         } catch (error) {
@@ -108,7 +111,6 @@ const UserType = () => {
             alert("Error updating user type. Please try again.");
         }
     };
-
 
     const deleteUserType = async (userTypeId) => {
         if (window.confirm("Are you sure you want to delete this user type?")) {
@@ -123,12 +125,34 @@ const UserType = () => {
         }
     };
 
+    const deleteMultipleUserTypes = async () => {
+        // Check if any items are selected
+        if (selectedUserTypes.length === 0) {
+            alert("Please select at least one item to delete.");
+            return;
+        }
+        
+        if (window.confirm("Are you sure you want to delete selected user types?")) {
+            try {
+                await Promise.all(selectedUserTypes.map(userTypeId =>
+                    axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`)
+                ));
+                fetchUserTypes();
+                setSelectedUserTypes([]);
+                setIsAllSelected(false);
+                alert("Selected user types deleted successfully!");
+            } catch (error) {
+                console.error('Error deleting user types:', error);
+                alert("Error deleting user types. Please try again.");
+            }
+        }
+    };
+
     const clearForm = () => {
         setFormData({ usertype: '' });
         setCurrentUserType({ id: null, usertype: "" });
     };
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedUserTypes, setSelectedUserTypes] = useState([]);
+
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
@@ -145,41 +169,21 @@ const UserType = () => {
                 : [...prevSelected, userTypeId]
         );
     };
-    const deleteMultipleUserTypes = async () => {
-        if (window.confirm("Are you sure you want to delete selected user types?")) {
-            try {
-                await Promise.all(selectedUserTypes.map(userTypeId =>
-                    axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`)
-                ));
-                fetchUserTypes();
-                setSelectedUserTypes([]);
-                alert("Selected user types deleted successfully!");
-            } catch (error) {
-                console.error('Error deleting user types:', error);
-                alert("Error deleting user types. Please try again.");
-            }
-        }
-    };
 
-    const [isAllSelected, setIsAllSelected] = useState(false);
     const handleSelectAllChange = () => {
         if (isAllSelected) {
             setSelectedUserTypes([]);
         } else {
-            setSelectedUserTypes(filteredUserTypes.map(userType => userType.id));
+            setSelectedUserTypes(currentUserTypes.map(userType => userType.id));
         }
         setIsAllSelected(!isAllSelected);
     };
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
 
     const totalPages = Math.ceil(filteredUserTypes.length / itemsPerPage);
-
 
     const indexOfLastUserTypes = currentPage * itemsPerPage;
     const indexOfFirstUserTypes = indexOfLastUserTypes - itemsPerPage;
     const currentUserTypes = filteredUserTypes.slice(indexOfFirstUserTypes, indexOfLastUserTypes);
-
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -192,6 +196,7 @@ const UserType = () => {
             setCurrentPage(currentPage - 1);
         }
     };
+
     return (
         <React.Fragment>
             <div className="main-content">
@@ -204,15 +209,18 @@ const UserType = () => {
                                 <Card>
                                     <CardBody>
                                         <div id="customerList">
-                                            {/* <Row className="g-4 mb-3"> */}
                                             <Row className="g-4 mb-3">
                                                 <Col className="col-sm-auto">
                                                     <div className="d-flex gap-1">
-                                                            <Button color="soft-danger"
+                                                        <Button 
+                                                            color="soft-danger"
                                                             onClick={deleteMultipleUserTypes}
-                                                        ><i className="ri-delete-bin-2-line"></i></Button>
-                                                        <Button color="primary" className="add-btn" onClick={() => tog_list()} id="create-btn"><i className="ri-add-line align-bottom me-1"></i> Add</Button>
-                                                    
+                                                        >
+                                                            <i className="ri-delete-bin-2-line"></i>
+                                                        </Button>
+                                                        <Button color="primary" className="add-btn" onClick={() => tog_list()} id="create-btn">
+                                                            <i className="ri-add-line align-bottom me-1"></i> Add
+                                                        </Button>
                                                     </div>
                                                 </Col>
                                                 <Col className="col-sm">
@@ -238,7 +246,6 @@ const UserType = () => {
                                                 </Col>
                                             </Row>
 
-
                                             <div className="table-responsive table-card mt-3 mb-1">
                                                 <table className="table align-middle table-nowrap" id="customerTable">
                                                     <thead className="table-light">
@@ -260,7 +267,6 @@ const UserType = () => {
                                                     </thead>
                                                     <tbody className="list form-check-all">
                                                         {Array.isArray(filteredUserTypes) && filteredUserTypes.length > 0 ? (
-
                                                             currentUserTypes.map(userType => (
                                                                 <tr key={userType.id}>
                                                                     <th scope="row">
@@ -276,7 +282,6 @@ const UserType = () => {
                                                                     <td>{userType.usertype}</td>
                                                                     <td>
                                                                         <div className="d-flex gap-2">
-                                                                            {/* Edit Icon */}
                                                                             <button
                                                                                 onClick={() => tog_list1(userType)}
                                                                                 title="Edit"
@@ -291,12 +296,9 @@ const UserType = () => {
                                                                                 <i className="ri-pencil-line" style={{ fontSize: '18px', color: '#10b981' }}></i>
                                                                             </button>
 
-                                                                            {/* Delete Icon */}
                                                                             <button
                                                                                 onClick={() => deleteUserType(userType.id)}
                                                                                 title="Delete"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#deleteRecordModal"
                                                                                 style={{
                                                                                     background: 'none',
                                                                                     border: 'none',
@@ -309,7 +311,6 @@ const UserType = () => {
                                                                             </button>
                                                                         </div>
                                                                     </td>
-
                                                                 </tr>
                                                             ))
                                                         ) : (
@@ -322,13 +323,19 @@ const UserType = () => {
                                             </div>
                                             <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
+                                                    <Link 
+                                                        onClick={handlePreviousPage}
+                                                        className={`page-item pagination-prev ${currentPage === 1 ? 'disabled' : ''}`} 
+                                                        to="#"
+                                                    >
                                                         Previous
                                                     </Link>
                                                     <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
+                                                    <Link 
+                                                        onClick={handleNextPage}
+                                                        className={`page-item pagination-next ${currentPage === totalPages ? 'disabled' : ''}`} 
+                                                        to="#"
+                                                    >
                                                         Next
                                                     </Link>
                                                 </div>
@@ -340,8 +347,8 @@ const UserType = () => {
                         </Row>
                     </Container>
                 </div>
-
             </div>
+
             {/* Add User Type Modal */}
             <Modal isOpen={modal_list} toggle={() => tog_list()} centered>
                 <ModalHeader className="bg-light p-3" toggle={() => tog_list()}>Add User Type</ModalHeader>
@@ -349,7 +356,16 @@ const UserType = () => {
                     <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
                             <label htmlFor="usertype-field" className="form-label">User Type</label>
-                            <input type="text" name="usertype" value={formData.usertype} onChange={handleInputChange} id="usertype-field" className="form-control" placeholder="Enter User Type" required />
+                            <input 
+                                type="text" 
+                                name="usertype" 
+                                value={formData.usertype} 
+                                onChange={handleInputChange} 
+                                id="usertype-field" 
+                                className="form-control" 
+                                placeholder="Enter User Type" 
+                                required 
+                            />
                         </div>
                     </ModalBody>
                     <ModalFooter>
@@ -359,22 +375,21 @@ const UserType = () => {
                 </form>
             </Modal>
 
-            <Modal isOpen={modal_list1} toggle={() => tog_list1(null)} centered
-                style={{ maxWidth: '900px', width: '40%' }}>
-                <ModalHeader className="bg-light p-" toggle={() => tog_list1(null)}>
+            {/* Edit User Type Modal */}
+            <Modal isOpen={modal_list1} toggle={() => tog_list1(null)} centered style={{ maxWidth: '900px', width: '40%' }}>
+                <ModalHeader className="bg-light p-3" toggle={() => tog_list1(null)}>
                     Edit User Type
                 </ModalHeader>
                 <form onSubmit={updateUserType}>
                     <ModalBody style={{ padding: '20px' }}>
                         <div className="mb-3">
-                            <label htmlFor="usertype-field" className="form-label">User Type</label>
+                            <label htmlFor="usertype-edit-field" className="form-label">User Type</label>
                             <input
                                 type="text"
                                 name="usertype"
                                 value={formData.usertype || ''}
-
                                 onChange={handleInputChange}
-                                id="usertype-field"
+                                id="usertype-edit-field"
                                 className="form-control"
                                 placeholder="Enter User Type"
                                 required
@@ -382,8 +397,8 @@ const UserType = () => {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        {/* <button type="button" className="btn btn-light" onClick={() => tog_list1(null)}>Close</button> */}
-                        <Button color="primary"  type="submit" className="btn btn-success">Update</Button>
+                        <button type="button" className="btn btn-light" onClick={() => tog_list1(null)}>Close</button>
+                        <button type="submit" className="btn btn-success">Update</button>
                     </ModalFooter>
                 </form>
             </Modal>
