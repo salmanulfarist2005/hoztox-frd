@@ -66,6 +66,14 @@ const AddColor = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         
+        // Validation for text-only field - only letters and spaces allowed
+        if (name === 'color') {
+            const textRegex = /^[a-zA-Z\s]*$/;
+            if (!textRegex.test(value)) {
+                return; // Don't update if invalid characters
+            }
+        }
+        
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors((prevErrors) => {

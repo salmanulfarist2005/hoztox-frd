@@ -94,6 +94,23 @@ const AddUser = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    
+    // Validation for phone number fields - only numbers and + allowed
+    if (name === 'mobile_number' || name === 'whatsapp_number') {
+      const phoneRegex = /^[0-9+]*$/;
+      if (!phoneRegex.test(value)) {
+        return; // Don't update if invalid characters
+      }
+    }
+    
+    // Validation for text-only fields - only letters and spaces
+    if (name === 'full_name' || name === 'company_name') {
+      const textRegex = /^[a-zA-Z\s]*$/;
+      if (!textRegex.test(value)) {
+        return; // Don't update if invalid characters
+      }
+    }
+    
     setFormData({ ...formData, [name]: value });
     // Clear error for this field on change
     if (errors[name]) {
@@ -364,13 +381,13 @@ const AddUser = () => {
                           {userTypes.map((userType) => (
                             <div key={userType.id} className="form-check me-4">
                               <input
-                                type="radio" // Change to radio button for single selection
+                                type="radio"
                                 className="form-check-input"
                                 id={`usertype-${userType.id}`}
-                                name="usertype" // Ensure name is the same for radio buttons
+                                name="usertype"
                                 value={userType.id}
                                 onChange={handleUserTypeChange}
-                                checked={selectedUserType === userType.id.toString()} // Check if the radio is selected
+                                checked={selectedUserType === userType.id.toString()}
                               />
                               <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
                                 {userType.usertype}
