@@ -33,11 +33,9 @@ const SignInFormSection = () => {
             }
         }
 
-        // Password validation
+        // Password validation - only check if required
         if (!password || !password.trim()) {
             newErrors.password = 'Password is required';
-        } else if (password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
         }
 
         setErrors(newErrors);
@@ -89,7 +87,7 @@ const SignInFormSection = () => {
                 } else if (errorData.password) {
                     setErrors({ password: Array.isArray(errorData.password) ? errorData.password[0] : errorData.password });
                 } else {
-                    setErrors({ general: 'Invalid credentials. Please check your email and password.' });
+                    setErrors({ general: 'Invalid email or password. Please try again.' });
                 }
             } else {
                 setErrors({ general: 'Login failed. Please try again later.' });
