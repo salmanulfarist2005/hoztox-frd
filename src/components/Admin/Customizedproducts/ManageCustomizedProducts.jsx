@@ -7,7 +7,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 
-
+import useDebounce from '../../../Hooks/useDebounce';
 
 
 
@@ -16,7 +16,11 @@ const ManageCustomProducts = () => {
     const [images, setImages] = useState([]);
 
     const [productId, setProductId] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const [pagetrigger, setPageTrigger] = useState(false);
 
 
 
@@ -35,22 +39,36 @@ const ManageCustomProducts = () => {
         description: "",
         usertypes: []
     });
+    const [totalPages,setTotalPages] = useState(1)
 
     const [category, setCategory] = useState([]);
+     const debouncedValue = useDebounce(searchTerm)
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`);
-            const data = response.data;
-            setProducts(data);
-            console.log("products", response.data);
+            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`,{
+                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
+
+            });
+            if(!response.error){
+            const productes = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+            setProducts(productes);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [debouncedValue,pagetrigger]);
 
 
     useEffect(() => {
@@ -200,23 +218,6 @@ const ManageCustomProducts = () => {
     const handleNewImageRemove = (index) => {
         setAdditionalImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
-
-    // const handleExistingImageRemove = (index) => {
-
-    //     setAdditionalImages((prevImages) => {
-    //         const updatedImages = prevImages.filter((_, i) => i !== index);
-
-    //         return updatedImages;
-    //     });
-
-    //     const updatedProducts = products.map(product => {
-    //         const updatedProduct = { ...product };
-    //         updatedProduct.additional_images = updatedProduct.additional_images.filter((_, i) => i !== index);
-    //         return updatedProduct;
-    //     });
-    //     setProducts(updatedProducts);  
-    // };
-
 
 
     const [additionalImages, setAdditionalImages] = useState([]);
@@ -444,7 +445,6 @@ const ManageCustomProducts = () => {
             }
         }
     };
-    const [searchTerm, setSearchTerm] = useState("");
 
     const deleteMultipleCategories = async () => {
         if (selectedIds.length === 0) {
@@ -474,10 +474,7 @@ const ManageCustomProducts = () => {
     });
 
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
 
-    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
 
     const indexOfLastProduct = currentPage * itemsPerPage;
@@ -487,13 +484,16 @@ const ManageCustomProducts = () => {
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
+            setCurrentPage((prev)=> prev+ 1);
+            setPageTrigger(e=>!e)
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
+            setCurrentPage((prev)=> prev - 1);
+            setPageTrigger(e=>!e)
+
         }
     };
     const [selectedIds, setSelectedIds] = useState([]);
@@ -579,7 +579,7 @@ const ManageCustomProducts = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {currentProducts.map((product) => (
+                                                        {products.map((product) => (
                                                             <tr key={product.id}>
                                                                 <td>
                                                                     <div className="form-check">
@@ -639,7 +639,7 @@ const ManageCustomProducts = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
+                                            {/* <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
                                                     <Link onClick={() => handlePreviousPage(currentPage - 1)}
                                                         disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
@@ -651,7 +651,57 @@ const ManageCustomProducts = () => {
                                                         Next
                                                     </Link>
                                                 </div>
-                                            </div>
+                                            </div> */}
+                                                                                            <div className="d-flex justify-content-end">
+                                                <div className="pagination-wrap hstack gap-2">
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
+                                                </div>
+                                                </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

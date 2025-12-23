@@ -49,9 +49,12 @@ const ProductViewFilter = () => {
         try {
             const token = localStorage.getItem('authToken');
             console.log("Fetched token:", token); 
+
+            
             const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { Authorization: `Bearer ${token}` },
             });
+            
 
             setProducts(productsResponse.data);
             const initialQuantities = {};

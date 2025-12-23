@@ -36,9 +36,9 @@ const HeaderSection4 = () => {
       const response = await axios.get(`${BASE_URL}/products/cart-items/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+      
       setJeweleryCartItemAmount(response.data.length);  
-      setCartItemAmount(cartItemCount);  
+      // setCartItemAmount(cartItemCount);  
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -71,7 +71,7 @@ const HeaderSection4 = () => {
     if (isLoggedIn) {
       fetchCartItems();
     }
-  }, [isLoggedIn, setCartItemAmount]);
+  }, [isLoggedIn]);
 
   return (
 
