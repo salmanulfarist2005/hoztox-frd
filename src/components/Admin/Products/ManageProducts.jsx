@@ -416,6 +416,7 @@ const ManageProducts = () => {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1)
     };
     const deleteCategory = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {

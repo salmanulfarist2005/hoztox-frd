@@ -195,6 +195,8 @@ const ManageCategory = () => {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1)
+
     };
 
     const tog_list = () => {

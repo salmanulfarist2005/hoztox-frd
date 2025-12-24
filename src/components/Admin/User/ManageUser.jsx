@@ -256,6 +256,8 @@ const ManageUser = () => {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1)
+
     };
 
 
