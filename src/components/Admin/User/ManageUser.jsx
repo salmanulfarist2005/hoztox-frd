@@ -6,7 +6,7 @@ import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
-
+import useDebounce from '../../../Hooks/useDebounce';
 const ManageUser = () => {
     const [users, setUsers] = useState([]);
     const [userTypes, setUserTypes] = useState([]);
@@ -31,15 +31,37 @@ const ManageUser = () => {
         usertypes: '',
     });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [totalPages,setTotalPages] = useState(1)
 
+   const debouncedValue = useDebounce(searchTerm)
 
 
 
     const fetchUsers = async () => {
         try {
 
-            const response = await axios.get(`${BASE_URL}/products/users/`);
-            setUsers(response.data);
+            const response = await axios.get(`${BASE_URL}/products/users/`,{
+                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
+
+
+            });
+           if(!response.error){
+            const users = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+
+            
+            setUsers(users);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error('Error fetching users:', error);
         } finally {
@@ -48,7 +70,7 @@ const ManageUser = () => {
     };
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
     const fetchUserTypes = async () => {
         try {
@@ -57,7 +79,6 @@ const ManageUser = () => {
 
             if (Array.isArray(userTypesData)) {
                 setUserTypes(userTypesData);
-                console.log("users", response)
             } else {
                 console.warn("Unexpected data format:", userTypesData);
                 setUserTypes([]);
@@ -96,7 +117,6 @@ const ManageUser = () => {
             return;
         }
 
-        console.log("Editing user:", user);
         setUserId(user.id);
 
         setFormData({
@@ -234,37 +254,24 @@ const ManageUser = () => {
         setPasswordVisible(!passwordVisible);
     };
 
-    const [searchTerm, setSearchTerm] = useState("");
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
-    const filteredUsers = users.filter(user => {
-        return user && (
-            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
-
-        );
-    });
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-
-
-    const indexOfLastUser = currentPage * itemsPerPage;
-    const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
+            setPageTrigger(e=>!e)
+
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
+
         }
     };
 
@@ -389,7 +396,7 @@ const ManageUser = () => {
 
                                                             </tr>
                                                         ) : (
-                                                            currentUsers.map((user) => (
+                                                            users.map((user) => (
                                                                 <tr key={user.id}>
                                                                     <th scope="row">
                                                                         <div className="form-check">
@@ -446,19 +453,55 @@ const ManageUser = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div className="d-flex justify-content-end">
+                                               <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
 
                                         </div>
                                     </CardBody>

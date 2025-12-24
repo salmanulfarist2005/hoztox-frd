@@ -82,9 +82,6 @@ const ManageProducts = () => {
 
 
     const handleEditClick = (product) => {
-        console.log("Editing product:", product);
-
-
         if (!product.id) {
             console.error("Product does not have a valid ID.");
             return;

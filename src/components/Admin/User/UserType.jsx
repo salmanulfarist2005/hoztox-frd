@@ -7,7 +7,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 
-
+import useDebounce from '../../../Hooks/useDebounce';
 const UserType = () => {
     const [userTypes, setUserTypes] = useState([]);
     const [currentUserType, setCurrentUserType] = useState({ id: null, usertype: "" });
@@ -22,6 +22,10 @@ const UserType = () => {
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [totalPages,setTotalPages] = useState(1)
+
+   const debouncedValue = useDebounce(searchTerm)
 
 
     function tog_list() { 
@@ -44,15 +48,23 @@ const UserType = () => {
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
-            const userTypesData = response.data;
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
 
-            if (Array.isArray(userTypesData)) {
-                setUserTypes(userTypesData);
-                console.log("userstypes", response.data)
-            } else {
-                console.warn("Unexpected data format:", userTypesData);
-                setUserTypes([]);
+            });
+
+        if(!response.error){
+            const users = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+
+            
+            setUserTypes(users);
+            setTotalPages(totalPages)
             }
         } catch (error) {
             console.error('Error fetching user types:', error);
@@ -62,7 +74,7 @@ const UserType = () => {
 
     useEffect(() => {
         fetchUserTypes();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -114,7 +126,7 @@ const UserType = () => {
 
     const deleteUserType = async (userTypeId) => {
         if (window.confirm("Are you sure you want to delete this user type?")) {
-            try {
+            try {  
                 await axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`);
                 fetchUserTypes();
                 alert("User type deleted successfully!");
@@ -155,6 +167,7 @@ const UserType = () => {
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
+        setCurrentPage(1)
     };
 
     // Filter user types based on search term
@@ -179,21 +192,18 @@ const UserType = () => {
         setIsAllSelected(!isAllSelected);
     };
 
-    const totalPages = Math.ceil(filteredUserTypes.length / itemsPerPage);
-
-    const indexOfLastUserTypes = currentPage * itemsPerPage;
-    const indexOfFirstUserTypes = indexOfLastUserTypes - itemsPerPage;
-    const currentUserTypes = filteredUserTypes.slice(indexOfFirstUserTypes, indexOfLastUserTypes);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1);
+            setPageTrigger(e=>!e)
         }
     };
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
         }
     };
 
@@ -266,8 +276,8 @@ const UserType = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all">
-                                                        {Array.isArray(filteredUserTypes) && filteredUserTypes.length > 0 ? (
-                                                            currentUserTypes.map(userType => (
+                                                        {Array.isArray(userTypes) && userTypes.length > 0 ? (
+                                                            userTypes.map(userType => (
                                                                 <tr key={userType.id}>
                                                                     <th scope="row">
                                                                         <div className="form-check">
@@ -323,23 +333,55 @@ const UserType = () => {
                                             </div>
                                             <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link 
-                                                        onClick={handlePreviousPage}
-                                                        className={`page-item pagination-prev ${currentPage === 1 ? 'disabled' : ''}`} 
-                                                        to="#"
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
                                                     >
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link 
-                                                        onClick={handleNextPage}
-                                                        className={`page-item pagination-next ${currentPage === totalPages ? 'disabled' : ''}`} 
-                                                        to="#"
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
                                                     >
-                                                        Next
-                                                    </Link>
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
+
+
                                         </div>
                                     </CardBody>
                                 </Card>
