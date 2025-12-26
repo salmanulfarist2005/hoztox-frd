@@ -75,8 +75,8 @@ const ProductCategoryList = () => {
           {categories.length > 0 ? (
             categories.map((categoryObj) => (
               <li
-                key={categoryObj.category_name}
-                onClick={() => handleCategoryClick(categoryObj.category_name)}
+                key={categoryObj.id}
+                onClick={() => handleCategoryClick(categoryObj.id)}
                 className={
                   activeCategory === categoryObj.category_name ? "active" : ""
                 }

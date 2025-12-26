@@ -77,7 +77,7 @@ const HeaderSection4 = () => {
 
     <>
     
-      <style jsx>{`
+      <style >{`
         .profile-dropdown {
           position: relative;
           display: inline-block;

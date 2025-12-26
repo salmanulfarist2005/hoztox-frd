@@ -3,7 +3,7 @@ import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
 import { Link, useNavigate } from 'react-router-dom';
-
+import useDebounce from '../../Hooks/useDebounce';
 const ProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -15,7 +15,8 @@ const ProductViewFilter = () => {
     } = useContext(FarzaaContext);
     
     const navigate = useNavigate();
-
+       const debouncedValue = useDebounce(searchTerm)
+    
   
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
@@ -35,7 +36,7 @@ const ProductViewFilter = () => {
    
     const productsPerPage = 18;
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [totalPages,setTotalPages] = useState()
  
     const handleQuantityChange = (productId, newQuantity) => {
         setQuantity(prevQuantities => ({
@@ -45,23 +46,32 @@ const ProductViewFilter = () => {
     };
 
  
+    
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('authToken');
-            console.log("Fetched token:", token); 
-
-            
-            const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+            const response = await axios.get(`${BASE_URL}/products/products_user_list/`, {
                 headers: { Authorization: `Bearer ${token}` },
+                params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:12,
+                    search:searchTerm,
+                    category_id:activeCategory
+                }
+
             });
             
+                                    if(!response.error){
+            const products = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
 
-            setProducts(productsResponse.data);
-            const initialQuantities = {};
-            productsResponse.data.forEach((product) => {
-                initialQuantities[product.id] = 1;
-            });
-            setQuantity(initialQuantities);
+            
+            setProducts(products);
+            setTotalPages(totalPages)
+            }
+
+            // setQuantity(initialQuantities);
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to load data. Please try again later.');
@@ -72,7 +82,7 @@ const ProductViewFilter = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [activeCategory,currentPage,debouncedValue]);
 
    
     const filteredProducts = products.filter(product => {
@@ -90,7 +100,7 @@ const ProductViewFilter = () => {
 
    
     const totalProducts = filteredProducts.length;
-    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    // const totalPages = Math.ceil(totalProducts / productsPerPage);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
@@ -127,8 +137,8 @@ const ProductViewFilter = () => {
     return (
         <div className="product-category-and-view">
             <div className="row gy-4 gx-3 justify-content-center">
-                {paginatedProducts.length > 0 ? (
-                    paginatedProducts.map((item) => (
+                {products.length > 0 ? (
+                    products.map((item) => (
                         <div className="col-xl-4 col-md-4 col-6 col-xxs-6 m-p-1" key={item.id}>
                             <div className="fz-2-single-product">
                                 <div className="fz-2-single-product-img">
