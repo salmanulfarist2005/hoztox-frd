@@ -49,7 +49,9 @@ const ProductViewFilter = () => {
     };
 
  const getQty = (productId) => quantity[productId] ?? 1;
-    
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedValue, activeCategory]);
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('authToken');

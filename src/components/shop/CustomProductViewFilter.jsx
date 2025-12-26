@@ -28,6 +28,8 @@ const CustomProductViewFilter = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
+
+    
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // Adjust this as needed
@@ -41,6 +43,12 @@ const CustomProductViewFilter = () => {
             setQuantity(newQuantity);
         }
     };
+
+    useEffect(() => {
+        setCurrentPage(1);
+        fetchData();
+
+    }, [debouncedValue, activeCategory]);
 
     const fetchData = async () => {
         try {
@@ -76,22 +84,7 @@ const CustomProductViewFilter = () => {
     useEffect(() => {
         fetchData();
     }, [debouncedValue,pagetrigger]);
-
-    // Filter the products based on category and search term
-    const filteredProducts = products.filter(product => {
-        const matchesCategory = activeCategory ? product.category_name === activeCategory : true;
-        const matchesSearch = product.product_name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesCategory && matchesSearch;
-    });
-
-    // Pagination logic
-    const indexOfLastProduct = currentPage * itemsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-
-    // const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-    // Pagination click handler
+ 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber)
         setPageTrigger(e=>!e)
@@ -133,45 +126,7 @@ const CustomProductViewFilter = () => {
                 )}
             </div>
 
-            {/* Pagination Controls */}
-            {/* <nav className="fz-shop-pagination">
-                <ul className="page-numbers">
-                    <li>
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            className="page-number-btn"
-                        >
-                            <span aria-current="page" className="last-page">
-                                <i className="fa-light fa-angle-double-left"></i>
-                            </span>
-                        </button>
-                    </li>
-
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <li key={index}>
-                            <button
-                                className={`page-number-btn ${currentPage === index + 1 ? 'current' : ''}`}
-                                onClick={() => handlePageChange(index + 1)}
-                            >
-                                {index + 1}
-                            </button>
-                        </li>
-                    ))}
-
-                    <li>
-                        <button
-                            disabled={currentPage === totalPages}
-                            className="page-number-btn"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                            <span aria-current="page" className="last-page">
-                                <i className="fa-light fa-angle-double-right"></i>
-                            </span>
-                        </button>
-                    </li>
-                </ul>
-            </nav> */}
+          
                         <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
