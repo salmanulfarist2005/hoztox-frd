@@ -29,7 +29,7 @@ const CustomProductViewFilter = () => {
     
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 9; // Adjust this as needed
+    const itemsPerPage = 10; // Adjust this as needed
     const [totalPages,setTotalPages] = useState(1)
     const [pagetrigger, setPageTrigger] = useState(false);
        const debouncedValue = useDebounce(searchTerm)
@@ -54,7 +54,8 @@ const CustomProductViewFilter = () => {
                 }
 
             });
-                        if(!response.error){
+            
+        if(!response.error){
             const productes = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
             setProducts(productes);
