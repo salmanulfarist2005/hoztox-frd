@@ -227,7 +227,9 @@ const Outview = () => {
                                                                 className="form-control rounded border-gray-300 focus:ring-2 focus:ring-blue-400"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line" style={{

@@ -8,7 +8,7 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import useDebounce from '../../../Hooks/useDebounce';
 const AcceptOrder = () => {
     const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
@@ -19,14 +19,32 @@ const AcceptOrder = () => {
     const [orderId, setOrderId] = useState('');
 
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const debouncedValue = useDebounce(searchQuery)
 
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/accepted/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response orderssssssss", response.data)
+            const response = await axios.get(`${BASE_URL}/products/orders/accepted/`,{
+                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+            if(!response.error){
+                    const productes = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / 10);
+                    setOrders(productes);
+                    setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -34,8 +52,23 @@ const AcceptOrder = () => {
     useEffect(() => {
         fetchOrders();
 
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prev)=>prev+1);
+                  setPageTrigger(e=>!e)
+
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
+
+        }
+    };
 
     const handleGenerateOrderId = async () => {
 
@@ -162,7 +195,6 @@ const AcceptOrder = () => {
 
         doc.save('order_details.pdf');
     };
-    const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
         console.log("Search Query:", searchQuery);
@@ -228,7 +260,9 @@ const AcceptOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }} // Update search query
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -259,8 +293,8 @@ const AcceptOrder = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) =>
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) =>
                                                                 order.order_items.map((item) => (
                                                                     <tr key={`${order.id}-${item.id}`}>
                                                                         <td className="OrderId">{order.ordercode}</td>
@@ -334,17 +368,56 @@ const AcceptOrder = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
+                                                                                            <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>
