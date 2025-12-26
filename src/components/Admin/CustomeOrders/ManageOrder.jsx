@@ -10,6 +10,7 @@ import 'jspdf-autotable';
 import FullCustomManageOrder from '../FullCustomOrders/ManageOrder'
 
 import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 
 const CustomManageOrder = ({ order, onStatusUpdate }) => {
     const [orders, setOrders] = useState([]);
@@ -25,25 +26,15 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             const itemsPerPage = 10;
             const [pagetrigger, setPageTrigger] = useState(false);
             const [totalPages,setTotalPages] = useState(1)
+            const [itemCount,setItemCount] = useState(1)
            const debouncedValue = useDebounce(searchQuery)
 
     const [editedOrderCode, setEditedOrderCode] = useState('');
     const [editedQuantity, setEditedQuantity] = useState('');
 
-        const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage((prev)=>prev+1);
-                  setPageTrigger(e=>!e)
-
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-            setPageTrigger(e=>!e)
-
-        }
+        const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
     const fetchOrders = async () => {
@@ -61,6 +52,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                     const orders = response.data.message.results;
                     const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
                     setOrders(orders);
+                    setItemCount(response.data.message.count)
                     setTotalPages(totalPages)
             }
 
@@ -525,54 +517,14 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                 </table>
                                             </div>
 
-                                                                                                                                        <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-
-                                                    <button
-                                                    className="page-item pagination-prev"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => handlePreviousPage(currentPage - 1)}
-                                                    >
-                                                    Previous
-                                                    </button>
-
-                                                    <ul className="pagination mb-0">
-                                                    {Array.from({ length: totalPages }, (_, index) => {
-                                                        const page = index + 1;
-                                                        return (
-                                                        <li
-                                                            key={page}
-                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
-                                                        >
-                                                            <button
-                                                            style={{
-                                                                color: "#212529",
-                                                                borderColor: "#212529",
-                                                                backgroundColor:
-                                                                currentPage === page ? "#212529" : "transparent",
-                                                                color: currentPage === page ? "#fff" : "#212529",
-                                                            }} 
-                                                            className="page-link"
-                                                            onClick={() => {setCurrentPage(page)
-                                                                 setPageTrigger(e=>!e)
-                                                            }}
-                                                            >
-                                                            {page}
-                                                            </button>
-                                                        </li>
-                                                        );
-                                                    })}
-                                                    </ul>
-
-                                                    <button
-                                                    className="page-item pagination-next"
-                                                    disabled={currentPage === totalPages}
-                                                    onClick={() => handleNextPage(currentPage + 1)}
-                                                    >
-                                                    Next
-                                                    </button>
-
-                                                </div>
+                                                                                                                                        <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
 
                                         </div>

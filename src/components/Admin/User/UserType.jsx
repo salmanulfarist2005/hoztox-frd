@@ -8,6 +8,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 import { BASE_URL } from '../../helpers/config';
 
 import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const UserType = () => {
     const [userTypes, setUserTypes] = useState([]);
     const [currentUserType, setCurrentUserType] = useState({ id: null, usertype: "" });
@@ -24,6 +25,7 @@ const UserType = () => {
     const itemsPerPage = 10;
     const [pagetrigger, setPageTrigger] = useState(false);
     const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
 
    const debouncedValue = useDebounce(searchTerm)
 
@@ -64,6 +66,7 @@ const UserType = () => {
 
             
             setUserTypes(users);
+            setItemCount(response.data.message.count)
             setTotalPages(totalPages)
             }
         } catch (error) {
@@ -128,7 +131,16 @@ const UserType = () => {
         if (window.confirm("Are you sure you want to delete this user type?")) {
             try {  
                 await axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`);
-                fetchUserTypes();
+                setUserTypes((prev) =>
+                    prev.filter((item) => item.id !== userTypeId)
+                );
+                const remainingItems = itemCount - 1;
+                setItemCount(remainingItems);
+                const newTotalPages = Math.ceil(remainingItems / 10);
+                if (currentPage > newTotalPages && newTotalPages > 0) {
+                    setCurrentPage(newTotalPages);
+                }
+                setPageTrigger((e) => !e);
                 alert("User type deleted successfully!");
             } catch (error) {
                 console.error('Error deleting user type:', error);
@@ -187,24 +199,15 @@ const UserType = () => {
         if (isAllSelected) {
             setSelectedUserTypes([]);
         } else {
-            setSelectedUserTypes(currentUserTypes.map(userType => userType.id));
+            setSelectedUserTypes(userTypes.map(userType => userType.id));
         }
         setIsAllSelected(!isAllSelected);
     };
 
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-            setPageTrigger(e=>!e)
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-            setPageTrigger(e=>!e)
-        }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
     return (
@@ -331,54 +334,14 @@ const UserType = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-
-                                                    <button
-                                                    className="page-item pagination-prev"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => handlePreviousPage(currentPage - 1)}
-                                                    >
-                                                    Previous
-                                                    </button>
-
-                                                    <ul className="pagination mb-0">
-                                                    {Array.from({ length: totalPages }, (_, index) => {
-                                                        const page = index + 1;
-                                                        return (
-                                                        <li
-                                                            key={page}
-                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
-                                                        >
-                                                            <button
-                                                            style={{
-                                                                color: "#212529",
-                                                                borderColor: "#212529",
-                                                                backgroundColor:
-                                                                currentPage === page ? "#212529" : "transparent",
-                                                                color: currentPage === page ? "#fff" : "#212529",
-                                                            }} 
-                                                            className="page-link"
-                                                            onClick={() => {setCurrentPage(page)
-                                                                 setPageTrigger(e=>!e)
-                                                            }}
-                                                            >
-                                                            {page}
-                                                            </button>
-                                                        </li>
-                                                        );
-                                                    })}
-                                                    </ul>
-
-                                                    <button
-                                                    className="page-item pagination-next"
-                                                    disabled={currentPage === totalPages}
-                                                    onClick={() => handleNextPage(currentPage + 1)}
-                                                    >
-                                                    Next
-                                                    </button>
-
-                                                </div>
+                                            <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
 
 

@@ -7,6 +7,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const ManageCategory = () => {
     const [images, setImages] = useState([]);
     const [formData, setFormData] = useState({ category_name: '', image: "" });
@@ -15,6 +16,7 @@ const ManageCategory = () => {
     const [category, setCategory] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
     const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
     const [pagetrigger, setPageTrigger] = useState(false);
 
     const [currentImage, setCurrentImage] = useState(null);
@@ -54,6 +56,7 @@ const ManageCategory = () => {
             const categories = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
             setCategory(categories);
+            setItemCount(response.data.message.count)
             setTotalPages(totalPages)
             }
 
@@ -131,7 +134,16 @@ const ManageCategory = () => {
         if (window.confirm("Are you sure you want to delete this category?")) {
             try {
                 await axios.delete(`${BASE_URL}/products/categories/${categoryId}/`);
-                fetchCategory();
+                setCategory((prev) =>
+                    prev.filter((item) => item.id !== categoryId)
+                );
+                const remainingItems = itemCount - 1;
+                setItemCount(remainingItems);
+                const newTotalPages = Math.ceil(remainingItems / 10);
+                if (currentPage > newTotalPages && newTotalPages > 0) {
+                    setCurrentPage(newTotalPages);
+                }
+                setPageTrigger((e) => !e);
                 alert("Category deleted successfully!");
             } catch (error) {
                 console.error('Error deleting category:', error);
@@ -230,18 +242,9 @@ const ManageCategory = () => {
     const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
 
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage((prev)=>prev + 1);
-            setPageTrigger(e=>!e)
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((prev)=>prev - 1);
-            setPageTrigger(e=>!e)
-        }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
 
@@ -390,54 +393,14 @@ const ManageCategory = () => {
                                                     </Link>
                                                 </div>
                                             </div> */}
-                                                   <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-
-                                                    <button
-                                                    className="page-item pagination-prev"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => handlePreviousPage(currentPage - 1)}
-                                                    >
-                                                    Previous
-                                                    </button>
-
-                                                    <ul className="pagination mb-0">
-                                                    {Array.from({ length: totalPages }, (_, index) => {
-                                                        const page = index + 1;
-                                                        return (
-                                                        <li
-                                                            key={page}
-                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
-                                                        >
-                                                            <button
-                                                            style={{
-                                                                color: "#212529",
-                                                                borderColor: "#212529",
-                                                                backgroundColor:
-                                                                currentPage === page ? "#212529" : "transparent",
-                                                                color: currentPage === page ? "#fff" : "#212529",
-                                                            }} 
-                                                            className="page-link"
-                                                            onClick={() => {setCurrentPage(page)
-                                                                 setPageTrigger(e=>!e)
-                                                            }}
-                                                            >
-                                                            {page}
-                                                            </button>
-                                                        </li>
-                                                        );
-                                                    })}
-                                                    </ul>
-
-                                                    <button
-                                                    className="page-item pagination-next"
-                                                    disabled={currentPage === totalPages}
-                                                    onClick={() => handleNextPage(currentPage + 1)}
-                                                    >
-                                                    Next
-                                                    </button>
-
-                                                </div>
+                                                   <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
                                         </div>
                                     </CardBody>

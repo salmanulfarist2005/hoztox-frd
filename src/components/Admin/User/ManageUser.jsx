@@ -7,6 +7,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const ManageUser = () => {
     const [users, setUsers] = useState([]);
     const [userTypes, setUserTypes] = useState([]);
@@ -261,20 +262,9 @@ const ManageUser = () => {
     };
 
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-            setPageTrigger(e=>!e)
-
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-            setPageTrigger(e=>!e)
-
-        }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
     const [isAllSelected, setIsAllSelected] = useState(false);
@@ -327,8 +317,8 @@ const ManageUser = () => {
       const newTotalPages = Math.ceil(remainingUsers / 10);
       if (currentPage > newTotalPages && newTotalPages > 0) {
         setCurrentPage(newTotalPages);
-        setPageTrigger((e) => !e);
       }
+      setPageTrigger((e) => !e);
 
                 alert("User deleted successfully!");
             } catch (error) {
@@ -464,54 +454,14 @@ const ManageUser = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                               <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-
-                                                    <button
-                                                    className="page-item pagination-prev"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => handlePreviousPage(currentPage - 1)}
-                                                    >
-                                                    Previous
-                                                    </button>
-
-                                                    <ul className="pagination mb-0">
-                                                    {Array.from({ length: totalPages }, (_, index) => {
-                                                        const page = index + 1;
-                                                        return (
-                                                        <li
-                                                            key={page}
-                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
-                                                        >
-                                                            <button
-                                                            style={{
-                                                                color: "#212529",
-                                                                borderColor: "#212529",
-                                                                backgroundColor:
-                                                                currentPage === page ? "#212529" : "transparent",
-                                                                color: currentPage === page ? "#fff" : "#212529",
-                                                            }} 
-                                                            className="page-link"
-                                                            onClick={() => {setCurrentPage(page)
-                                                                 setPageTrigger(e=>!e)
-                                                            }}
-                                                            >
-                                                            {page}
-                                                            </button>
-                                                        </li>
-                                                        );
-                                                    })}
-                                                    </ul>
-
-                                                    <button
-                                                    className="page-item pagination-next"
-                                                    disabled={currentPage === totalPages}
-                                                    onClick={() => handleNextPage(currentPage + 1)}
-                                                    >
-                                                    Next
-                                                    </button>
-
-                                                </div>
+                                               <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={userCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
 
                                         </div>
