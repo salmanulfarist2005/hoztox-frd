@@ -31,7 +31,7 @@ const ChangePassword = () => {
 
         setLoading(true);
         try {
-            const adminToken = localStorage.getItem('adminAuthToken');
+            const adminToken = localStorage.getItem('authToken');
 
             console.log("Admin Token:", adminToken);
             console.log("Request Data:", {
