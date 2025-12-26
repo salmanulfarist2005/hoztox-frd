@@ -35,7 +35,7 @@ const ManageUser = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [pagetrigger, setPageTrigger] = useState(false);
     const [totalPages,setTotalPages] = useState(1)
-
+    const [userCount,setUserCount] = useState(1)
    const debouncedValue = useDebounce(searchTerm)
 
 
@@ -57,7 +57,7 @@ const ManageUser = () => {
             const users = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / 10);
 
-            
+            setUserCount(response.data.message.count)
             setUsers(users);
             setTotalPages(totalPages)
             }
@@ -320,7 +320,16 @@ const ManageUser = () => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
                 await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`);
-                fetchUsers();
+                    setUsers((prev) =>prev.filter((item) => item.id !== userId));
+                
+                      const remainingUsers = userCount - 1;
+      setUserCount(remainingUsers);
+      const newTotalPages = Math.ceil(remainingUsers / 10);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+        setPageTrigger((e) => !e);
+      }
+
                 alert("User deleted successfully!");
             } catch (error) {
                 console.error('Error deleting user:', error);

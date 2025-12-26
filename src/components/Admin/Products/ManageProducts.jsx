@@ -422,8 +422,10 @@ const ManageProducts = () => {
     const deleteCategory = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/product/${productId}/delete/`);
-                fetchProducts();
+        await axios.delete(`${BASE_URL}/products/product/${productId}/delete/`);
+      setProducts((prev) =>
+        prev.filter((item) => item.id !== productId)
+      );
 
                       const remainingItems = itemCount - 1;
       setItemCount(remainingItems);
