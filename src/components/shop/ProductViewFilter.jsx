@@ -19,7 +19,7 @@ const ProductViewFilter = () => {
     const navigate = useNavigate();
        const debouncedValue = useDebounce(searchTerm)
     
-  
+    
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
@@ -29,7 +29,7 @@ const ProductViewFilter = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages,setTotalPages] = useState();
     const [totalItems, setTotalItems] = useState(0);
- 
+    const [pageTrigger,setPageTrigger]  = useState(false)
 
    
     const defaultQuantity = 1;
@@ -51,7 +51,7 @@ useEffect(() => {
         setCurrentPage(1);
         prevFiltersRef.current = currentFilters;
     }
-}, [debouncedValue, activeCategory]);
+}, [debouncedValue, pageTrigger,activeCategory]);
    
     const productsPerPage = 18;
     const handleQuantityChange = (productId, newQuantity) => {
@@ -122,6 +122,7 @@ useEffect(() => {
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
+        setPageTrigger((e) => !e);
         scrollToTop();
     };
 
