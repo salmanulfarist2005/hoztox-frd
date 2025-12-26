@@ -7,7 +7,7 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 import useDebounce from '../../../Hooks/useDebounce';
-
+import Pagination from '../../pagination/Pagination';
 const ManageProducts = () => {
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();

@@ -48,6 +48,21 @@ const CustomPendingOrder = () => {
     useEffect(() => {
         fetchOrders();
     }, [pagetrigger,debouncedValue]);
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prev)=>prev+1);
+                  setPageTrigger(e=>!e)
+
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
+
+        }
+    };
 
 
 
@@ -143,7 +158,9 @@ const CustomPendingOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
