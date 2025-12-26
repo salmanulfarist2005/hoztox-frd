@@ -331,17 +331,7 @@ const FullCustomViewOrder = () => {
                                                 </table>
                                             </div>
 
-                                            {/* <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
-                                                </div>
-                                            </div> */}
+                                        
                                                                                             <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
 
