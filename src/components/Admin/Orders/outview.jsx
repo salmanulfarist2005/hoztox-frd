@@ -7,21 +7,39 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import useDebounce from '../../../Hooks/useDebounce';
 const Outview = () => {
     const [orders, setOrders] = useState([]);
     const [modal_list1, setModalList1] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [orderId, setOrderId] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
+    // const [filteredOrders, setFilteredOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
 
+       const debouncedValue = useDebounce(searchQuery)
+    
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
-            const data = response.data;
-            console.log("Fetched orders:", data);
-            setOrders(Array.isArray(data) ? data : []);
+            const response = await axios.get(`${BASE_URL}/products/orders/pending/`,{
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+
+            });
+            if(!response.error){
+            const productes = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+            setOrders(productes);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
             setOrders([]);
@@ -30,7 +48,23 @@ const Outview = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prev)=>prev+1);
+                  setPageTrigger(e=>!e)
+
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
+
+        }
+    };
 
     const handleGenerateOrderId = async () => {
         if (!selectedItem || !selectedItem.id) {
@@ -69,26 +103,26 @@ const Outview = () => {
         });
     };
 
-    useEffect(() => {
-        console.log("Search Query:", searchQuery);
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order => {
-                if (!order) return false;
-                return (
-                    (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
-                    (order.user?.company_name && order.user.company_name.toLowerCase().includes(lowercasedQuery)) ||
-                    (order.order_items && Array.isArray(order.order_items) && order.order_items.some(item =>
-                        item.product?.product_name && item.product.product_name.toLowerCase().includes(lowercasedQuery)
-                    ))
-                );
-            });
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-        console.log("Filtered Orders:", filteredOrders);
-    }, [searchQuery, orders]);
+    // useEffect(() => {
+    //     console.log("Search Query:", searchQuery);
+    //     if (searchQuery) {
+    //         const lowercasedQuery = searchQuery.toLowerCase();
+    //         const results = orders.filter(order => {
+    //             if (!order) return false;
+    //             return (
+    //                 (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
+    //                 (order.user?.company_name && order.user.company_name.toLowerCase().includes(lowercasedQuery)) ||
+    //                 (order.order_items && Array.isArray(order.order_items) && order.order_items.some(item =>
+    //                     item.product?.product_name && item.product.product_name.toLowerCase().includes(lowercasedQuery)
+    //                 ))
+    //             );
+    //         });
+    //         setFilteredOrders(results);
+    //     } else {
+    //         setFilteredOrders(orders);
+    //     }
+    //     console.log("Filtered Orders:", filteredOrders);
+    // }, [searchQuery, orders]);
 
     const handleDeleteOrder = async (orderId) => {
         if (!orderId) {
@@ -220,8 +254,8 @@ const Outview = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order, index) => {
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order, index) => {
                                                                 if (!order || !order.id) {
                                                                     console.error(`Invalid order at index ${index}:`, order);
                                                                     return (
@@ -322,18 +356,57 @@ const Outview = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-
-                                            <div className="d-flex justify-content-end mt-3">
+                                            
+                                                <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <a className="page-item pagination-prev disabled text-gray-500" href="#">
-                                                        Previous
-                                                    </a>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <a className="page-item pagination-next text-gray-500" href="#">
-                                                        Next
-                                                    </a>
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>
