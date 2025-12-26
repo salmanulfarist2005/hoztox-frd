@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
 import { Link ,useNavigate} from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
+import Pagination from '../pagination/Pagination';
 const CustomProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -33,7 +34,7 @@ const CustomProductViewFilter = () => {
     const [totalPages,setTotalPages] = useState(1)
     const [pagetrigger, setPageTrigger] = useState(false);
        const debouncedValue = useDebounce(searchTerm)
-    
+    const [totalItems,setTotalItems] = useState(1)
     
     const handleQuantityChange = (newQuantity) => {
         if (newQuantity >= 1) {
@@ -59,6 +60,7 @@ const CustomProductViewFilter = () => {
             const productes = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
             setProducts(productes);
+            setTotalItems(response.data.message.count)
             setTotalPages(totalPages)
             }
 
@@ -132,7 +134,7 @@ const CustomProductViewFilter = () => {
             </div>
 
             {/* Pagination Controls */}
-            <nav className="fz-shop-pagination">
+            {/* <nav className="fz-shop-pagination">
                 <ul className="page-numbers">
                     <li>
                         <button
@@ -169,7 +171,14 @@ const CustomProductViewFilter = () => {
                         </button>
                     </li>
                 </ul>
-            </nav>
+            </nav> */}
+                        <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+            />
+
         </div>
     );
 };

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
 import { Link, useNavigate } from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
+import Pagination from '../pagination/Pagination'; 
 const ProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -23,7 +24,7 @@ const ProductViewFilter = () => {
         if (!authToken) {
             navigate('/');
         } 
-    }, [navigate]);
+    }, [navigate]); 
 
    
     const defaultQuantity = 1;
@@ -36,7 +37,8 @@ const ProductViewFilter = () => {
    
     const productsPerPage = 18;
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages,setTotalPages] = useState()
+    const [totalPages,setTotalPages] = useState();
+    const [totalItems, setTotalItems] = useState(0);
  
     const handleQuantityChange = (productId, newQuantity) => {
         
@@ -65,11 +67,14 @@ const ProductViewFilter = () => {
             
                                     if(!response.error){
             const products = response.data.message.results;
-            const totalPages = Math.ceil(response.data.message.count / 10);
+            const totalCount = response.data.message.count || 0;
+            const limit = 12; // Match the limit in params
+            const totalPages = Math.ceil(totalCount / limit);
 
             
             setProducts(products);
-            setTotalPages(totalPages)
+            setTotalPages(totalPages);
+            setTotalItems(totalCount);
             }
 
         } catch (error) {
@@ -286,51 +291,12 @@ const ProductViewFilter = () => {
                 )}
             </div>
 
-            <nav className="fz-shop-pagination">
-    <ul className="page-numbers">
-        <li>
-            <button
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="page-number-btn"
-            >
-                <span aria-current="page" className="last-page">
-                    <i className="fa-light fa-angle-double-left"></i>
-                </span>
-            </button>
-        </li>
-
-      
-        {Array.from({ length: Math.min(5, totalPages - (Math.floor((currentPage - 1) / 5) * 5)) }, (_, index) => {
-            const page = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
-            return (
-                page <= totalPages && (
-                    <li key={page}>
-                        <button
-                            className={`page-number-btn ${currentPage === page ? 'current' : ''}`}
-                            onClick={() => handlePageChange(page)}
-                        >
-                            {page}
-                        </button>
-                    </li>
-                )
-            );
-        })}
-
-        <li>
-            <button
-                disabled={currentPage === totalPages}
-                className="page-number-btn"
-                onClick={() => handlePageChange(currentPage + 1)}
-            >
-                <span aria-current="page" className="last-page">
-                    <i className="fa-light fa-angle-double-right"></i>
-                </span>
-            </button>
-        </li>
-    </ul>
-</nav>
-
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };

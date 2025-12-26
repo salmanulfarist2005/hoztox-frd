@@ -23,7 +23,7 @@ const BestSellerTabContent = () => {
     const fetchProducts = async () => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+            const response = await axios.get(`${BASE_URL}/products/products_user_list/?limit_bestsellers=24`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

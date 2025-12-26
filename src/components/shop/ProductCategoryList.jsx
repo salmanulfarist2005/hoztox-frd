@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FarzaaContext } from "../../context/FarzaaContext";
 import axios from "axios";
 import { BASE_URL } from "../helpers/config";
+import { useSearchParams } from "react-router-dom";
 
 const ProductCategoryList = () => {
   const { handleCategoryFilter } = useContext(FarzaaContext);
@@ -11,6 +12,7 @@ const ProductCategoryList = () => {
   const [error, setError] = useState(null);
   const [isCollapsed, setCollapsed] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+const [searchParams, setSearchParams] = useSearchParams();
 
   const fetchCategories = async () => {
     try {
@@ -41,6 +43,7 @@ const ProductCategoryList = () => {
 
   const handleCategoryClick = (categoryName) => {
     if (activeCategory === categoryName) {
+      newParams.set("id", activeCategory);
       setActiveCategory(null);
       handleCategoryFilter(null);
 
@@ -49,6 +52,22 @@ const ProductCategoryList = () => {
     setActiveCategory(categoryName);
     handleCategoryFilter(categoryName);
   };
+
+//   const handleCategoryClick = (id) => {
+//   const currentId = searchParams.get("id");
+
+//   const newParams = new URLSearchParams(searchParams);
+
+//   if (currentId === String(id)) {
+//     newParams.delete("id");
+//     handleCategoryFilter(null);
+//   } else {
+//     newParams.set("id", id);
+//     handleCategoryFilter(id);
+//   }
+
+//   setSearchParams(newParams, { replace: true });
+// };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
