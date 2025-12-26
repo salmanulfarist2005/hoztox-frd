@@ -8,7 +8,7 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import useDebounce from '../../../Hooks/useDebounce';
 const CompletedOrder = () => {
     const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
@@ -17,15 +17,32 @@ const CompletedOrder = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
+
+       const debouncedValue = useDebounce(searchQuery)
 
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/delivered/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response orderssssssss", response.data)
+            const response = await axios.get(`${BASE_URL}/products/orders/delivered/`,{
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+            });
+                        if(!response.error){
+            const orders = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+            setOrders(orders);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -33,8 +50,23 @@ const CompletedOrder = () => {
     useEffect(() => {
         fetchOrders();
 
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage((prev)=>prev+1);
+                  setPageTrigger(e=>!e)
+
+        }
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            setPageTrigger(e=>!e)
+
+        }
+    };
 
     const handleGenerateOrderId = async () => {
 
@@ -161,27 +193,6 @@ const CompletedOrder = () => {
 
         doc.save('order_details.pdf');
     };
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        console.log("Search Query:", searchQuery);
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.product?.product_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-        console.log("Filtered Orders after search:", filteredOrders);
-    }, [searchQuery, orders]);
-
- 
     
 
     return (
@@ -205,7 +216,9 @@ const CompletedOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }} 
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -236,8 +249,8 @@ const CompletedOrder = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) =>
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) =>
                                                                 order.order_items.map((item) => (
                                                                     <tr key={`${order.id}-${item.id}`}>
                                                                         <td className="OrderId">{order.ordercode}</td>
@@ -302,15 +315,54 @@ const CompletedOrder = () => {
 
                                             <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

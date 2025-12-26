@@ -103,26 +103,6 @@ const Outview = () => {
         });
     };
 
-    // useEffect(() => {
-    //     console.log("Search Query:", searchQuery);
-    //     if (searchQuery) {
-    //         const lowercasedQuery = searchQuery.toLowerCase();
-    //         const results = orders.filter(order => {
-    //             if (!order) return false;
-    //             return (
-    //                 (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
-    //                 (order.user?.company_name && order.user.company_name.toLowerCase().includes(lowercasedQuery)) ||
-    //                 (order.order_items && Array.isArray(order.order_items) && order.order_items.some(item =>
-    //                     item.product?.product_name && item.product.product_name.toLowerCase().includes(lowercasedQuery)
-    //                 ))
-    //             );
-    //         });
-    //         setFilteredOrders(results);
-    //     } else {
-    //         setFilteredOrders(orders);
-    //     }
-    //     console.log("Filtered Orders:", filteredOrders);
-    // }, [searchQuery, orders]);
 
     const handleDeleteOrder = async (orderId) => {
         if (!orderId) {

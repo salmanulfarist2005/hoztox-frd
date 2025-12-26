@@ -33,7 +33,7 @@ const ManageProducts = () => {
     const [category, setCategory] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages,setTotalPages] = useState(1)
-
+    const [itemCount,setItemCount] = useState(1)
     const itemsPerPage = 10;
 
    const debouncedValue = useDebounce(searchTerm)
@@ -66,6 +66,7 @@ const ManageProducts = () => {
             const productes = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
             setProducts(productes);
+            setItemCount(response.data.message.count)
             setTotalPages(totalPages)
             }
         } catch (error) {
@@ -423,6 +424,15 @@ const ManageProducts = () => {
             try {
                 await axios.delete(`${BASE_URL}/products/product/${productId}/delete/`);
                 fetchProducts();
+
+                      const remainingItems = itemCount - 1;
+      setItemCount(remainingItems);
+      const newTotalPages = Math.ceil(remainingItems / 10);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+        setPageTrigger((e) => !e);
+      }
+
                 alert("Product deleted successfully!");
             } catch (error) {
                 console.error('Error deleting product:', error);

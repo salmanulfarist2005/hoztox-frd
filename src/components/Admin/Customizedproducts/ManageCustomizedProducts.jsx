@@ -22,6 +22,7 @@ const ManageCustomProducts = () => {
     const itemsPerPage = 10;
     const [pagetrigger, setPageTrigger] = useState(false);
 
+    const [itemCount,setItemCount] = useState(1)
 
 
     const [userTypes, setUserTypes] = useState([]);
@@ -58,6 +59,7 @@ const ManageCustomProducts = () => {
             if(!response.error){
             const productes = response.data.message.results;
             const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+            setItemCount(response.data.message.count)
             setProducts(productes);
             setTotalPages(totalPages)
             }
@@ -439,7 +441,18 @@ const ManageCustomProducts = () => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
                 await axios.delete(`${BASE_URL}/products/customized_product/${productId}/delete/`);
-                fetchProducts();
+                setProducts((prev) =>
+        prev.filter((item) => item.id !== productId)
+      );
+        const remainingItems = itemCount - 1;
+      setItemCount(remainingItems);
+      const newTotalPages = Math.ceil(remainingItems / 10);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+        setPageTrigger((e) => !e);
+      }
+
+
                 alert("Product deleted successfully!");
             } catch (error) {
                 console.error('Error deleting product:', error);
@@ -641,20 +654,7 @@ const ManageCustomProducts = () => {
                                                 </table>
                                             </div>
 
-                                            {/* <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
-                                                </div>
-                                            </div> */}
-                                                                                            <div className="d-flex justify-content-end">
+                                              <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
 
                                                     <button
