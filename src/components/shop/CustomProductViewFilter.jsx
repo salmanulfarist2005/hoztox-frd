@@ -5,6 +5,7 @@ import { BASE_URL } from '../helpers/config';
 import { Link ,useNavigate} from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
 import Pagination from '../pagination/Pagination';
+import { useRef } from 'react';
 const CustomProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -49,6 +50,22 @@ const CustomProductViewFilter = () => {
         fetchData();
 
     }, [debouncedValue, activeCategory]);
+
+
+        const prevFiltersRef = React.useRef({ search: '', category: '' });
+
+useEffect(() => {
+    const currentFilters = { search: debouncedValue, category: activeCategory };
+
+    if (
+        prevFiltersRef.current.search !== currentFilters.search ||
+        prevFiltersRef.current.category !== currentFilters.category
+    ) {
+        setCurrentPage(1);
+        prevFiltersRef.current = currentFilters;
+    }
+}, [debouncedValue, activeCategory]);
+   
 
     const fetchData = async () => {
         try {

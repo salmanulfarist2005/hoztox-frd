@@ -5,6 +5,7 @@ import { BASE_URL } from '../helpers/config';
 import { Link, useNavigate } from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
 import Pagination from '../pagination/Pagination'; 
+import { useRef } from 'react';
 const ProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -25,6 +26,10 @@ const ProductViewFilter = () => {
             navigate('/');
         } 
     }, [navigate]); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState();
+    const [totalItems, setTotalItems] = useState(0);
+ 
 
    
     const defaultQuantity = 1;
@@ -33,13 +38,22 @@ const ProductViewFilter = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    const prevFiltersRef = React.useRef({ search: '', category: '' });
 
+useEffect(() => {
+    const currentFilters = { search: debouncedValue, category: activeCategory };
+
+    if (
+        prevFiltersRef.current.search !== currentFilters.search ||
+        prevFiltersRef.current.category !== currentFilters.category
+    ) {
+        setCurrentPage(1);
+        prevFiltersRef.current = currentFilters;
+    }
+}, [debouncedValue, activeCategory]);
    
     const productsPerPage = 18;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages,setTotalPages] = useState();
-    const [totalItems, setTotalItems] = useState(0);
- 
     const handleQuantityChange = (productId, newQuantity) => {
         
         setQuantity(prevQuantities => ({
@@ -49,9 +63,6 @@ const ProductViewFilter = () => {
     };
 
  const getQty = (productId) => quantity[productId] ?? 1;
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [debouncedValue, activeCategory]);
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('authToken');
@@ -60,17 +71,17 @@ const ProductViewFilter = () => {
                 params:{
                     is_paginated:true,
                     page:currentPage,
-                    limit:12,
+                    limit:10,
                     search:searchTerm,
                     category_id:activeCategory
                 }
 
             });
             
-                                    if(!response.error){
+            if(!response.error){
             const products = response.data.message.results;
             const totalCount = response.data.message.count || 0;
-            const limit = 12; // Match the limit in params
+            const limit = 10; 
             const totalPages = Math.ceil(totalCount / limit);
 
             
@@ -122,9 +133,9 @@ const ProductViewFilter = () => {
     };
 
  
-    const startIndex = (currentPage - 1) * productsPerPage;
-    const endIndex = currentPage * productsPerPage;
-    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+    // const startIndex = (currentPage - 1) * productsPerPage;
+    // const endIndex = currentPage * productsPerPage;
+    // const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
  
     const [selectedColors, setSelectedColors] = useState({});
