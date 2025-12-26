@@ -39,13 +39,14 @@ const ProductViewFilter = () => {
     const [totalPages,setTotalPages] = useState()
  
     const handleQuantityChange = (productId, newQuantity) => {
+        
         setQuantity(prevQuantities => ({
             ...prevQuantities,
             [productId]: Math.max(1, newQuantity),
         }));
     };
 
- 
+ const getQty = (productId) => quantity[productId] ?? 1;
     
     const fetchData = async () => {
         try {
@@ -71,7 +72,6 @@ const ProductViewFilter = () => {
             setTotalPages(totalPages)
             }
 
-            // setQuantity(initialQuantities);
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to load data. Please try again later.');
@@ -165,7 +165,7 @@ const ProductViewFilter = () => {
                                             <div className="fz-product-details__quantity cart-product__quantity">
                                                 <button
                                                     className="minus-btn cart-product__minus"
-                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] - 1)}
+                                                    onClick={() => handleQuantityChange(item.id, getQty(item.id) - 1)}
                                                 >
                                                     <i className="fa-light fa-minus"></i>
                                                 </button>
@@ -173,7 +173,7 @@ const ProductViewFilter = () => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={quantity[item.id]}
+                                                    value={parseInt(quantity[item.id])}
                                                     onChange={(e) =>
                                                         handleQuantityChange(
                                                             item.id,
@@ -184,7 +184,7 @@ const ProductViewFilter = () => {
                                                 />
                                                 <button
                                                     className="plus-btn cart-product__plus"
-                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] + 1)}
+                                                    onClick={() => handleQuantityChange(item.id, getQty(item.id) + 1)}
                                                 >
                                                     <i className="fa-light fa-plus"></i>
                                                 </button>
