@@ -6,6 +6,7 @@ import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import FullCustomPendingOrder from '../FullCustomOrders/Pendingorder'
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
+import useDebounce from '../../../Hooks/useDebounce';
 const CustomPendingOrder = () => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
@@ -13,13 +14,32 @@ const CustomPendingOrder = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [totalPages,setTotalPages] = useState(1)
+   const debouncedValue = useDebounce(searchQuery)
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-pending/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response", response.data);
+            const response = await axios.get(`${BASE_URL}/products/customized-pending/`,{
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+            if(!response.error){
+                    const orders = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+                    setOrders(orders);
+                    setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -27,7 +47,7 @@ const CustomPendingOrder = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
 
 
@@ -85,7 +105,6 @@ const CustomPendingOrder = () => {
     };
 
 
-    const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
         if (searchQuery) {
@@ -155,8 +174,8 @@ const CustomPendingOrder = () => {
 
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) => (
                                                                 <tr key={order.id}>
                                                                     <td>{order.product?.SKU}</td>
                                                                     <td>{order.user?.company_name}</td>
@@ -198,17 +217,57 @@ const CustomPendingOrder = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
+                                      
+
+                                                <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+
+                                                    <button
+                                                    className="page-item pagination-prev"
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePreviousPage(currentPage - 1)}
+                                                    >
+                                                    Previous
+                                                    </button>
+
+                                                    <ul className="pagination mb-0">
+                                                    {Array.from({ length: totalPages }, (_, index) => {
+                                                        const page = index + 1;
+                                                        return (
+                                                        <li
+                                                            key={page}
+                                                            className={`page-item ${currentPage === page ? "active" : ""}`}
+                                                        >
+                                                            <button
+                                                            style={{
+                                                                color: "#212529",
+                                                                borderColor: "#212529",
+                                                                backgroundColor:
+                                                                currentPage === page ? "#212529" : "transparent",
+                                                                color: currentPage === page ? "#fff" : "#212529",
+                                                            }} 
+                                                            className="page-link"
+                                                            onClick={() => {setCurrentPage(page)
+                                                                 setPageTrigger(e=>!e)
+                                                            }}
+                                                            >
+                                                            {page}
+                                                            </button>
+                                                        </li>
+                                                        );
+                                                    })}
+                                                    </ul>
+
+                                                    <button
+                                                    className="page-item pagination-next"
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handleNextPage(currentPage + 1)}
+                                                    >
+                                                    Next
+                                                    </button>
+
                                                 </div>
-                                            </div>
+                                                </div>
                                         </div>
                                     </CardBody>
 
