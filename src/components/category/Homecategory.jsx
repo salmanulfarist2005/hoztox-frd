@@ -69,7 +69,7 @@ const Category = () => {
                     img={BASE_URL + category.image}
                     title={category.category_name}
                     link={`/shop/${category.category_name}`}   
-                    onCategoryClick={() => handleCategoryClick(category.category_name)}   
+                    onCategoryClick={() => handleCategoryClick(category.id)}   
                   />
                 </Col>
               ))}
