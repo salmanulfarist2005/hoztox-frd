@@ -42,7 +42,7 @@ const CustomProductCategoryList = () => {
                     categories.map((categoryObj) => (
                         <li
                             key={categoryObj.category_name}
-                            onClick={() => handleCategoryClick(categoryObj.category_name)}
+                            onClick={() => handleCategoryClick(categoryObj.id)}
                             className={activeCategory === categoryObj.category_name ? 'active' : ''}
                             style={{ cursor: 'pointer', textTransform: 'capitalize' }}  
                         >

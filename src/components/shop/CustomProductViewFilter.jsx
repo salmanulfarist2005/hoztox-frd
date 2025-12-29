@@ -6,6 +6,7 @@ import { Link ,useNavigate} from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
 import Pagination from '../pagination/Pagination';
 import { useRef } from 'react';
+
 const CustomProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -29,6 +30,7 @@ const CustomProductViewFilter = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
+console.log("category.....",activeCategory);
 
     
     // Pagination state
@@ -76,7 +78,9 @@ useEffect(() => {
                     is_paginated:true,
                     page:currentPage,
                     limit:9,
-                    search:searchTerm
+                    search:searchTerm,
+                    category_id:activeCategory
+
                 }
 
             });
@@ -144,7 +148,7 @@ useEffect(() => {
             </div>
 
           
-                        <Pagination
+            <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 totalItems={totalItems}
