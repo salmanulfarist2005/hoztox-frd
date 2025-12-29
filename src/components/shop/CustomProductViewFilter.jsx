@@ -51,7 +51,7 @@ console.log("category.....",activeCategory);
         setCurrentPage(1);
         fetchData();
 
-    }, [debouncedValue, activeCategory]);
+    }, [debouncedValue,pagetrigger, activeCategory]);
 
 
         const prevFiltersRef = React.useRef({ search: '', category: '' });
@@ -66,7 +66,7 @@ useEffect(() => {
         setCurrentPage(1);
         prevFiltersRef.current = currentFilters;
     }
-}, [debouncedValue, activeCategory]);
+}, [debouncedValue,pagetrigger, activeCategory]);
    
 
     const fetchData = async () => {

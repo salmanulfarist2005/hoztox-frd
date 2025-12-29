@@ -708,39 +708,9 @@ const FarzaaContextProvider = ({ children }) => {
       );
     }
   };
-  const [ornamentList, setOrnamentList] = useState([]);
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-  
-      setOrnamentList(productsResponse.data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError('Failed to load data. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  useEffect(() => {
-    fetchData();
-  }, []);
   const addToJeweleryCart = async (itemId, quantity = 1, color = '') => {
     console.log("Adding item with ID:", itemId, "with quantity:", quantity, "and color:", color);
   
-    if (!ornamentList || ornamentList.length === 0) {
-      console.error("Ornament list is not available.");
-      toast.warning("No items available in the ornament list.");
-      return;
-    }
-  
-    const itemToAdd = ornamentList.find((item) => item.id === itemId);
-    console.log("Item found:", itemToAdd);
-  
-    if (itemToAdd) {
       try {
         const token = localStorage.getItem('authToken');
         if (!token) {
@@ -799,10 +769,6 @@ const FarzaaContextProvider = ({ children }) => {
           toast.error("Failed to add item to cart. Please try again.");
         }
       }
-    } else {
-      console.warn("Item not found in ornament list.");
-      toast.warning("Item not found in ornament list.");
-    }
   };
   
 
@@ -1117,7 +1083,6 @@ const FarzaaContextProvider = ({ children }) => {
         filteredProduct,
         setFilteredProduct,
         setJeweleryAddToCart,
-        ornamentList,
         cartItemAmount,
         setCartItemAmount,
       }}

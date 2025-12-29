@@ -28,9 +28,11 @@ const AcceptOrder = () => {
 
     const debouncedValue = useDebounce(searchQuery)
 
+    console.log("orders........",orders);
+    
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/accepted/`,{
+            const response = await axios.get(`${BASE_URL}products/order-items/accepted/`,{
                                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -39,7 +41,10 @@ const AcceptOrder = () => {
                 }
 
             });
+            
             if(!response.error){
+                            console.log("response....",response.data.message.results);
+
                     const productes = response.data.message.results;
                     const totalPages = Math.ceil(response.data.message.count / 10);
                     setOrders(productes);
