@@ -7,21 +7,43 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const Outview = () => {
     const [orders, setOrders] = useState([]);
     const [modal_list1, setModalList1] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [orderId, setOrderId] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
+    // const [filteredOrders, setFilteredOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
 
+       const debouncedValue = useDebounce(searchQuery)
+    
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
-            const data = response.data;
-            console.log("Fetched orders:", data);
-            setOrders(Array.isArray(data) ? data : []);
+            const response = await axios.get(`${BASE_URL}/products/orders/pending/`,{
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+
+            });
+            if(!response.error){
+            const productes = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+            setOrders(productes);
+            setItemCount(response.data.message.count)
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
             setOrders([]);
@@ -30,7 +52,12 @@ const Outview = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
 
     const handleGenerateOrderId = async () => {
         if (!selectedItem || !selectedItem.id) {
@@ -41,6 +68,10 @@ const Outview = () => {
         try {
             await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
                 ordercode: orderId,
+            },{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
             });
             setOrders(prevOrders =>
                 prevOrders.map(order =>
@@ -69,26 +100,6 @@ const Outview = () => {
         });
     };
 
-    useEffect(() => {
-        console.log("Search Query:", searchQuery);
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order => {
-                if (!order) return false;
-                return (
-                    (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
-                    (order.user?.company_name && order.user.company_name.toLowerCase().includes(lowercasedQuery)) ||
-                    (order.order_items && Array.isArray(order.order_items) && order.order_items.some(item =>
-                        item.product?.product_name && item.product.product_name.toLowerCase().includes(lowercasedQuery)
-                    ))
-                );
-            });
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-        console.log("Filtered Orders:", filteredOrders);
-    }, [searchQuery, orders]);
 
     const handleDeleteOrder = async (orderId) => {
         if (!orderId) {
@@ -98,8 +109,21 @@ const Outview = () => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`);
-                fetchOrders();
+                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                setOrders((prev) =>
+                    prev.filter((item) => item.id !== orderId)
+                );
+                const remainingItems = itemCount - 1;
+                setItemCount(remainingItems);
+                const newTotalPages = Math.ceil(remainingItems / 10);
+                if (currentPage > newTotalPages && newTotalPages > 0) {
+                    setCurrentPage(newTotalPages);
+                }
+                setPageTrigger((e) => !e);
                 alert("Order deleted successfully!");
             } catch (error) {
                 console.error("Error deleting order:", error.response ? error.response.data : error.message);
@@ -115,6 +139,10 @@ const Outview = () => {
         try {
             const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
                 status: newStatus
+            },{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                },
             });
 
             setOrders((prevOrders) =>
@@ -193,7 +221,9 @@ const Outview = () => {
                                                                 className="form-control rounded border-gray-300 focus:ring-2 focus:ring-blue-400"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line" style={{
@@ -220,8 +250,8 @@ const Outview = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order, index) => {
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order, index) => {
                                                                 if (!order || !order.id) {
                                                                     console.error(`Invalid order at index ${index}:`, order);
                                                                     return (
@@ -322,18 +352,17 @@ const Outview = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-
-                                            <div className="d-flex justify-content-end mt-3">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <a className="page-item pagination-prev disabled text-gray-500" href="#">
-                                                        Previous
-                                                    </a>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <a className="page-item pagination-next text-gray-500" href="#">
-                                                        Next
-                                                    </a>
+                                            
+                                                <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

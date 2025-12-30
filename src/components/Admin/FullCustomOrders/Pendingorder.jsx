@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const FullCustomPendingOrder = () => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
@@ -12,13 +14,39 @@ const FullCustomPendingOrder = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
+        const [searchQuery, setSearchQuery] = useState('');
+
+   const debouncedValue = useDebounce(searchQuery)
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/full-cusom-pending/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response", response.data);
+            const response = await axios.get(`${BASE_URL}/products/full-cusom-pending/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+                        if(!response.error){
+                    const orders = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+                    setOrders(orders);
+                    setItemCount(response.data.message.count)
+                    setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -26,7 +54,7 @@ const FullCustomPendingOrder = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [debouncedValue,pagetrigger]);
 
 
 
@@ -51,7 +79,11 @@ const FullCustomPendingOrder = () => {
         }
 
         try {
-            const response = await axios.patch(`${BASE_URL}/products/full-orders/${selectedItem.order?.id}/approve/`, { approved: true });
+            const response = await axios.patch(`${BASE_URL}/products/full-orders/${selectedItem.order?.id}/approve/`, { approved: true },{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                }
+            });
             console.log("Approval response:", response.data);
 
             alert("Order approved successfully!");
@@ -70,7 +102,12 @@ const FullCustomPendingOrder = () => {
         }
 
         try {
-            const response = await axios.patch(`${BASE_URL}/products/full-orders/${selectedItem.order?.id}/reject/`);
+            const response = await axios.patch(`${BASE_URL}/products/full-orders/${selectedItem.order?.id}/reject/`,{},
+                {
+                headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                }}
+                 );
             console.log("Rejection response:", response.data);
 
             alert("Order rejected successfully!");
@@ -84,7 +121,6 @@ const FullCustomPendingOrder = () => {
     };
 
 
-    const [searchQuery, setSearchQuery] = useState('');
     const [filteredOrders, setFilteredOrders] = useState([]);
     useEffect(() => {
         if (searchQuery) {
@@ -124,7 +160,9 @@ const FullCustomPendingOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -156,8 +194,8 @@ const FullCustomPendingOrder = () => {
 
                                                     </thead>
                                                     <tbody className="list form-check-all">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) => (
                                                                 <tr key={order.id}>
 
                                                                     <td>{order.user?.company_name}</td>
@@ -200,7 +238,7 @@ const FullCustomPendingOrder = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
+                                            {/* <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
                                                     <Link className="page-item pagination-prev disabled" to="#">
                                                         Previous
@@ -210,7 +248,16 @@ const FullCustomPendingOrder = () => {
                                                         Next
                                                     </Link>
                                                 </div>
-                                            </div>
+                                            </div> */}
+                                                                                            <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
+                                                </div>
                                         </div>
                                     </CardBody>
                                 </Card>

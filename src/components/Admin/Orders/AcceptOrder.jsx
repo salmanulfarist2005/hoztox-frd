@@ -8,7 +8,8 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const AcceptOrder = () => {
     const [images, setImages] = useState([]);
     const [orders, setOrders] = useState([]);
@@ -19,14 +20,44 @@ const AcceptOrder = () => {
     const [orderId, setOrderId] = useState('');
 
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
+    const debouncedValue = useDebounce(searchQuery)
 
+    console.log("orders........",orders);
+    
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/accepted/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response orderssssssss", response.data)
+            const response = await axios.get(`${BASE_URL}/products/order-items/`,
+            {
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`
+                },
+                params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery,
+                    status:"accepted"
+                }
+
+            });
+            
+            if(!response.error){ 
+                     
+                    const productes = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / 10);
+                    setOrders(productes);
+                    setItemCount(response.data.message.count)
+                    setTotalPages(totalPages)
+                  
+
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -34,14 +65,22 @@ const AcceptOrder = () => {
     useEffect(() => {
         fetchOrders();
 
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
 
     const handleGenerateOrderId = async () => {
 
         try {
-            await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
+            await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.order_id}/`, {
                 ordercode: orderId,
+            },{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
             });
             setModalList1(false);
             setOrderId('');
@@ -62,7 +101,7 @@ const AcceptOrder = () => {
     };
 
     const tog_list1 = (order) => {
-        console.log("Selected Item for Order ID:", order);
+        console.log("Selected Item for Order ID:", order,order);
         setSelectedItem(order);
         setOrderId(order.ordercode || '');
         setModalList1(!modal_list1);
@@ -162,25 +201,6 @@ const AcceptOrder = () => {
 
         doc.save('order_details.pdf');
     };
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        console.log("Search Query:", searchQuery);
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                (order.ordercode && order.ordercode.toLowerCase().includes(lowercasedQuery)) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.product?.product_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-        console.log("Filtered Orders after search:", filteredOrders);
-    }, [searchQuery, orders]);
 
     const handleStatusChange = async (orderid, newStatus) => {
         const confirmed = window.confirm(`Are you sure you want to change the status to "${newStatus}"?`);
@@ -189,6 +209,10 @@ const AcceptOrder = () => {
         try {
             const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
                 status: newStatus
+            },{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
             });
 
             setOrders((prevOrders) =>
@@ -228,7 +252,9 @@ const AcceptOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }} // Update search query
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -259,92 +285,87 @@ const AcceptOrder = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) =>
-                                                                order.order_items.map((item) => (
-                                                                    <tr key={`${order.id}-${item.id}`}>
-                                                                        <td className="OrderId">{order.ordercode}</td>
-                                                                        <td className="OrderId">{order.user?.company_name}</td>
-                                                                        <td className="sku">{item.product?.SKU}</td>
-                                                                        <td className="product_name">{item.product?.product_name}</td>
-                                                                        <td className="product_category">{item.product?.category?.category_name}</td>
-                                                                        <td className="quantity">{item.quantity}</td>
-                                                                        <td>
-                                                                            {order.status && (
-                                                                                <select
-                                                                                    value={order.status || "pending"}
-                                                                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                                                                    className="border rounded p-1 focus:ring-2 focus:ring-blue-400 text-sm"
-                                                                                >
-                                                                                    <option value="pending">Pending</option>
-                                                                                    <option value="accepted">Accepted</option>
-                                                                                    <option value="delivered">Delivered</option>
-                                                                                </select>
-                                                                            )}
-                                                                        </td>
+                                                        {orders.length > 0 ? 
+                                                        
+                                                        orders.map((item) => (
+                                                                <tr key={`${item.order_id}-${item.order_item_id}`}>
+                                                                    <td className="OrderId">{item.ordercode}</td>
+                                                                    <td className="OrderId">{item.company_name}</td>
+                                                                    <td className="sku">{item.sku}</td>
+                                                                    <td className="product_name">{item.product_name}</td>
+                                                                    <td className="product_category">{item.product_category}</td>
+                                                                    <td className="quantity">{item.quantity}</td>
 
-                                                                        <td>
-                                                                            <div className="d-flex gap-2" style={{ minWidth: '200px', alignItems: 'center' }}>
-                                                                                
-                                                                                    <button
-                                                                                        onClick={() => tog_list1(order)}
-                                                                                        style={{
-                                                                                            backgroundColor: '#e5e7eb',
-                                                                                            border: '1px solid #d1d5db',
-                                                                                            padding: '4px 8px',
-                                                                                            borderRadius: '4px',
-                                                                                            cursor: 'pointer',
-                                                                                            display: 'inline-block',
-                                                                                            color: '#374151',
-                                                                                            fontSize: '14px',
-                                                                                            transition: 'background-color 0.2s'
-                                                                                        }}
-                                                                                        onMouseOver={(e) => e.target.style.backgroundColor = '#d1d5db'}
-                                                                                        onMouseOut={(e) => e.target.style.backgroundColor = '#e5e7eb'}
-                                                                                    >
-                                                                                        Generate Order ID
-                                                                                    </button>
-                                                                               
-                                                                                <div className="edit">
-                                                                                    <button
-                                                                                        onClick={() => window.location.href = `/view-order-accept/${order.id}`}
-                                                                                        title="View"
-                                                                                        style={{
-                                                                                            background: 'none',
-                                                                                            border: 'none',
-                                                                                            padding: '5px',
-                                                                                            cursor: 'pointer',
-                                                                                            display: 'inline-block'
-                                                                                        }}
-                                                                                    >
-                                                                                        <i className="ri-eye-line" style={{ fontSize: '18px', color: '#6b7280' }}></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
+                                                                    <td>
+                                                                    <select
+                                                                        value={item.status || "pending"}
+                                                                        onChange={(e) =>
+                                                                        handleStatusChange(item.order_id, e.target.value)
+                                                                        }
+                                                                        className="border rounded p-1 focus:ring-2 focus:ring-blue-400 text-sm"
+                                                                    >
+                                                                        <option value="pending">Pending</option>
+                                                                        <option value="accepted">Accepted</option>
+                                                                        <option value="delivered">Delivered</option>
+                                                                    </select>
+                                                                    </td>
+
+                                                                    <td>
+                                                                    <div className="d-flex gap-2" style={{ minWidth: "200px", alignItems: "center" }}>
+                                                                        <button
+                                                                        onClick={() => tog_list1(item)}
+                                                                        style={{
+                                                                            backgroundColor: "#e5e7eb",
+                                                                            border: "1px solid #d1d5db",
+                                                                            padding: "4px 8px",
+                                                                            borderRadius: "4px",
+                                                                            cursor: "pointer",
+                                                                            color: "#374151",
+                                                                            fontSize: "14px",
+                                                                        }}
+                                                                        >
+                                                                        Generate Order ID
+                                                                        </button>
+
+                                                                        <button
+                                                                        onClick={() =>
+                                                                            (window.location.href = `/view-order-accept/${item.order_id}`)
+                                                                        }
+                                                                        title="View"
+                                                                        style={{
+                                                                            background: "none",
+                                                                            border: "none",
+                                                                            padding: "5px",
+                                                                            cursor: "pointer",
+                                                                        }}
+                                                                        >
+                                                                        <i className="ri-eye-line" style={{ fontSize: "18px", color: "#6b7280" }} />
+                                                                        </button>
+                                                                    </div>
+                                                                    </td>
+                                                                </tr>
                                                                 ))
-                                                            )
-                                                        ) : (
+
+                                                        
+                                                        : (
                                                             <tr>
-                                                                <td colSpan="7" className="text-center">No orders found.</td>
+                                                                <td colSpan="8" className="text-center">No orders found.</td>
                                                             </tr>
                                                         )}
                                                     </tbody>
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                                                                            <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

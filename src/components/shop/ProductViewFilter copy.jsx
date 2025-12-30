@@ -91,7 +91,7 @@ const ProductViewFilter = () => {
                                     <div className="fz-2-single-product-actions">
                                         <button
                                             className="fz-add-to-cart-btn"
-                                            onClick={() => addToJeweleryCart(item.id, quantity)}
+                                            onClick={() => addToJeweleryCart(item.id, quantity,'',item)}
                                         >
                                             Add to Cart
                                         </button>

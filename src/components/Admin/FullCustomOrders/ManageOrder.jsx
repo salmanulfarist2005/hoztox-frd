@@ -7,7 +7,9 @@ import { BASE_URL } from '../../helpers/config';
 import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import useDebounce from '../../../Hooks/useDebounce';
 import { Button, Card, CardBody, CardHeader, Col, Container, Row, Modal, ModalBody, ModalFooter, ModalHeader, Input } from 'reactstrap';
+import Pagination from '../../pagination/Pagination';
 const FullCustomManageOrder = (order) => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
@@ -19,12 +21,35 @@ const FullCustomManageOrder = (order) => {
     const [editedQuantity, setEditedQuantity] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [status, setStatus] = useState(order?.status || 'N/A');
+    const [searchQuery, setSearchQuery] = useState('');
+
+                const [currentPage, setCurrentPage] = useState(1);
+                const itemsPerPage = 10;
+                const [pagetrigger, setPageTrigger] = useState(false);
+                const [totalPages,setTotalPages] = useState(1)
+                const [itemCount,setItemCount] = useState(1)
+               const debouncedValue = useDebounce(searchQuery)
+    
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/full-customized-approved/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response", response.data);
+            const response = await axios.get(`${BASE_URL}/products/full-customized-approved/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+                                                if(!response.error){
+                    const orders = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+                    setOrders(orders);
+                    setItemCount(response.data.message.count)
+                    setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -32,7 +57,7 @@ const FullCustomManageOrder = (order) => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
 
 
@@ -55,23 +80,6 @@ const FullCustomManageOrder = (order) => {
     };
 
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.category?.category_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-    }, [searchQuery, orders]);
 
 
 
@@ -171,6 +179,10 @@ const FullCustomManageOrder = (order) => {
             await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
+            },{
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+                }
             });
 
             // After updating, update the state to reflect the changes
@@ -203,7 +215,11 @@ const FullCustomManageOrder = (order) => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-full-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-full-orders/${orderId}/delete/`,{
+                    headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+                }
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -239,6 +255,12 @@ const FullCustomManageOrder = (order) => {
         return statusChoice ? statusChoice.className : 'badge-default';
     };
 
+          const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
+
+
     const handleStatusChange = (orderId, value) => {
         setStatus(value);
         setEditingOrderId(orderId);
@@ -256,7 +278,11 @@ const FullCustomManageOrder = (order) => {
             try {
                 const response = await axios.patch(
                     `${BASE_URL}/products/full-orders/${editingOrderId}/update-status/`,
-                    requestData
+                    requestData,{
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        },
+                    }
                 );
                 console.log("Response:", response);
 
@@ -302,7 +328,9 @@ const FullCustomManageOrder = (order) => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -335,8 +363,8 @@ const FullCustomManageOrder = (order) => {
 
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) => (
                                                                 <tr key={order.id}>
                                                                     <td>{order.ordercode}</td>
                                                                     <td> {new Date(order.created_at).toLocaleDateString('en-US', {
@@ -498,17 +526,15 @@ const FullCustomManageOrder = (order) => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                            <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
                                         </div>
                                     </CardBody>
                                 </Card>

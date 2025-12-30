@@ -6,7 +6,8 @@ import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const ManageCategory = () => {
     const [images, setImages] = useState([]);
     const [formData, setFormData] = useState({ category_name: '', image: "" });
@@ -14,12 +15,20 @@ const ManageCategory = () => {
     const [modal_delete, setmodal_delete] = useState(false);
     const [category, setCategory] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState([]);
+    const [totalPages,setTotalPages] = useState(1)
+    const [itemCount,setItemCount] = useState(1)
+    const [pagetrigger, setPageTrigger] = useState(false);
 
     const [currentImage, setCurrentImage] = useState(null);
     const [newImage, setNewImage] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+
+     const debouncedValue = useDebounce(searchTerm)
 
     const clearForm = () => {
         setFormData({ category_name: '', image: "" });
@@ -34,15 +43,28 @@ const ManageCategory = () => {
 
     const fetchCategory = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/categories/`);
-            const category = response.data;
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/categories/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
 
-            if (Array.isArray(category)) {
-                setCategory(category);
-            } else {
-                console.warn("Unexpected data format:", category);
-                setCategory([]);
+            });
+            if(!response.error){
+            const categories = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+            setCategory(categories);
+            setItemCount(response.data.message.count)
+            setTotalPages(totalPages)
             }
+
+
         } catch (error) {
             console.error('Error fetching category:', error);
             setCategory([]);
@@ -51,7 +73,7 @@ const ManageCategory = () => {
 
     useEffect(() => {
         fetchCategory();
-    }, []);
+    }, [debouncedValue,pagetrigger]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -70,7 +92,13 @@ const ManageCategory = () => {
         }
 
         try {
-            await axios.post(`${BASE_URL}/products/categories/`, formDataToSend);
+            const token = localStorage.getItem('authToken');
+            await axios.post(`${BASE_URL}/products/categories/`, formDataToSend,{
+                headers: {
+                     
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setmodal_list(false);
             fetchCategory();
             alert("Category created successfully!");
@@ -103,7 +131,13 @@ const ManageCategory = () => {
         }
 
         try {
-            await axios.put(`${BASE_URL}/products/categories/${selectedCategory.id}/`, formDataToSend);
+            const token = localStorage.getItem('authToken');
+            await axios.put(`${BASE_URL}/products/categories/${selectedCategory.id}/`, formDataToSend, {
+                headers: {
+                   
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setmodal_list(false);
             fetchCategory();
             alert("Category Updated successfully!");
@@ -115,8 +149,24 @@ const ManageCategory = () => {
     const deleteCategory = async (categoryId) => {
         if (window.confirm("Are you sure you want to delete this category?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/categories/${categoryId}/`);
-                fetchCategory();
+                const token = localStorage.getItem('authToken');
+                await axios.delete(`${BASE_URL}/products/categories/${categoryId}/`
+                ,{ headers: {
+                       
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+                );
+                setCategory((prev) =>
+                    prev.filter((item) => item.id !== categoryId)
+                );
+                const remainingItems = itemCount - 1;
+                setItemCount(remainingItems);
+                const newTotalPages = Math.ceil(remainingItems / 10);
+                if (currentPage > newTotalPages && newTotalPages > 0) {
+                    setCurrentPage(newTotalPages);
+                }
+                setPageTrigger((e) => !e);
                 alert("Category deleted successfully!");
             } catch (error) {
                 console.error('Error deleting category:', error);
@@ -168,7 +218,13 @@ const ManageCategory = () => {
         }
         if (window.confirm("Are you sure you want to delete the selected categories?")) {
             try {
-                await Promise.all(selectedIds.map(id => axios.delete(`${BASE_URL}/products/categories/${id}/`)));
+                const token = localStorage.getItem('authToken');
+                await Promise.all(selectedIds.map(id => axios.delete(`${BASE_URL}/products/categories/${id}/`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })));
+             
                 fetchCategory(); // Refresh the category list
                 alert("Selected categories deleted successfully!");
             } catch (error) {
@@ -180,6 +236,8 @@ const ManageCategory = () => {
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1)
+
     };
 
     const tog_list = () => {
@@ -207,27 +265,15 @@ const ManageCategory = () => {
 
         setIsAllSelected(filteredCategories.length === selectedIds.length + 1);
     };
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-
-    const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
-
 
     const indexOfLastCategory = currentPage * itemsPerPage;
     const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
     const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
 
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
 
@@ -294,7 +340,7 @@ const ManageCategory = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {currentCategories.map((cat, index) => (
+                                                        {category.map((cat, index) => (
                                                             <tr key={index}>
                                                                 <td>
                                                                     <div className="form-check">
@@ -309,7 +355,7 @@ const ManageCategory = () => {
                                                                 </td>
                                                                       <td>
                                                                     <img
-                                                                        src={BASE_URL + cat.image}
+                                                                        src={cat.image}
                                                                         alt={cat.category_name}
                                                                         style={{ maxWidth: '80px' }}
                                                                     />
@@ -363,7 +409,7 @@ const ManageCategory = () => {
 
 
 
-                                            <div className="d-flex justify-content-end">
+                                            {/* <div className="d-flex justify-content-end">
                                                 <div className="pagination-wrap hstack gap-2">
                                                     <Link onClick={() => handlePreviousPage(currentPage - 1)}
                                                         disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
@@ -375,7 +421,16 @@ const ManageCategory = () => {
                                                         Next
                                                     </Link>
                                                 </div>
-                                            </div>
+                                            </div> */}
+                                                   <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
+                                                </div>
                                         </div>
                                     </CardBody>
                                 </Card>

@@ -12,7 +12,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
-        const token = localStorage.getItem('adminAuthToken');
+        const token = localStorage.getItem('authToken');
         if (token) {
             navigate('/dashboard');
         }
@@ -29,7 +29,7 @@ const Login = () => {
             const { access } = response.data;
 
             if (access) {
-                localStorage.setItem('adminAuthToken', access);
+                localStorage.setItem('authToken', access);
                 alert('Login successful!');
                 console.log("access", access)
                 navigate('/dashboard');

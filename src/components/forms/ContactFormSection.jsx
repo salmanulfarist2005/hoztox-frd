@@ -1,9 +1,10 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';   
 import { useNavigate } from 'react-router-dom';
  
 import { BASE_URL } from '../helpers/config';
+
 const ContactFormSection = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -14,19 +15,38 @@ const ContactFormSection = () => {
   const authToken = localStorage.getItem('authToken');
 
   const navigate = useNavigate();
+  
   useEffect(() => {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-          navigate('/');
-      } 
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+      navigate('/');
+    } 
   }, [navigate]);
+
+  // Validation function for text-only fields
+  const handleTextOnlyChange = (value, setter) => {
+    const textRegex = /^[a-zA-Z\s]*$/;
+    if (textRegex.test(value)) {
+      setter(value);
+    }
+  };
+
+  // Validation function for phone number (numbers and + only)
+  const handlePhoneChange = (value) => {
+    const phoneRegex = /^[0-9+]*$/;
+    if (phoneRegex.test(value)) {
+      setPhoneNumber(value);
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    
     if (!authToken) {
       alert("You need to be logged in to send a message.");
-      setIsSubmitting(false);
       return;
     }
+    
     if (!firstName || !lastName || !email || !phoneNumber || !comment) {
       toast.error('Please fill out all fields.', { position: 'top-right' });
     } else if (!isValidEmail(email)) {
@@ -41,10 +61,8 @@ const ContactFormSection = () => {
           phone: phoneNumber,
           message: comment,
         };
-
-        
        
-        const response = await axios.post( `${BASE_URL}/products/contact/`, formData, {
+        const response = await axios.post(`${BASE_URL}/products/contact/`, formData, {
           headers: {
             Authorization: `Bearer ${authToken}`
           }
@@ -62,13 +80,12 @@ const ContactFormSection = () => {
         console.error('Error submitting form:', error);
         toast.error('Failed to submit the form. Please try again later.', { position: 'top-right' });
       } finally {
-        setLoading(false);  // Set loading state to false after the request
+        setLoading(false);
       }
     }
   };
 
   const isValidEmail = (email) => {
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -83,7 +100,7 @@ const ContactFormSection = () => {
             id="commenter-first-name"
             placeholder="First Name"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => handleTextOnlyChange(e.target.value, setFirstName)}
           />
         </div>
         <div className="col-6 col-xxs-12">
@@ -93,7 +110,7 @@ const ContactFormSection = () => {
             id="commenter-last-name"
             placeholder="Last Name"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => handleTextOnlyChange(e.target.value, setLastName)}
           />
         </div>
         <div className="col-6 col-xxs-12">
@@ -108,12 +125,12 @@ const ContactFormSection = () => {
         </div>
         <div className="col-6 col-xxs-12">
           <input
-            type="number"
+            type="text"
             name="commenter-number"
             id="commenter-number"
             placeholder="Phone Number"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => handlePhoneChange(e.target.value)}
           />
         </div>
         <div className="col-12">

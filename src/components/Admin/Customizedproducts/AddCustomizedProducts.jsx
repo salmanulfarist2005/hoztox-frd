@@ -19,12 +19,10 @@ const AddCustomeProduct = () => {
     SKU: "",
     product_name: "",
     category: "",
- 
     gross_weight: "",
     diamond_weight: "",
     colour_stones: "",
     net_weight: "",
-     
     product_image: null,
     description: "",
     usertypes: []
@@ -33,8 +31,8 @@ const AddCustomeProduct = () => {
   const [images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [userTypes, setUserTypes] = useState([]);
-
-
+  const [errors, setErrors] = useState({});
+  const [selectedUserTypes, setSelectedUserTypes] = useState([]);
 
   const handleImageChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -71,9 +69,17 @@ const AddCustomeProduct = () => {
       </div>
     ));
   };
+
   const fetchCategory = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+
       const category = response.data;
 
       if (Array.isArray(category)) {
@@ -95,15 +101,19 @@ const AddCustomeProduct = () => {
 
   const fetchUserTypes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log("Full response:", response.data);
   
       const userTypesData = response.data;
   
       if (Array.isArray(userTypesData)) {
         setUserTypes(userTypesData);
-  
- 
         const allUserTypeIds = userTypesData.map((userType) => userType.id);
         setSelectedUserTypes(allUserTypeIds);
   
@@ -126,16 +136,92 @@ const AddCustomeProduct = () => {
   useEffect(() => {
     fetchUserTypes();
   }, []);
-  
+
+  // Handle numeric input validation for weight fields
+  const handleNumericChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Allow only numbers and one decimal point
+    const regex = /^\d*\.?\d*$/;
+    
+    if (regex.test(value) || value === '') {
+      // Clear error for this field on change
+      if (errors[name]) {
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[name];
+          return newErrors;
+        });
+      }
+      
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Clear error for this field on change
+    if (errors[name]) {
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // SKU validation - required field
+    if (!formData.SKU || !formData.SKU.trim()) {
+      newErrors.SKU = 'This field is required';
+    }
+
+    // Product name validation - required field
+    if (!formData.product_name || !formData.product_name.trim()) {
+      newErrors.product_name = 'This field is required';
+    }
+
+    // Category validation - required field
+    if (!formData.category) {
+      newErrors.category = 'This field is required';
+    }
+
+    // Gross weight validation - required field
+    // if (!formData.gross_weight || !formData.gross_weight.trim()) {
+    //   newErrors.gross_weight = 'This field is required';
+    // }
+
+    // // Net weight validation - required field
+    // if (!formData.net_weight || !formData.net_weight.trim()) {
+    //   newErrors.net_weight = 'This field is required';
+    // }
+
+    // Product image validation - required field
+    if (!formData.product_image) {
+      newErrors.product_image = 'This field is required';
+    }
+
+    // Description validation - required field
+    // if (!formData.description || !formData.description.trim()) {
+    //   newErrors.description = 'This field is required';
+    // }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (!validateForm()) {
+      return;
+    }
 
     const productFormData = new FormData();
 
@@ -154,58 +240,101 @@ const AddCustomeProduct = () => {
     });
 
     try {
+
       const response = await axios.post(`${BASE_URL}/products/customized_products/`, productFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
       console.log("Product added:", response.data);
       alert("Product added successfully!");
 
-
       setFormData({
         SKU: "",
         product_name: "",
         category: "",
-   
         gross_weight: "",
         diamond_weight: "",
         colour_stones: "",
         net_weight: "",
-     
         product_image: null,
         description: "",
         usertypes: []
       });
 
-
+      setErrors({});
       setImages([]);
-
-
       setSelectedUserTypes([]);
-
-
 
     } catch (error) {
       console.error("Error adding product:", error.response ? error.response.data : error.message);
+      
+      // Handle backend validation errors
+      if (error.response && error.response.data) {
+        const backendErrors = {};
+        const errorData = error.response.data;
+        
+        // Check for general error message (like {error: "Product with this SKU already exists."})
+        if (errorData.error) {
+          const errorMsg = errorData.error;
+          if (errorMsg.toLowerCase().includes('sku')) {
+            backendErrors.SKU = errorMsg;
+          } else {
+            alert(errorMsg);
+          }
+        }
+        
+        // Handle field-specific errors
+        Object.keys(errorData).forEach((key) => {
+          if (key === 'error') return; // Skip as already handled above
+          
+          // Map backend keys to frontend field names
+          let frontendKey = key;
+          if (key === 'sku' || key.toLowerCase() === 'sku') {
+            frontendKey = 'SKU';
+          }
+          
+          let msg = Array.isArray(errorData[key]) 
+            ? errorData[key].join(', ') 
+            : errorData[key];
+          
+          backendErrors[frontendKey] = msg;
+        });
+        
+        // Handle non-field errors if present
+        if (errorData.non_field_errors) {
+          alert(Array.isArray(errorData.non_field_errors) 
+            ? errorData.non_field_errors.join(', ') 
+            : errorData.non_field_errors);
+        }
+        
+        setErrors(backendErrors);
+        
+        // Scroll to the first error
+        const firstErrorField = Object.keys(backendErrors)[0];
+        if (firstErrorField) {
+          const element = document.querySelector(`[name="${firstErrorField}"]`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.focus();
+          }
+        }
+      } else {
+        alert('An error occurred while adding the product. Please try again.');
+      }
     }
   };
 
-
-
-
-  const [selectedUserTypes, setSelectedUserTypes] = useState([]);
   const handleCheckboxChange = (event) => {
     const { value } = event.target;
     const userTypeId = parseInt(value, 10);
   
     setSelectedUserTypes((prevSelected) => {
-    
       const updatedSelection = prevSelected.includes(userTypeId)
         ? prevSelected.filter((id) => id !== userTypeId)  
         : [...prevSelected, userTypeId]; 
   
- 
       setFormData((prevData) => ({
         ...prevData,
         usertypes: updatedSelection,
@@ -214,7 +343,17 @@ const AddCustomeProduct = () => {
       return updatedSelection;
     });
   };
-  
+
+  const renderError = (field) => {
+    if (errors[field]) {
+      return (
+        <div className="invalid-feedback d-block text-danger" style={{ fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          {errors[field]}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <React.Fragment>
@@ -228,75 +367,92 @@ const AddCustomeProduct = () => {
                   <CardBody>
                     <form onSubmit={handleSubmit}>
                       <Row className="mb-3 mt-2">
-                        <label htmlFor="SKU" className="col-md-2 col-form-label">SKU</label>
+                        <label htmlFor="SKU" className="col-md-2 col-form-label">
+                          SKU <span className="text-danger">*</span>
+                        </label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.SKU ? 'is-invalid' : ''}`}
                             type="text"
                             name="SKU"
                             placeholder="SKU"
-                            value={formData.SKU} // <-- bind to formData
+                            value={formData.SKU}
                             onChange={handleChange}
-                            required
                           />
-
+                          {renderError('SKU')}
                         </div>
                       </Row>
+
                       <Row className="mb-3">
-                        <label htmlFor="product_name" className="col-md-2 col-form-label">Product Name</label>
+                        <label htmlFor="product_name" className="col-md-2 col-form-label">
+                          Product Name <span className="text-danger">*</span>
+                        </label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.product_name ? 'is-invalid' : ''}`}
                             type="text"
                             name="product_name"
                             value={formData.product_name}
                             placeholder="Product Name"
                             onChange={handleChange}
-                            required
                           />
+                          {renderError('product_name')}
                         </div>
                       </Row>
+
                       <Row className="mb-3">
-                        <label htmlFor="category" className="col-md-2 col-form-label">Product Category</label>
+                        <label htmlFor="category" className="col-md-2 col-form-label">
+                          Product Category <span className="text-danger">*</span>
+                        </label>
                         <div className="col-md-10">
-                          <select className="form-control" value={formData.category} name="category" onChange={handleChange} required>
-                            <option value="" disabled>Select Product Category</option>
+                          <select 
+                            className={`form-control ${errors.category ? 'is-invalid' : ''}`}
+                            value={formData.category} 
+                            name="category" 
+                            onChange={handleChange}
+                          >
+                            <option value="">Select Product Category</option>
                             {categories.map((category) => (
-                              <option key={category.id} value={category.id}>{category.category_name}</option>
+                              <option key={category.id} value={category.id}>
+                                {category.category_name}
+                              </option>
                             ))}
                           </select>
+                          {renderError('category')}
                         </div>
                       </Row>
 
-
-                      
                       <Row className="mb-3">
-                        <label htmlFor="gross_weight" className="col-md-2 col-form-label">Gross Weight (gm)</label>
+                        <label htmlFor="gross_weight" className="col-md-2 col-form-label">
+                          Gross Weight (gm)  
+                        </label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
-                            type="number"
+                            className={`form-control ${errors.gross_weight ? 'is-invalid' : ''}`}
+                            type="text"
                             name="gross_weight"
                             placeholder="Gross Weight"
                             value={formData.gross_weight}
-                            onChange={handleChange}
-                            required
+                            onChange={handleNumericChange}
                           />
+                          {renderError('gross_weight')}
                         </div>
                       </Row>
+
                       <Row className="mb-3">
                         <label htmlFor="diamond_weight" className="col-md-2 col-form-label">Diamond Weight (gm)</label>
                         <div className="col-md-10">
                           <input
                             className="form-control"
-                            type="number"
+                            type="text"
                             name="diamond_weight"
                             placeholder="Diamond Weight"
                             value={formData.diamond_weight}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>
+
                       <Row className="mb-3">
                         <label htmlFor="colour_stones" className="col-md-2 col-form-label">Colour Stones (gm)</label>
                         <div className="col-md-10">
@@ -306,38 +462,53 @@ const AddCustomeProduct = () => {
                             name="colour_stones"
                             placeholder="Colour Stones"
                             value={formData.colour_stones}
-                            onChange={handleChange}
+                            onChange={handleNumericChange}
                           />
                         </div>
                       </Row>
+
                       <Row className="mb-3">
-                        <label htmlFor="net_weight" className="col-md-2 col-form-label">Net Weight (gm)</label>
+                        <label htmlFor="net_weight" className="col-md-2 col-form-label">
+                          Net Weight (gm) 
+                        </label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
-                            type="number"
+                            className={`form-control ${errors.net_weight ? 'is-invalid' : ''}`}
+                            type="text"
                             name="net_weight"
                             placeholder="Net Weight"
                             value={formData.net_weight}
-                            onChange={handleChange}
-                            required
+                            onChange={handleNumericChange}
                           />
+                          {renderError('net_weight')}
                         </div>
                       </Row>
                       
                       <Row className="mb-3">
-                        <label htmlFor="product_image" className="col-md-2 col-form-label">Product Image</label>
+                        <label htmlFor="product_image" className="col-md-2 col-form-label">
+                          Product Image <span className="text-danger">*</span>
+                        </label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.product_image ? 'is-invalid' : ''}`}
                             type="file"
                             name="product_image"
                             accept="image/*"
-                            onChange={(e) => setFormData({ ...formData, product_image: e.target.files[0] })}
-                            required
+                            onChange={(e) => {
+                              setFormData({ ...formData, product_image: e.target.files[0] });
+                              if (errors.product_image) {
+                                setErrors((prevErrors) => {
+                                  const newErrors = { ...prevErrors };
+                                  delete newErrors.product_image;
+                                  return newErrors;
+                                });
+                              }
+                            }}
                           />
+                          {renderError('product_image')}
                         </div>
                       </Row>
+
                       <Row className="mb-3">
                         <label htmlFor="additional_images" className="col-md-2 col-form-label">Product Gallery</label>
                         <div className="col-md-10">
@@ -350,28 +521,33 @@ const AddCustomeProduct = () => {
                           />
                         </div>
                       </Row>
+
                       <div>
                         {images.length > 0 && <h5>Image Previews:</h5>}
                         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                           {renderImagePreviews()}
                         </div>
                       </div>
+
                       <Row className="mb-3">
-                        <label htmlFor="description" className="col-md-2 col-form-label">Description</label>
+                        <label htmlFor="description" className="col-md-2 col-form-label">
+                          Description  
+                        </label>
                         <div className="col-md-10">
                           <textarea
-                            className="form-control"
+                            className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                             name="description"
                             placeholder="Description"
                             value={formData.description}
                             onChange={handleChange}
                             rows="3"
-                            required
                           />
+                          {renderError('description')}
                         </div>
                       </Row>
+
                       <Row className="mb-3">
-                        <label htmlFor="usertypes" className="col-md-2 d-flex  align-items-center">User Types</label>
+                        <label htmlFor="usertypes" className="col-md-2 d-flex align-items-center">User Types</label>
                         <div className="col-md-10 d-flex flex-wrap">
                           {userTypes.map((userType) => (
                             <div key={userType.id} className="form-check me-4">
@@ -383,7 +559,6 @@ const AddCustomeProduct = () => {
                                 onChange={handleCheckboxChange}
                                 checked={selectedUserTypes.includes(userType.id)}
                               />
-
                               <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
                                 {userType.usertype}
                               </label>
@@ -391,6 +566,7 @@ const AddCustomeProduct = () => {
                           ))}
                         </div>
                       </Row>
+
                       <div className="d-flex justify-content-end">
                         <button type="submit" className="btn btn-primary">Add Product</button>
                       </div>
@@ -401,7 +577,7 @@ const AddCustomeProduct = () => {
             </Row>
           </Container>
         </div>
-        </div>
+      </div>
     </React.Fragment>
   );
 };

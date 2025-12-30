@@ -7,7 +7,8 @@ import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
 
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 
 
 
@@ -16,8 +17,13 @@ const ManageCustomProducts = () => {
     const [images, setImages] = useState([]);
 
     const [productId, setProductId] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const [pagetrigger, setPageTrigger] = useState(false);
 
+    const [itemCount,setItemCount] = useState(1)
 
 
     const [userTypes, setUserTypes] = useState([]);
@@ -35,42 +41,41 @@ const ManageCustomProducts = () => {
         description: "",
         usertypes: []
     });
+    const [totalPages,setTotalPages] = useState(1)
 
     const [category, setCategory] = useState([]);
+     const debouncedValue = useDebounce(searchTerm)
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`);
-            const data = response.data;
-            setProducts(data);
-            console.log("products", response.data);
+            const response = await axios.get(`${BASE_URL}/products/customized_products_list/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
+                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
+
+            });
+            if(!response.error){
+            const productes = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+            setItemCount(response.data.message.count)
+            setProducts(productes);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
     useEffect(() => {
         fetchProducts();
-    }, []);
+    }, [debouncedValue,pagetrigger]);
 
 
-    useEffect(() => {
-        const fetchProductDetail = async () => {
-            try {
-
-                const response = await axios.get(`${BASE_URL}/products/${productId}/`);
-                const data = response.data;
-                setProducts(data);
-                console.log("Product Detail:", data);
-            } catch (error) {
-                console.error('Error fetching product detail:', error);
-            }
-        };
-
-
-        if (productId) {
-            fetchProductDetail();
-        }
-    }, [productId]);
+    
 
 
     const handleEditClick = (product) => {
@@ -132,7 +137,12 @@ const ManageCustomProducts = () => {
     }
     const fetchCategory = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/categories/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/categories/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const category = response.data;
 
             if (Array.isArray(category)) {
@@ -150,7 +160,12 @@ const ManageCustomProducts = () => {
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             console.log("Full response:", response.data);
 
 
@@ -200,23 +215,6 @@ const ManageCustomProducts = () => {
     const handleNewImageRemove = (index) => {
         setAdditionalImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
-
-    // const handleExistingImageRemove = (index) => {
-
-    //     setAdditionalImages((prevImages) => {
-    //         const updatedImages = prevImages.filter((_, i) => i !== index);
-
-    //         return updatedImages;
-    //     });
-
-    //     const updatedProducts = products.map(product => {
-    //         const updatedProduct = { ...product };
-    //         updatedProduct.additional_images = updatedProduct.additional_images.filter((_, i) => i !== index);
-    //         return updatedProduct;
-    //     });
-    //     setProducts(updatedProducts);  
-    // };
-
 
 
     const [additionalImages, setAdditionalImages] = useState([]);
@@ -362,7 +360,19 @@ const ManageCustomProducts = () => {
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
+            if (!formData.diamond_weight) {
+                formDataToSubmit.append('diamond_weight', 0);
+            }
+            if (!formData.gold_weight) {
+                formDataToSubmit.append('gold_weight', 0);
+            }
+            if (!formData.gross_weight){
+                formDataToSubmit.append('gross_weight', 0);
+            }
+            if (!formData.net_weight){
+         formDataToSubmit.append('net_weight', 0);
 
+            }
             // Append any new additional images
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
@@ -386,6 +396,7 @@ const ManageCustomProducts = () => {
             // Make the API request
             await axios.put(`${BASE_URL}/products/customized_products/${productId}/update/`, formDataToSubmit, {
                 headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
@@ -431,12 +442,27 @@ const ManageCustomProducts = () => {
     // Other existing useEffect hooks...
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1)
+
     };
     const deleteCategory = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/customized_product/${productId}/delete/`);
-                fetchProducts();
+                await axios.delete(`${BASE_URL}/products/customized_product/${productId}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+                });
+                setProducts((prev) =>
+        prev.filter((item) => item.id !== productId)
+      );
+        const remainingItems = itemCount - 1;
+      setItemCount(remainingItems);
+      const newTotalPages = Math.ceil(remainingItems / 10);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+        setPageTrigger((e) => !e);
+      }
+
+
                 alert("Product deleted successfully!");
             } catch (error) {
                 console.error('Error deleting product:', error);
@@ -444,7 +470,6 @@ const ManageCustomProducts = () => {
             }
         }
     };
-    const [searchTerm, setSearchTerm] = useState("");
 
     const deleteMultipleCategories = async () => {
         if (selectedIds.length === 0) {
@@ -454,7 +479,10 @@ const ManageCustomProducts = () => {
         if (window.confirm("Are you sure you want to delete the selected Products?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/customized_product/${id}/delete/`)
+                    axios.delete(`${BASE_URL}/products/customized_product/${id}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+
+                    })
                 ));
                 fetchProducts();
                 alert("Selected Products deleted successfully!");
@@ -474,10 +502,7 @@ const ManageCustomProducts = () => {
     });
 
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
 
-    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
 
     const indexOfLastProduct = currentPage * itemsPerPage;
@@ -485,16 +510,9 @@ const ManageCustomProducts = () => {
     const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
 
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
     const [selectedIds, setSelectedIds] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
@@ -579,7 +597,7 @@ const ManageCustomProducts = () => {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="list form-check-all manage-product">
-                                                        {currentProducts.map((product) => (
+                                                        {products.map((product) => (
                                                             <tr key={product.id}>
                                                                 <td>
                                                                     <div className="form-check">
@@ -639,19 +657,16 @@ const ManageCustomProducts = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                              <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>
@@ -750,7 +765,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Gross Weight"
                                         value={formData.gross_weight}
                                         onChange={handleChange}
-                                        required
+                                         
                                     />
                                 </div>
                                 <div className="me-2 flex-grow-1">
@@ -764,7 +779,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Diamond Weight"
                                         value={formData.diamond_weight}
                                         onChange={handleChange}
-                                        required
+                                        
                                     />
                                 </div>
                                 <div className="me-2 flex-grow-1">
@@ -778,7 +793,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Colour Stones"
                                         value={formData.colour_stones}
                                         onChange={handleChange}
-                                        required
+                                      
                                     />
                                 </div>
                                 <div className="flex-grow-1">
@@ -792,7 +807,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Net Weight"
                                         value={formData.net_weight}
                                         onChange={handleChange}
-                                        required
+                                         
                                     />
                                 </div>
                             </div>
@@ -854,7 +869,7 @@ const ManageCustomProducts = () => {
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows="5"
-                                    required
+                                    
                                 ></textarea>
                             </div>
                         </Row>

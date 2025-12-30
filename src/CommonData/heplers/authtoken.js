@@ -12,7 +12,7 @@ export async function adminLogin(email, password) {
 
         if (response.status === 200) {
             const adminToken = data.access;  
-            localStorage.setItem('adminAuthToken', adminToken); 
+            localStorage.setItem('authToken', adminToken); 
             toast.success('Admin Login Success');
             return data;
         } else {

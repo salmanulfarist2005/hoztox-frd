@@ -60,9 +60,11 @@ const ProductCSVUpload = () => {
       formData.append("file", csvFile);
 
       try {
+        
         const response = await axios.post(`${BASE_URL}/products/upload-csv/`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
         });
 

@@ -15,13 +15,13 @@ const Sidebar = (props) => {
   const navigate = useNavigate();  
 
   useEffect(() => {
-    const token = localStorage.getItem('adminAuthToken');
+    const token = localStorage.getItem('authToken');
     if (!token) {
         navigate('/login');  
     }
 }, [navigate]);
   const handleLogout = () => {
-    localStorage.removeItem("adminAuthToken");  
+    localStorage.removeItem("authToken");  
     navigate("/login");  
 };
 

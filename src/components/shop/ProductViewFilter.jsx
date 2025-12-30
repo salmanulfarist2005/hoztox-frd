@@ -2,27 +2,35 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
-import { Link, useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import useDebounce from '../../Hooks/useDebounce';
+import Pagination from '../pagination/Pagination'; 
+import { useRef } from 'react';
 const ProductViewFilter = () => {
     const {
         handleCategoryFilter,
         addToJeweleryWishlist,
         addToJeweleryCart,
-      
         searchTerm,
-        activeCategory
+        activeCategory, 
+        jeweleryCartItemCount, 
+        setjeweleryCartItemCount
     } = useContext(FarzaaContext);
     
     const navigate = useNavigate();
-
-  
+       const debouncedValue = useDebounce(searchTerm)
+    
+    
     useEffect(() => {
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             navigate('/');
         } 
-    }, [navigate]);
+    }, [navigate]); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages,setTotalPages] = useState();
+    const [totalItems, setTotalItems] = useState(0);
+    const [pageTrigger,setPageTrigger]  = useState(false)
 
    
     const defaultQuantity = 1;
@@ -31,34 +39,65 @@ const ProductViewFilter = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    const prevFiltersRef = React.useRef({ search: '', category: '' });
 
+useEffect(() => {
+    const currentFilters = { search: debouncedValue, category: activeCategory };
+
+    if (
+        prevFiltersRef.current.search !== currentFilters.search ||
+        prevFiltersRef.current.category !== currentFilters.category
+    ) {
+        setCurrentPage(1);
+        prevFiltersRef.current = currentFilters;
+    }
+}, [debouncedValue, pageTrigger,activeCategory]);
    
     const productsPerPage = 18;
-    const [currentPage, setCurrentPage] = useState(1);
+        const handleQuantityChange = (productId, value) => {
+        const qty = Number(value);
 
- 
-    const handleQuantityChange = (productId, newQuantity) => {
-        setQuantity(prevQuantities => ({
-            ...prevQuantities,
-            [productId]: Math.max(1, newQuantity),
+        setQuantity(prev => ({
+            ...prev,
+            [productId]: Number.isNaN(qty) || qty < 1 ? 1 : qty,
         }));
-    };
+        };
+ const {categoryName} = useParams()
 
+  handleCategoryFilter(categoryName);
+  
+  
  
+  
+ const getQty = (productId) => quantity[productId] ?? 1;
     const fetchData = async () => {
         try {
             const token = localStorage.getItem('authToken');
-            console.log("Fetched token:", token); 
-            const productsResponse = await axios.get(`${BASE_URL}/products/products_user_list/`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await axios.get(`${BASE_URL}/products/products_user_list/`, {
+                headers: { Authorization: `Bearer ${token}` },
+                params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm,
+                    category_id:activeCategory 
+                }
 
-            setProducts(productsResponse.data);
-            const initialQuantities = {};
-            productsResponse.data.forEach((product) => {
-                initialQuantities[product.id] = 1;
             });
-            setQuantity(initialQuantities);
+            
+            if(!response.error){
+            const products = response.data.message.results;
+            const totalCount = response.data.message.count || 0;
+            const limit = 10; 
+            const totalPages = Math.ceil(totalCount / limit);
+
+            
+            setProducts(products);
+            setTotalPages(totalPages);
+            setTotalItems(totalCount);
+            }
+
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to load data. Please try again later.');
@@ -69,7 +108,7 @@ const ProductViewFilter = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [activeCategory,currentPage,debouncedValue]);
 
    
     const filteredProducts = products.filter(product => {
@@ -87,10 +126,11 @@ const ProductViewFilter = () => {
 
    
     const totalProducts = filteredProducts.length;
-    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    // const totalPages = Math.ceil(totalProducts / productsPerPage);
 
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
+        setPageTrigger((e) => !e);
         scrollToTop();
     };
 
@@ -102,9 +142,9 @@ const ProductViewFilter = () => {
     };
 
  
-    const startIndex = (currentPage - 1) * productsPerPage;
-    const endIndex = currentPage * productsPerPage;
-    const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+    // const startIndex = (currentPage - 1) * productsPerPage;
+    // const endIndex = currentPage * productsPerPage;
+    // const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
  
     const [selectedColors, setSelectedColors] = useState({});
@@ -124,8 +164,8 @@ const ProductViewFilter = () => {
     return (
         <div className="product-category-and-view">
             <div className="row gy-4 gx-3 justify-content-center">
-                {paginatedProducts.length > 0 ? (
-                    paginatedProducts.map((item) => (
+                {products.length > 0 ? (
+                    products.map((item) => (
                         <div className="col-xl-4 col-md-4 col-6 col-xxs-6 m-p-1" key={item.id}>
                             <div className="fz-2-single-product">
                                 <div className="fz-2-single-product-img">
@@ -134,7 +174,7 @@ const ProductViewFilter = () => {
                                     </Link>
                                     <div className="color_text">
                                         <h5 className="fz-2-single-product-title">
-                                            <Link to={`/products/${item.id}`}>{item.SKU}</Link>
+                                            <Link to={`/products/${item.SKU}`}>{item.SKU}</Link>
                                         </h5>
                                     </div>
                                     <div className="fz-2-single-product-actions">
@@ -142,7 +182,9 @@ const ProductViewFilter = () => {
                                             className="fz-add-to-cart-btn"
                                             onClick={() => {
                                                 const selectedColor = selectedColors[item.id] || '';  
-                                                addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                addToJeweleryCart(item.id, quantity[item.id], selectedColor,item);
+                                                
+
                                             }}
                                         >
                                             Add to Cart
@@ -152,7 +194,7 @@ const ProductViewFilter = () => {
                                             <div className="fz-product-details__quantity cart-product__quantity">
                                                 <button
                                                     className="minus-btn cart-product__minus"
-                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] - 1)}
+                                                    onClick={() => handleQuantityChange(item.id, getQty(item.id) - 1)}
                                                 >
                                                     <i className="fa-light fa-minus"></i>
                                                 </button>
@@ -160,7 +202,7 @@ const ProductViewFilter = () => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={quantity[item.id]}
+                                                    value={parseInt(quantity[item.id])||1}
                                                     onChange={(e) =>
                                                         handleQuantityChange(
                                                             item.id,
@@ -171,7 +213,7 @@ const ProductViewFilter = () => {
                                                 />
                                                 <button
                                                     className="plus-btn cart-product__plus"
-                                                    onClick={() => handleQuantityChange(item.id, quantity[item.id] + 1)}
+                                                    onClick={() => handleQuantityChange(item.id, getQty(item.id) + 1)}
                                                 >
                                                     <i className="fa-light fa-plus"></i>
                                                 </button>
@@ -181,7 +223,7 @@ const ProductViewFilter = () => {
                                 </div>
                                 <div className="fz-2-single-product-txt">
                                     <h5 className="fz-2-single-product-title ">
-                                        <Link to={`/products/${item.id}`}>{item.category_name}</Link>
+                                        <Link to={`/products/${item.SKU}`}>{item.category_name}</Link>
                                     </h5>
 
                                     <div className="inf_gm">
@@ -235,7 +277,7 @@ const ProductViewFilter = () => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={quantity[item.id]}
+                                                    value={quantity[item.id] || 1}
                                                     onChange={(e) =>
                                                         handleQuantityChange(
                                                             item.id,
@@ -257,7 +299,8 @@ const ProductViewFilter = () => {
                                                 className="fz-add-to-cart-btn"
                                                 onClick={() => {
                                                     const selectedColor = selectedColors[item.id] || '';  
-                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor,item)
+                                                   
                                                 }}
                                             >
                                                 Add to Cart
@@ -273,51 +316,12 @@ const ProductViewFilter = () => {
                 )}
             </div>
 
-            <nav className="fz-shop-pagination">
-    <ul className="page-numbers">
-        <li>
-            <button
-                disabled={currentPage === 1}
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="page-number-btn"
-            >
-                <span aria-current="page" className="last-page">
-                    <i className="fa-light fa-angle-double-left"></i>
-                </span>
-            </button>
-        </li>
-
-      
-        {Array.from({ length: Math.min(5, totalPages - (Math.floor((currentPage - 1) / 5) * 5)) }, (_, index) => {
-            const page = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
-            return (
-                page <= totalPages && (
-                    <li key={page}>
-                        <button
-                            className={`page-number-btn ${currentPage === page ? 'current' : ''}`}
-                            onClick={() => handlePageChange(page)}
-                        >
-                            {page}
-                        </button>
-                    </li>
-                )
-            );
-        })}
-
-        <li>
-            <button
-                disabled={currentPage === totalPages}
-                className="page-number-btn"
-                onClick={() => handlePageChange(currentPage + 1)}
-            >
-                <span aria-current="page" className="last-page">
-                    <i className="fa-light fa-angle-double-right"></i>
-                </span>
-            </button>
-        </li>
-    </ul>
-</nav>
-
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 };

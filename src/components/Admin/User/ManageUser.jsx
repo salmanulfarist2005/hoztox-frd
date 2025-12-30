@@ -6,7 +6,8 @@ import axios from 'axios';
 import Breadcrumbs from "../../../components/Admin/Breadcrumb";
 
 import { BASE_URL } from '../../helpers/config';
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const ManageUser = () => {
     const [users, setUsers] = useState([]);
     const [userTypes, setUserTypes] = useState([]);
@@ -31,15 +32,38 @@ const ManageUser = () => {
         usertypes: '',
     });
 
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [pagetrigger, setPageTrigger] = useState(false);
+    const [totalPages,setTotalPages] = useState(1)
+    const [userCount,setUserCount] = useState(1)
+   const debouncedValue = useDebounce(searchTerm)
 
 
 
     const fetchUsers = async () => {
         try {
 
-            const response = await axios.get(`${BASE_URL}/products/users/`);
-            setUsers(response.data);
+            const response = await axios.get(`${BASE_URL}/products/users/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
+                                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchTerm
+                }
+
+
+            });
+           if(!response.error){
+            const users = response.data.message.results;
+            const totalPages = Math.ceil(response.data.message.count / 10);
+
+            setUserCount(response.data.message.count)
+            setUsers(users);
+            setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error('Error fetching users:', error);
         } finally {
@@ -48,16 +72,20 @@ const ManageUser = () => {
     };
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const userTypesData = response.data;
 
             if (Array.isArray(userTypesData)) {
                 setUserTypes(userTypesData);
-                console.log("users", response)
             } else {
                 console.warn("Unexpected data format:", userTypesData);
                 setUserTypes([]);
@@ -96,7 +124,6 @@ const ManageUser = () => {
             return;
         }
 
-        console.log("Editing user:", user);
         setUserId(user.id);
 
         setFormData({
@@ -157,6 +184,7 @@ const ManageUser = () => {
         try {
             const response = await axios.put(`${BASE_URL}/products/users/${userId}/`, formDataToSubmit, {
                 headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
@@ -234,38 +262,16 @@ const ManageUser = () => {
         setPasswordVisible(!passwordVisible);
     };
 
-    const [searchTerm, setSearchTerm] = useState("");
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
-    };
-    const filteredUsers = users.filter(user => {
-        return user && (
-            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        setCurrentPage(1)
 
-        );
-    });
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-
-
-    const indexOfLastUser = currentPage * itemsPerPage;
-    const indexOfFirstUser = indexOfLastUser - itemsPerPage;
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
     };
 
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
     };
 
     const [isAllSelected, setIsAllSelected] = useState(false);
@@ -297,7 +303,10 @@ const ManageUser = () => {
         if (window.confirm("Are you sure you want to delete the selected users?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/users/${userId}/delete/`)
+                    axios.delete(`${BASE_URL}/products/users/${userId}/delete/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
+
+                    })
                 ));
                 fetchUsers();
                 alert("Selected Users deleted successfully!");
@@ -310,8 +319,19 @@ const ManageUser = () => {
     const deleteCategory = async (userId) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`);
-                fetchUsers();
+                await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+                });
+                    setUsers((prev) =>prev.filter((item) => item.id !== userId));
+                
+                      const remainingUsers = userCount - 1;
+      setUserCount(remainingUsers);
+      const newTotalPages = Math.ceil(remainingUsers / 10);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
+      setPageTrigger((e) => !e);
+
                 alert("User deleted successfully!");
             } catch (error) {
                 console.error('Error deleting user:', error);
@@ -389,7 +409,7 @@ const ManageUser = () => {
 
                                                             </tr>
                                                         ) : (
-                                                            currentUsers.map((user) => (
+                                                            users.map((user) => (
                                                                 <tr key={user.id}>
                                                                     <th scope="row">
                                                                         <div className="form-check">
@@ -446,19 +466,15 @@ const ManageUser = () => {
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link onClick={() => handlePreviousPage(currentPage - 1)}
-                                                        disabled={currentPage === 1} className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link onClick={() => handleNextPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages} className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                               <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={userCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
 
                                         </div>
                                     </CardBody>

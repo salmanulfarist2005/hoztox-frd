@@ -93,7 +93,12 @@ const CustomFull = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const category = response.data;
 
       if (Array.isArray(category)) {
@@ -114,7 +119,7 @@ const CustomFull = () => {
 
   const fetchColors = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/colors_list/`);
+      const response = await axios.get(`${BASE_URL}/products/colors_list/`, { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } });
       if (Array.isArray(response.data)) {
         setColors(response.data);
       } else {

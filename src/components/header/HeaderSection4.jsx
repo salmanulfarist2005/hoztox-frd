@@ -9,11 +9,10 @@ import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
 
 const HeaderSection4 = () => {
-  const { handleCartShow, isHeaderFixed, handleSidebarOpen, setCartItemAmount } = useContext(FarzaaContext);
+  const { handleCartShow, isHeaderFixed, handleSidebarOpen, setCartItemAmount , jeweleryCartItemCount, setjeweleryCartItemCount} = useContext(FarzaaContext);
 
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("authToken"));
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [jeweleryCartItemAmount, setJeweleryCartItemAmount] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false); 
 
   const { isSidebarOpen, handleSidebarClose } = useContext(FarzaaContext);
   const navigate = useNavigate(); 
@@ -36,9 +35,9 @@ const HeaderSection4 = () => {
       const response = await axios.get(`${BASE_URL}/products/cart-items/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-  
-      setJeweleryCartItemAmount(response.data.length);  
-      setCartItemAmount(cartItemCount);  
+      
+      setjeweleryCartItemCount(response.data.length);  
+      // setCartItemAmount(cartItemCount);  
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -54,7 +53,7 @@ const HeaderSection4 = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
     setIsLoggedIn(false);
-    setJeweleryCartItemAmount(0);  
+    setjeweleryCartItemCount(0);  
     navigate("/")
   };
 
@@ -71,13 +70,13 @@ const HeaderSection4 = () => {
     if (isLoggedIn) {
       fetchCartItems();
     }
-  }, [isLoggedIn, setCartItemAmount]);
+  }, [isLoggedIn]);
 
   return (
 
     <>
     
-      <style jsx>{`
+      <style >{`
         .profile-dropdown {
           position: relative;
           display: inline-block;
@@ -208,7 +207,7 @@ const HeaderSection4 = () => {
                   <li>
                     <a role="button" className="fz-header-cart-btn d-none d-lg-block" onClick={handleCartShow}>
                       <i className="fa-light fa-cart-shopping"></i>
-                      <span className="count">{jeweleryCartItemAmount}</span>
+                      <span className="count">{jeweleryCartItemCount}</span>
                     </a>
                   </li>
                 </Link>
@@ -278,7 +277,7 @@ const HeaderSection4 = () => {
                       <span className="fz-off-actions-icon">
                         <i className="fa-thin fa-bag-shopping"></i>
                       </span>
-                      <span className="count">{jeweleryCartItemAmount}</span>
+                      <span className="count">{jeweleryCartItemCount}</span>
                     </a>
                   </Link>
                 </li>

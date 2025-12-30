@@ -28,7 +28,11 @@ const ViewOrderAccept = () => {
             return;
         }
         try {
-            const response = await axios.get(`${BASE_URL}/products/accept-orders/${orderId}/`);
+            const response = await axios.get(`${BASE_URL}/products/accept-orders/${orderId}/`,{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+            });
             const data = response.data;
             setOrders(data || []);
             console.log("response orderssssssss", response.data);
@@ -313,7 +317,11 @@ const ViewOrderAccept = () => {
             console.log("updatedOrder", updatedOrder);
 
             // Send the update request
-            await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder);
+            await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder,{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+            });
 
             // Update the orders list locally in the state
             fetchOrders();
@@ -330,7 +338,11 @@ const ViewOrderAccept = () => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {

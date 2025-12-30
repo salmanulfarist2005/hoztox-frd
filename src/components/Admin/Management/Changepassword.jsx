@@ -15,6 +15,8 @@ const ChangePassword = () => {
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ const ChangePassword = () => {
 
         setLoading(true);
         try {
-            const adminToken = localStorage.getItem('adminAuthToken');
+            const adminToken = localStorage.getItem('authToken');
 
             console.log("Admin Token:", adminToken);
             console.log("Request Data:", {
@@ -42,13 +44,12 @@ const ChangePassword = () => {
                 confirm_password: confirmPassword,
             }, {
                 headers: {
-                    Authorization: `Token ${adminToken}`,
+                    Authorization: `Bearer ${adminToken}`,
                 }
             });
 
             alert("Password updated successfully.");
             setError("");
-
 
             setNewPassword('');
             setConfirmPassword('');
@@ -61,8 +62,6 @@ const ChangePassword = () => {
             setLoading(false);
         }
     };
-
-
 
     return (
         <React.Fragment>
@@ -81,15 +80,24 @@ const ChangePassword = () => {
                                                     New Password
                                                 </label>
                                                 <div className="col-md-10">
-                                                    <input
-                                                        id="new-password"
-                                                        className="form-control"
-                                                        type="password"
-                                                        placeholder="New Password"
-                                                        value={newPassword}
-                                                        onChange={(e) => setNewPassword(e.target.value)}
-                                                        required
-                                                    />
+                                                    <div className="input-group">
+                                                        <input
+                                                            id="new-password"
+                                                            className="form-control"
+                                                            type={showNewPassword ? "text" : "password"}
+                                                            placeholder="New Password"
+                                                            value={newPassword}
+                                                            onChange={(e) => setNewPassword(e.target.value)}
+                                                            required
+                                                        />
+                                                        <button
+                                                            className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                                        >
+                                                            <i className={showNewPassword ? "mdi mdi-eye-off" : "mdi mdi-eye"}></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </Row>
 
@@ -98,15 +106,24 @@ const ChangePassword = () => {
                                                     Confirm Password
                                                 </label>
                                                 <div className="col-md-10">
-                                                    <input
-                                                        id="confirm-password"
-                                                        className="form-control"
-                                                        type="password"
-                                                        placeholder="Confirm Password"
-                                                        value={confirmPassword}
-                                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                                        required
-                                                    />
+                                                    <div className="input-group">
+                                                        <input
+                                                            id="confirm-password"
+                                                            className="form-control"
+                                                            type={showConfirmPassword ? "text" : "password"}
+                                                            placeholder="Confirm Password"
+                                                            value={confirmPassword}
+                                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                                            required
+                                                        />
+                                                        <button
+                                                            className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        >
+                                                            <i className={showConfirmPassword ? "mdi mdi-eye-off" : "mdi mdi-eye"}></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </Row>
 
@@ -125,7 +142,7 @@ const ChangePassword = () => {
                         </Row>
                     </Container>
                 </div>
-                </div>
+            </div>
         </React.Fragment>
     );
 };

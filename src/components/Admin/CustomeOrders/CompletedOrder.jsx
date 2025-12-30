@@ -26,7 +26,9 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/delivered-orders/`);
+            const response = await axios.get(`${BASE_URL}/products/delivered-orders/`,{
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+            });
             setOrders(response.data || []);
             console.log("response", response.data);
         } catch (error) {
@@ -62,6 +64,9 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
+            },{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
             });
 
 
@@ -178,7 +183,10 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`,{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -222,7 +230,11 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
             };
 
             try {
-                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData);
+                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
 
                 // Update the specific order directly in the state
                 setOrders((prevOrders) =>
@@ -336,7 +348,7 @@ const CompletedOrder = ({ order, onStatusUpdate }) => {
                                                                     <td>{order.user?.company_name || "N/A"}</td>
                                                                     <td>{order.product?.SKU || "N/A"}</td>
                                                                     <td>{order.product?.product_name || "N/A"}</td>
-                                                                    <td>{order.product?.category_name || "N/A"}</td>
+                                                                    <td>{order.product?.category?.category_name || "N/A"}</td>
                                                                     <td>{order.quantity}</td>
                                                                     <td>
                                                                         {editingOrderId === order.id ? (

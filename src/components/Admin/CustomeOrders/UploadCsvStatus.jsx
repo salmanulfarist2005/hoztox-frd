@@ -60,6 +60,7 @@ const StatusCSVUpload = () => {
             const response = await axios.post(`${BASE_URL}/products/status/upload-csv/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 },
             });
 

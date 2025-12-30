@@ -41,7 +41,11 @@ const CustomProductDetailSlider = () => {
         const fetchProductDetails = async () => {
             try {
          
-                const response = await axios.get(`${BASE_URL}/products/customized-products/${SKU}/`);
+                const response = await axios.get(`${BASE_URL}/products/customized-products/${SKU}/`,{
+                    headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+                });
                 setProduct(response.data);
             } catch (error) {
                 console.error('Error fetching product details:', error);

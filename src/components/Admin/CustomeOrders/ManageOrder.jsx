@@ -9,7 +9,8 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import FullCustomManageOrder from '../FullCustomOrders/ManageOrder'
 
-
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 
 const CustomManageOrder = ({ order, onStatusUpdate }) => {
     const [orders, setOrders] = useState([]);
@@ -19,16 +20,42 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [status, setStatus] = useState(order?.status || 'N/A');
+        const [searchQuery, setSearchQuery] = useState('');
 
+            const [currentPage, setCurrentPage] = useState(1);
+            const itemsPerPage = 10;
+            const [pagetrigger, setPageTrigger] = useState(false);
+            const [totalPages,setTotalPages] = useState(1)
+            const [itemCount,setItemCount] = useState(1)
+           const debouncedValue = useDebounce(searchQuery)
 
     const [editedOrderCode, setEditedOrderCode] = useState('');
     const [editedQuantity, setEditedQuantity] = useState('');
 
+        const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
+
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
-            setOrders(response.data || []);
-            console.log("response", response.data);
+            const response = await axios.get(`${BASE_URL}/products/customized-approved/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+                    params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+                                    if(!response.error){
+                    const orders = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+                    setOrders(orders);
+                    setItemCount(response.data.message.count)
+                    setTotalPages(totalPages)
+            }
 
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -37,7 +64,7 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
     const tog_list1 = (order) => {
         if (!order) return;
@@ -63,6 +90,9 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
+            },{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
             });
 
 
@@ -179,7 +209,10 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`,{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -188,23 +221,22 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             }
         }
     };
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.product?.product_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-    }, [searchQuery, orders]);
+    // const [filteredOrders, setFilteredOrders] = useState([]);
+    // useEffect(() => {
+    //     if (searchQuery) {
+    //         const lowercasedQuery = searchQuery.toLowerCase();
+    //         const results = orders.filter(order =>
+    //             order.ordercode.toLowerCase().includes(lowercasedQuery) ||
+    //             order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
+    //             (order.order_items && order.order_items.some(item =>
+    //                 item.product?.product_name.toLowerCase().includes(lowercasedQuery)
+    //             ))
+    //         );
+    //         setFilteredOrders(results);
+    //     } else {
+    //         setFilteredOrders(orders);
+    //     }
+    // }, [searchQuery, orders]);
     const [editingOrderId, setEditingOrderId] = useState(null);
     const [newStatus, setNewStatus] = useState({});
     const [showConfirm, setShowConfirm] = useState(false);
@@ -223,7 +255,11 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             };
 
             try {
-                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData);
+                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
 
                 // Update the specific order directly in the state
                 setOrders((prevOrders) =>
@@ -292,7 +328,9 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -324,8 +362,8 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                     <tbody className="list form-check-all manage-product">
 
 
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) => (
                                                                 <tr key={order.id}>
 
                                                                     <td>{order.ordercode}</td>
@@ -490,17 +528,16 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                                                                                                                        <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

@@ -79,6 +79,7 @@ const Media = () => {
       const response = await axios.post(`${BASE_URL}/products/upload-media/`, productFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
       console.log("Media added:", response.data);

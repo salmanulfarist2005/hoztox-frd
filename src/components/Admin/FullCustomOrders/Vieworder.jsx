@@ -8,6 +8,8 @@ import Papa from 'papaparse';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { Button, Card, CardBody, CardHeader, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, Row, ModalHeader } from 'reactstrap';
+import useDebounce from '../../../Hooks/useDebounce';
+import Pagination from '../../pagination/Pagination';
 const FullCustomViewOrder = () => {
     const [orders, setOrders] = useState([]);
     const [modal_list, setModalList] = useState(false);
@@ -16,12 +18,41 @@ const FullCustomViewOrder = () => {
     const [modal_list1, setModalList1] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [dueDate, setDueDate] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
+            const [currentPage, setCurrentPage] = useState(1);
+            const itemsPerPage = 10;
+            const [pagetrigger, setPageTrigger] = useState(false);
+            const [totalPages,setTotalPages] = useState(1)
+            const [itemCount,setItemCount] = useState(1)
+           const debouncedValue = useDebounce(searchQuery)
+        const handlePageChange = (page) => {
+        setCurrentPage(page);
+        setPageTrigger(e => !e);
+    };
+
+
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/full-customized-approved/`);
-            const data = response.data;
-            setOrders(data || []);
-            console.log("response", response.data);
+            const response = await axios.get(`${BASE_URL}/products/full-customized-approved/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                params:{
+                    is_paginated:true,
+                    page:currentPage,
+                    limit:10,
+                    search:searchQuery
+                }
+
+            });
+                        if(!response.error){
+                    const orders = response.data.message.results;
+                    const totalPages = Math.ceil(response.data.message.count / itemsPerPage);
+                    setOrders(orders);
+                    setItemCount(response.data.message.count)
+                    setTotalPages(totalPages)
+            }
+
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -29,7 +60,7 @@ const FullCustomViewOrder = () => {
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [pagetrigger,debouncedValue]);
 
 
 
@@ -56,24 +87,6 @@ const FullCustomViewOrder = () => {
     };
 
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    useEffect(() => {
-        if (searchQuery) {
-            const lowercasedQuery = searchQuery.toLowerCase();
-            const results = orders.filter(order =>
-                order.ordercode.toLowerCase().includes(lowercasedQuery) ||
-                order.user?.company_name.toLowerCase().includes(lowercasedQuery) ||
-                (order.order_items && order.order_items.some(item =>
-                    item.category?.category_name.toLowerCase().includes(lowercasedQuery)
-                ))
-            );
-            setFilteredOrders(results);
-        } else {
-            setFilteredOrders(orders);
-        }
-    }, [searchQuery, orders]);
-
 
 
 
@@ -95,7 +108,12 @@ const FullCustomViewOrder = () => {
                 payload.due_date = new Date(dueDate).toISOString();   
             }
     
-            const response = await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/generate-order-id/`, payload);
+            const response = await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/generate-order-id/`, payload,{
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+                }
+            });
+            
     
             console.log("Order ID generated:", response.data);
             alert("Order ID Created Successfully");
@@ -216,7 +234,9 @@ const FullCustomViewOrder = () => {
                                                                 className="form-control search"
                                                                 placeholder="Search..."
                                                                 value={searchQuery}
-                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                onChange={(e) => {setSearchQuery(e.target.value)
+                                                                    setCurrentPage(1)
+                                                                }}
                                                                 style={{ paddingRight: '30px' }}
                                                             />
                                                             <i className="ri-search-line search-icon" style={{
@@ -248,8 +268,8 @@ const FullCustomViewOrder = () => {
 
                                                     </thead>
                                                     <tbody className="list form-check-all">
-                                                        {filteredOrders.length > 0 ? (
-                                                            filteredOrders.map((order) => (
+                                                        {orders.length > 0 ? (
+                                                            orders.map((order) => (
                                                                 <tr key={order.id}>
                                                                     <td>{order.ordercode}</td>
                                                                     <td>{order.user?.company_name}</td>
@@ -309,17 +329,17 @@ const FullCustomViewOrder = () => {
                                                 </table>
                                             </div>
 
-                                            <div className="d-flex justify-content-end">
-                                                <div className="pagination-wrap hstack gap-2">
-                                                    <Link className="page-item pagination-prev disabled" to="#">
-                                                        Previous
-                                                    </Link>
-                                                    <ul className="pagination listjs-pagination mb-0"></ul>
-                                                    <Link className="page-item pagination-next" to="#">
-                                                        Next
-                                                    </Link>
+                                        
+                                                                                            <div className="d-flex justify-content-end mt-3">
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalPages={totalPages}
+                                                        totalItems={itemCount}
+                                                        onPageChange={handlePageChange}
+                                                        showTotal={true}
+                                                    />
                                                 </div>
-                                            </div>
+
                                         </div>
                                     </CardBody>
                                 </Card>

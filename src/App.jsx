@@ -67,7 +67,7 @@ function App() {
 
 
 
-        <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/" element={<Shop/>} />
         <Route path="/custom-shop" element={<CustomShop />} />
         
         <Route path="/products/:SKU" element={<ShopDetails />} />

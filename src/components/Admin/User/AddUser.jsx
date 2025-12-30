@@ -43,6 +43,8 @@ const AddUser = () => {
     usertypes: '',
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [errors, setErrors] = useState({});
+  
   const handleUserTypeChange = (event) => {
     setSelectedUserType(event.target.value);
   };
@@ -71,7 +73,12 @@ const AddUser = () => {
 
   const fetchUserTypes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
       const userTypesData = response.data;
 
       if (Array.isArray(userTypesData)) {
@@ -92,17 +99,75 @@ const AddUser = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+    
+    // Validation for phone number fields - only numbers and + allowed
+    if (name === 'mobile_number' || name === 'whatsapp_number') {
+      const phoneRegex = /^[0-9+]*$/;
+      if (!phoneRegex.test(value)) {
+        return; // Don't update if invalid characters
+      }
+    }
+    
+    // Validation for text-only fields - only letters and spaces
+    if (name === 'full_name' || name === 'company_name') {
+      const textRegex = /^[a-zA-Z\s]*$/;
+      if (!textRegex.test(value)) {
+        return; // Don't update if invalid characters
+      }
+    }
+    
     setFormData({ ...formData, [name]: value });
+    // Clear error for this field on change
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
   };
 
   const handleFileChange = (event) => {
     setFormData({ ...formData, company_logo: event.target.files[0] });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Full name minimum 3 characters
+    if (formData.full_name.length < 3) {
+      newErrors.full_name = 'Full name must be at least 3 characters long.';
+    }
+
+    // Username minimum 3 characters
+    if (formData.username.length < 3) {
+      newErrors.username = 'Username must be at least 3 characters long.';
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address.';
+    }
+
+    // Password match validation
+    if (formData.password !== formData.confirm_password) {
+      newErrors.confirm_password = 'Passwords do not match.';
+    }
+
+    // User type selection required
+    if (!selectedUserType) {
+      newErrors.usertypes = 'Please select a user type.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-   
+    // Client-side validation
+    if (!validateForm()) {
+      return;
+    }
+
     const userData = { ...formData, usertypes: selectedUserType };  
 
     console.log("formData", userData);
@@ -110,6 +175,7 @@ const AddUser = () => {
     try {
         const response = await axios.post(`${BASE_URL}/products/users/create/`, userData, {
             headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 'Content-Type': 'multipart/form-data'
             }
         });
@@ -117,14 +183,13 @@ const AddUser = () => {
         alert("User Created successfully!");
         console.log("User created:", response.data);
 
-    
+        // Clear form and errors
         setFormData({
             full_name: '',
             email: '',
             mobile_number: '',
             whatsapp_number: '',
             company_name: '',
-   
             shipping_address: '',
             company_logo: null,
             company_email: '',
@@ -134,15 +199,36 @@ const AddUser = () => {
             confirm_password: '',
             usertypes: '',  
         });
-
-    
+        setErrors({});
         setSelectedUserType('');
     } catch (error) {
         console.error('Error creating user:', error);
+        // Handle backend validation errors (e.g., email already exists, username already exists)
+        if (error.response && error.response.data) {
+          const backendErrors = {};
+          Object.keys(error.response.data).forEach((key) => {
+            const msg = Array.isArray(error.response.data[key]) 
+              ? error.response.data[key].join(', ') 
+              : error.response.data[key];
+            backendErrors[key] = msg;
+          });
+          setErrors(backendErrors);
+        } else {
+          alert('An error occurred while creating the user. Please try again.');
+        }
     }
-};
+  };
 
-
+  const renderError = (field) => {
+    if (errors[field]) {
+      return (
+        <div className="invalid-feedback d-block text-danger">
+          {errors[field]}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <React.Fragment>
@@ -159,7 +245,7 @@ const AddUser = () => {
                         <label htmlFor="full_name" className="col-md-2 col-form-label">Full Name</label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.full_name ? 'is-invalid' : ''}`}
                             type="text"
                             name="full_name"
                             value={formData.full_name}
@@ -167,13 +253,14 @@ const AddUser = () => {
                             placeholder="Full Name"
                             required
                           />
+                          {renderError('full_name')}
                         </div>
                       </Row>
                       <Row className="mb-3">
                         <label htmlFor="email" className="col-md-2 col-form-label">Email</label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                             type="email"
                             name="email"
                             value={formData.email}
@@ -181,6 +268,7 @@ const AddUser = () => {
                             placeholder="Email"
                             required
                           />
+                          {renderError('email')}
                         </div>
                       </Row>
                       <Row className="mb-3">
@@ -281,7 +369,7 @@ const AddUser = () => {
                         <label htmlFor="username" className="col-md-2 col-form-label">Username</label>
                         <div className="col-md-10">
                           <input
-                            className="form-control"
+                            className={`form-control ${errors.username ? 'is-invalid' : ''}`}
                             type="text"
                             name="username"
                             value={formData.username}
@@ -289,21 +377,23 @@ const AddUser = () => {
                             placeholder="Username"
                             required
                           />
+                          {renderError('username')}
                         </div>
                       </Row>
                       <Row className="mb-3">
-                        <label htmlFor="usertypes" className="col-md-2 d-flex  align-items-center">User Types</label>
+                        <label htmlFor="usertypes" className="col-md-2 d-flex  align-items-center">User Types <span className="text-danger">*</span></label>
                         <div className="col-md-10 d-flex flex-wrap">
+                          {renderError('usertypes')}
                           {userTypes.map((userType) => (
                             <div key={userType.id} className="form-check me-4">
                               <input
-                                type="radio" // Change to radio button for single selection
+                                type="radio"
                                 className="form-check-input"
                                 id={`usertype-${userType.id}`}
-                                name="usertype" // Ensure name is the same for radio buttons
+                                name="usertype"
                                 value={userType.id}
                                 onChange={handleUserTypeChange}
-                                checked={selectedUserType === userType.id.toString()} // Check if the radio is selected
+                                checked={selectedUserType === userType.id.toString()}
                               />
                               <label htmlFor={`usertype-${userType.id}`} className="form-check-label">
                                 {userType.usertype}
@@ -325,14 +415,13 @@ const AddUser = () => {
                             placeholder="Password"
                             required
                           />
-
                         </div>
                       </Row>
                       <Row className="mb-3">
                         <label htmlFor="confirm_password" className="col-md-2 col-form-label">Confirm Password</label>
                         <div className="col-md-10">
                           <input
-                            className={`form-control ${passwordVisible ? 'show-password' : ''}`}
+                            className={`form-control ${errors.confirm_password ? 'is-invalid' : ''} ${passwordVisible ? 'show-password' : ''}`}
                             type={passwordVisible ? "text" : "password"}
                             name="confirm_password"
                             value={formData.confirm_password}
@@ -340,6 +429,7 @@ const AddUser = () => {
                             placeholder="Confirm Password"
                             required
                           />
+                          {renderError('confirm_password')}
                         </div>
                       </Row>
                       <Row className="mb-3 d-flex justify-content-start">
@@ -369,5 +459,3 @@ const AddUser = () => {
 };
 
 export default AddUser;
-
-

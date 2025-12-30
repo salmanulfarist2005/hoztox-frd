@@ -47,7 +47,11 @@ function CustomeDetail() {
     // Fetch product details using SKU for display
     const fetchProductDetails = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-products/${SKU}/`);
+            const response = await axios.get(`${BASE_URL}/products/customized-products/${SKU}/`,{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
             setProduct(response.data);
             setAdditionalImages(response.data.additional_images);
             console.log("custom response.data", response.data);
@@ -62,7 +66,7 @@ function CustomeDetail() {
     // Fetch colors for the product options
     const fetchColors = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/colors_list/`);
+            const response = await axios.get(`${BASE_URL}/products/colors_list/`, { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } });
             console.log("Response data:", response.data);
 
             if (Array.isArray(response.data)) {
