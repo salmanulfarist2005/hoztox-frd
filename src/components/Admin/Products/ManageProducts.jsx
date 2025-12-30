@@ -252,7 +252,7 @@ const ManageProducts = () => {
                 ) : (
                     currentImage && (
                         <img
-                            src={BASE_URL + currentImage}
+                            src={  currentImage}
                             alt="Current"
                             style={{ maxWidth: '30%', marginBottom: '10px' }}
                         />
