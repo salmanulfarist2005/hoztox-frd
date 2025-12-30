@@ -9,7 +9,7 @@ const ProductCategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isCollapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setCollapsed] = useState(true);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ const handleCategoryClick = (categoryId) => {
         )}
       </div>
 
-      {!isCollapsed && (
+      {(viewportWidth >= 992 || !isCollapsed) && (
         <ul className="product-categories mt-2">
 
           <li
