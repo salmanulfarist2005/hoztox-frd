@@ -45,6 +45,7 @@ const ManageUser = () => {
         try {
 
             const response = await axios.get(`${BASE_URL}/products/users/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
                                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -75,7 +76,12 @@ const ManageUser = () => {
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const userTypesData = response.data;
 
             if (Array.isArray(userTypesData)) {
@@ -178,6 +184,7 @@ const ManageUser = () => {
         try {
             const response = await axios.put(`${BASE_URL}/products/users/${userId}/`, formDataToSubmit, {
                 headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
@@ -296,7 +303,10 @@ const ManageUser = () => {
         if (window.confirm("Are you sure you want to delete the selected users?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/users/${userId}/delete/`)
+                    axios.delete(`${BASE_URL}/products/users/${userId}/delete/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
+
+                    })
                 ));
                 fetchUsers();
                 alert("Selected Users deleted successfully!");
@@ -309,7 +319,9 @@ const ManageUser = () => {
     const deleteCategory = async (userId) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/users/${userId}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+                });
                     setUsers((prev) =>prev.filter((item) => item.id !== userId));
                 
                       const remainingUsers = userCount - 1;

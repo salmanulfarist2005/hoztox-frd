@@ -40,7 +40,7 @@ const AddColor = () => {
 
     const fetchColors = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/colors_list/`);
+            const response = await axios.get(`${BASE_URL}/products/colors_list/`, { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } });
             console.log("Response data:", response.data);
 
             if (Array.isArray(response.data)) {
@@ -113,7 +113,11 @@ const AddColor = () => {
         }
 
         try {
-            await axios.post(`${BASE_URL}/products/colors/`, { color: formData.color });
+            await axios.post(`${BASE_URL}/products/colors/`, { color: formData.color }, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
             fetchColors();
             toggleAddModal();
             alert("Color added successfully!");
@@ -195,7 +199,11 @@ const AddColor = () => {
         }
 
         try {
-            await axios.put(`${BASE_URL}/products/colors/${currentColor.id}/`, { color: formData.color });
+            await axios.put(`${BASE_URL}/products/colors/${currentColor.id}/`, { color: formData.color },{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
             fetchColors();
             toggleEditModal(null);
             alert("Color updated successfully!");
@@ -266,7 +274,11 @@ const AddColor = () => {
     const deleteColor = async (colorId) => {
         if (window.confirm("Are you sure you want to delete this color?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/colors/${colorId}/`);
+                await axios.delete(`${BASE_URL}/products/colors/${colorId}/`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
                 fetchColors();
                 alert("Color deleted successfully!");
             } catch (error) {

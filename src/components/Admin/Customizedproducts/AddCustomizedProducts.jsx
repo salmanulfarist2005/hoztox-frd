@@ -72,7 +72,14 @@ const AddCustomeProduct = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+
       const category = response.data;
 
       if (Array.isArray(category)) {
@@ -94,7 +101,13 @@ const AddCustomeProduct = () => {
 
   const fetchUserTypes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+        
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log("Full response:", response.data);
   
       const userTypesData = response.data;
@@ -227,9 +240,11 @@ const AddCustomeProduct = () => {
     });
 
     try {
+
       const response = await axios.post(`${BASE_URL}/products/customized_products/`, productFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
       console.log("Product added:", response.data);

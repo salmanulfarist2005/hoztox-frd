@@ -12,7 +12,12 @@ const CustomProductCategoryList = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/categories/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/categories/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);

@@ -27,6 +27,7 @@ const CustomPendingOrder = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/customized-pending/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -79,7 +80,11 @@ const CustomPendingOrder = () => {
         }
 
         try {
-            const response = await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order?.id}/approve/`, { approved: true });
+            const response = await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order?.id}/approve/`, { approved: true }, {
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+            });
             console.log("Approval response:", response.data);
 
             alert("Order approved successfully!");
@@ -98,7 +103,11 @@ const CustomPendingOrder = () => {
         }
 
         try {
-            const response = await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order?.id}/reject/`);
+            const response = await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order?.id}/reject/`,{}, {
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+            });
             console.log("Rejection response:", response.data);
 
             alert("Order rejected successfully!");

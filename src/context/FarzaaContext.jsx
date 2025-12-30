@@ -730,36 +730,36 @@ const FarzaaContextProvider = ({ children }) => {
   
         const updatedCartItem = response.data;
         console.log("Cart item saved to backend:", updatedCartItem);
+        alert("Item added to cart!");
+        // setJeweleryAddToCart((prevAddToCartItems) => {
+        //   console.log("Current cart items before update:", prevAddToCartItems);
   
-        setJeweleryAddToCart((prevAddToCartItems) => {
-          console.log("Current cart items before update:", prevAddToCartItems);
+        //   const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId && item.color === color);  
+        //   let updatedAddToCartItems;
   
-          const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId && item.color === color);  
-          let updatedAddToCartItems;
+        //   if (existingItemIndex === -1) {
+        //     const newItem = {
+        //       ...itemToAdd,
+        //       quantity: quantity,
+        //       color: color || '',  
+        //       total: itemToAdd.price * quantity,
+        //     };
   
-          if (existingItemIndex === -1) {
-            const newItem = {
-              ...itemToAdd,
-              quantity: quantity,
-              color: color || '',  
-              total: itemToAdd.price * quantity,
-            };
+        //     updatedAddToCartItems = [...prevAddToCartItems, newItem];
+        //     console.log("New item added. Updated cart items:", updatedAddToCartItems);
+        //     alert("Item added to cart!");
+        //   } else {
+        //     updatedAddToCartItems = [...prevAddToCartItems];
+        //     updatedAddToCartItems[existingItemIndex].quantity += quantity;
+        //     updatedAddToCartItems[existingItemIndex].total =
+        //       updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price;
   
-            updatedAddToCartItems = [...prevAddToCartItems, newItem];
-            console.log("New item added. Updated cart items:", updatedAddToCartItems);
-            alert("Item added to cart!");
-          } else {
-            updatedAddToCartItems = [...prevAddToCartItems];
-            updatedAddToCartItems[existingItemIndex].quantity += quantity;
-            updatedAddToCartItems[existingItemIndex].total =
-              updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price;
+        //     console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
+        //     alert("Item quantity updated in cart!");
+        //   }
   
-            console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
-            alert("Item quantity updated in cart!");
-          }
-  
-          return updatedAddToCartItems;
-        });
+        //   return updatedAddToCartItems;
+        // });
       } catch (error) {
         console.error("Error saving cart item to backend:", error);
   

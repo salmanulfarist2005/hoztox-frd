@@ -31,6 +31,9 @@ const CompletedOrder = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/orders/delivered/`,{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -65,6 +68,10 @@ const CompletedOrder = () => {
         try {
             await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
                 ordercode: orderId,
+            },{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
             });
             setModalList1(false);
             setOrderId('');

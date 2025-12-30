@@ -2,21 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import { FarzaaContext } from "../../context/FarzaaContext";
 import axios from "axios";
 import { BASE_URL } from "../helpers/config";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const ProductCategoryList = () => {
-  const { handleCategoryFilter } = useContext(FarzaaContext);
+  const { handleCategoryFilter,activeCategory } = useContext(FarzaaContext);
   const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCollapsed, setCollapsed] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-const [searchParams, setSearchParams] = useSearchParams();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -25,7 +29,8 @@ const [searchParams, setSearchParams] = useSearchParams();
       setLoading(false);
     }
   };
-
+ console.log(activeCategory);
+ 
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -41,17 +46,23 @@ const [searchParams, setSearchParams] = useSearchParams();
     };
   }, []);
 
-  const handleCategoryClick = (categoryName) => {
-    if (activeCategory === categoryName) {
-      newParams.set("id", activeCategory);
-      setActiveCategory(null);
-      handleCategoryFilter(null);
+const handleCategoryClick = (categoryId) => {
+  if (!categoryId) {
+    navigate('/shop');
+    handleCategoryFilter(null);
+    return;
+  }
 
-      return;
-    }
-    setActiveCategory(categoryName);
-    handleCategoryFilter(categoryName);
-  };
+  if (activeCategory === categoryId) {
+    handleCategoryFilter(null);
+    navigate('/shop');
+    return;
+  }
+
+  navigate(`/shop/${categoryId}`);
+  handleCategoryFilter(categoryId);
+};
+
 
 //   const handleCategoryClick = (id) => {
 //   const currentId = searchParams.get("id");
@@ -91,19 +102,30 @@ const [searchParams, setSearchParams] = useSearchParams();
 
       {!isCollapsed && (
         <ul className="product-categories mt-2">
+
+          <li
+            onClick={() => handleCategoryClick(null)}
+            className={activeCategory == null ? "active" : ""}
+            style={{ cursor: "pointer", textTransform: "capitalize" }}
+          >
+            All Products
+          </li>
+
+
           {categories.length > 0 ? (
-            categories.map((categoryObj) => (
+          categories.map((categoryObj) => (
               <li
                 key={categoryObj.id}
                 onClick={() => handleCategoryClick(categoryObj.id)}
                 className={
-                  activeCategory === categoryObj.category_name ? "active" : ""
+                  activeCategory == categoryObj.id ? "active" : ""
                 }
                 style={{ cursor: "pointer", textTransform: "capitalize" }}
               >
                 {categoryObj.category_name.toUpperCase()}
               </li>
-            ))
+            )) 
+
           ) : (
             <li>No categories available</li>
           )}

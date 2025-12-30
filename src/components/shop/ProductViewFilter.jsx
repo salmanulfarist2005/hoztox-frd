@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FarzaaContext } from '../../context/FarzaaContext';
 import axios from 'axios';
 import { BASE_URL } from '../helpers/config';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
 import Pagination from '../pagination/Pagination'; 
 import { useRef } from 'react';
@@ -12,7 +12,7 @@ const ProductViewFilter = () => {
         addToJeweleryWishlist,
         addToJeweleryCart,
         searchTerm,
-        activeCategory
+        activeCategory, 
     } = useContext(FarzaaContext);
     
     const navigate = useNavigate();
@@ -53,14 +53,18 @@ useEffect(() => {
 }, [debouncedValue, pageTrigger,activeCategory]);
    
     const productsPerPage = 18;
-    const handleQuantityChange = (productId, newQuantity) => {
-        
-        setQuantity(prevQuantities => ({
-            ...prevQuantities,
-            [productId]: Math.max(1, newQuantity),
-        }));
-    };
+        const handleQuantityChange = (productId, value) => {
+        const qty = Number(value);
 
+        setQuantity(prev => ({
+            ...prev,
+            [productId]: Number.isNaN(qty) || qty < 1 ? 1 : qty,
+        }));
+        };
+ const {categoryName} = useParams()
+
+  handleCategoryFilter(categoryName);
+ 
  const getQty = (productId) => quantity[productId] ?? 1;
     const fetchData = async () => {
         try {
@@ -72,7 +76,7 @@ useEffect(() => {
                     page:currentPage,
                     limit:10,
                     search:searchTerm,
-                    category_id:activeCategory
+                    category_id:activeCategory 
                 }
 
             });
@@ -191,7 +195,7 @@ useEffect(() => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={parseInt(quantity[item.id])}
+                                                    value={parseInt(quantity[item.id])||1}
                                                     onChange={(e) =>
                                                         handleQuantityChange(
                                                             item.id,
@@ -266,7 +270,7 @@ useEffect(() => {
                                                     type="number"
                                                     name="product-quantity"
                                                     className="cart-product-quantity-input"
-                                                    value={quantity[item.id]}
+                                                    value={quantity[item.id] || 1}
                                                     onChange={(e) =>
                                                         handleQuantityChange(
                                                             item.id,

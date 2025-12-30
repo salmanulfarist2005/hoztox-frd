@@ -73,7 +73,12 @@ const AddUser = () => {
 
   const fetchUserTypes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+          headers: {
+              Authorization: `Bearer ${token}`,
+          },
+      });
       const userTypesData = response.data;
 
       if (Array.isArray(userTypesData)) {
@@ -170,6 +175,7 @@ const AddUser = () => {
     try {
         const response = await axios.post(`${BASE_URL}/products/users/create/`, userData, {
             headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 'Content-Type': 'multipart/form-data'
             }
         });

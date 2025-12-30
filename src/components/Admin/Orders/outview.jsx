@@ -26,6 +26,7 @@ const Outview = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/orders/pending/`,{
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -67,6 +68,10 @@ const Outview = () => {
         try {
             await axios.patch(`${BASE_URL}/products/ordersid/${selectedItem.id}/`, {
                 ordercode: orderId,
+            },{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
             });
             setOrders(prevOrders =>
                 prevOrders.map(order =>
@@ -104,7 +109,11 @@ const Outview = () => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
                 setOrders((prev) =>
                     prev.filter((item) => item.id !== orderId)
                 );
@@ -130,6 +139,10 @@ const Outview = () => {
         try {
             const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
                 status: newStatus
+            },{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                },
             });
 
             setOrders((prevOrders) =>

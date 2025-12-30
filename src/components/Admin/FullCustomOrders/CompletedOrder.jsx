@@ -21,7 +21,10 @@ const CompletedOrder = (order) => {
     const [status, setStatus] = useState(order?.status || 'N/A');
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/full-delivered-orders/`);
+            const response = await axios.get(`${BASE_URL}/products/full-delivered-orders/`,{
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+            });
             const data = response.data;
             setOrders(data || []);
             console.log("response", response.data);
@@ -171,6 +174,10 @@ const CompletedOrder = (order) => {
             await axios.patch(`${BASE_URL}/products/custom-full-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
+            }, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+                },
             });
 
             // After updating, update the state to reflect the changes
@@ -203,7 +210,12 @@ const CompletedOrder = (order) => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-full-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-full-orders/${orderId}/delete/`,
+                {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                    });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -256,7 +268,11 @@ const CompletedOrder = (order) => {
             try {
                 const response = await axios.patch(
                     `${BASE_URL}/products/full-orders/${editingOrderId}/update-status/`,
-                    requestData
+                    requestData,{
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        },
+                    }
                 );
                 console.log("Response:", response);
 

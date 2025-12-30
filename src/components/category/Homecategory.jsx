@@ -26,7 +26,12 @@ const Category = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       const data = response.data;
 
       if (Array.isArray(data)) {

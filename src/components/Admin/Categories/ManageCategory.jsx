@@ -43,7 +43,11 @@ const ManageCategory = () => {
 
     const fetchCategory = async () => {
         try {
+            const token = localStorage.getItem('authToken');
             const response = await axios.get(`${BASE_URL}/products/categories/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
                                                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -88,7 +92,13 @@ const ManageCategory = () => {
         }
 
         try {
-            await axios.post(`${BASE_URL}/products/categories/`, formDataToSend);
+            const token = localStorage.getItem('authToken');
+            await axios.post(`${BASE_URL}/products/categories/`, formDataToSend,{
+                headers: {
+                     
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setmodal_list(false);
             fetchCategory();
             alert("Category created successfully!");
@@ -121,7 +131,13 @@ const ManageCategory = () => {
         }
 
         try {
-            await axios.put(`${BASE_URL}/products/categories/${selectedCategory.id}/`, formDataToSend);
+            const token = localStorage.getItem('authToken');
+            await axios.put(`${BASE_URL}/products/categories/${selectedCategory.id}/`, formDataToSend, {
+                headers: {
+                   
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setmodal_list(false);
             fetchCategory();
             alert("Category Updated successfully!");
@@ -133,7 +149,14 @@ const ManageCategory = () => {
     const deleteCategory = async (categoryId) => {
         if (window.confirm("Are you sure you want to delete this category?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/categories/${categoryId}/`);
+                const token = localStorage.getItem('authToken');
+                await axios.delete(`${BASE_URL}/products/categories/${categoryId}/`
+                ,{ headers: {
+                       
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+                );
                 setCategory((prev) =>
                     prev.filter((item) => item.id !== categoryId)
                 );
@@ -195,7 +218,13 @@ const ManageCategory = () => {
         }
         if (window.confirm("Are you sure you want to delete the selected categories?")) {
             try {
-                await Promise.all(selectedIds.map(id => axios.delete(`${BASE_URL}/products/categories/${id}/`)));
+                const token = localStorage.getItem('authToken');
+                await Promise.all(selectedIds.map(id => axios.delete(`${BASE_URL}/products/categories/${id}/`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })));
+             
                 fetchCategory(); // Refresh the category list
                 alert("Selected categories deleted successfully!");
             } catch (error) {

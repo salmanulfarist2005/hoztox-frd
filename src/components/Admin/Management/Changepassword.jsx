@@ -44,7 +44,7 @@ const ChangePassword = () => {
                 confirm_password: confirmPassword,
             }, {
                 headers: {
-                    Authorization: `Token ${adminToken}`,
+                    Authorization: `Bearer ${adminToken}`,
                 }
             });
 

@@ -14,7 +14,10 @@ const ManageImage = () => {
 
     const fetchMediaImages = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/media/images/`);
+            const response = await axios.get(`${BASE_URL}/products/media/images/`,{
+                                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+            });
             setMediaImages(response.data);
         } catch (error) {
             console.error('Error fetching media images:', error);
@@ -75,7 +78,10 @@ const ManageImage = () => {
         if (window.confirm("Are you sure you want to delete the selected images?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/media/images/${id}/`)
+                    axios.delete(`${BASE_URL}/products/media/images/${id}/`,{
+                                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                    })
                 ));
                 fetchMediaImages();
                 alert("Selected images deleted successfully!");
@@ -90,7 +96,10 @@ const ManageImage = () => {
     const deleteImage = async (imageId) => {
         if (window.confirm("Are you sure you want to delete this image?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/media/images/${imageId}/`);
+                await axios.delete(`${BASE_URL}/products/media/images/${imageId}/`,{
+                                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                });
                 fetchMediaImages();
                 alert("Image deleted successfully!");
             } catch (error) {

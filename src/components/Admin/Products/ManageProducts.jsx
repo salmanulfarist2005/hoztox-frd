@@ -138,8 +138,12 @@ const ManageProducts = () => {
     }
     const fetchCategory = async () => {
         try {
-            
-            const response = await axios.get(`${BASE_URL}/products/categories/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/categories/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const category = response.data;
 
             if (Array.isArray(category)) {
@@ -157,7 +161,12 @@ const ManageProducts = () => {
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             console.log("Full response:", response.data);
 
 
@@ -375,9 +384,11 @@ const ManageProducts = () => {
             });
 
             // Send the update request
+            const token = localStorage.getItem('authToken');
             await axios.put(`${BASE_URL}/products/products/${productId}/update/`, formDataToSubmit, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
                 }
             });
 
@@ -422,7 +433,12 @@ const ManageProducts = () => {
     const deleteCategory = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-        await axios.delete(`${BASE_URL}/products/product/${productId}/delete/`);
+
+        await axios.delete(`${BASE_URL}/products/product/${productId}/delete/`,{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            }
+        });
       setProducts((prev) =>
         prev.filter((item) => item.id !== productId)
       );
@@ -451,7 +467,11 @@ const ManageProducts = () => {
         if (window.confirm("Are you sure you want to delete the selected Products?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/product/${id}/delete/`)
+                    axios.delete(`${BASE_URL}/products/product/${id}/delete/`,{
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        }
+                    })
                 ));
                 fetchProducts();
                 alert("Selected Products deleted successfully!");

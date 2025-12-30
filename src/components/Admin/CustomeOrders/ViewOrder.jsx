@@ -31,6 +31,8 @@ const CustomViewOrder = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/customized-approved/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -99,7 +101,10 @@ const CustomViewOrder = () => {
             }
 
 
-            const response = await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/generate-order-id/`, payload);
+            const response = await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/generate-order-id/`, payload,{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+            });
 
             console.log("Order ID generated:", response.data);
             alert("Order ID Created Successfully");

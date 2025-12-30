@@ -49,6 +49,7 @@ const ManageCustomProducts = () => {
     const fetchProducts = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/customized_products_list/`,{
+                headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`},
                                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -153,7 +154,12 @@ const ManageCustomProducts = () => {
     }
     const fetchCategory = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/categories/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/categories/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const category = response.data;
 
             if (Array.isArray(category)) {
@@ -171,7 +177,12 @@ const ManageCustomProducts = () => {
 
     const fetchUserTypes = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+            const token = localStorage.getItem('authToken');
+            const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             console.log("Full response:", response.data);
 
 
@@ -390,6 +401,7 @@ const ManageCustomProducts = () => {
             // Make the API request
             await axios.put(`${BASE_URL}/products/customized_products/${productId}/update/`, formDataToSubmit, {
                 headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                     'Content-Type': 'multipart/form-data'
                 }
             });
@@ -441,7 +453,9 @@ const ManageCustomProducts = () => {
     const deleteCategory = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await axios.delete(`${BASE_URL}/products/customized_product/${productId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/customized_product/${productId}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+                });
                 setProducts((prev) =>
         prev.filter((item) => item.id !== productId)
       );
@@ -470,7 +484,10 @@ const ManageCustomProducts = () => {
         if (window.confirm("Are you sure you want to delete the selected Products?")) {
             try {
                 await Promise.all(selectedIds.map(id =>
-                    axios.delete(`${BASE_URL}/products/customized_product/${id}/delete/`)
+                    axios.delete(`${BASE_URL}/products/customized_product/${id}/delete/`,{
+                    headers:{Authorization:`Bearer ${localStorage.getItem('authToken')}`}
+
+                    })
                 ));
                 fetchProducts();
                 alert("Selected Products deleted successfully!");

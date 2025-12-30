@@ -124,7 +124,7 @@ useEffect(() => {
                               <div className="fz-2-single-product br-12">
                                 <div className="fz-2-single-product-img br-0">
                                     <Link to={`/customized-products/${item.SKU}`}>
-                                        <img className='br-0' src={BASE_URL + item.product_image} alt={item.product_name} />
+                                        <img className='br-0' src={ item.product_image} alt={item.product_name} />
                                     </Link>
                                     <div className='color_text'>
                                         <h5 className="fz-2-single-product-title">

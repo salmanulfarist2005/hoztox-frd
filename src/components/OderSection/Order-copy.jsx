@@ -35,7 +35,10 @@ function Order() {
 
     const fetchcusOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/customized-approved/`);
+            const response = await axios.get(`${BASE_URL}/products/customized-approved/`,{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+            });
             const data = response.data;
             setfullOrders(data || []);
             console.log("response", response);

@@ -23,7 +23,9 @@ const ManageOrder = () => {
     // Fetch orders from backend
     const fetchOrders = async () => {
         try {
-            const response = await axios.get(`${BASE_URL}/products/orders/pending/`);
+            const response = await axios.get(`${BASE_URL}/products/orders/pending/`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+            });
             setOrders(response.data || []);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -79,7 +81,11 @@ const ManageOrder = () => {
             console.log("updatedOrder", updatedOrder);
     
             // Send the update request
-            await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder);
+            await axios.patch(`${BASE_URL}/products/orders/${selectedItem.order.id}/update/`, updatedOrder,{
+                headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+            });
     
             // Update the orders list locally in the state
             setOrders((prevOrders) => 
@@ -193,7 +199,11 @@ const ManageOrder = () => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/orders/${orderId}/delete/`,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -227,6 +237,10 @@ const handleStatusChange = async (orderid, newStatus) => {
     try {
         const response = await axios.patch(`${BASE_URL}/products/order/${orderid}/update-status/`, {
             status: newStatus
+        },{
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            },
         });
 
         setOrders((prevOrders) =>

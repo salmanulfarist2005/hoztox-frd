@@ -84,9 +84,11 @@ const AddCategory = () => {
         }
 
         try {
+            const token = localStorage.getItem('authToken');
             await axios.post(`${BASE_URL}/products/categories/create/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',  
+                    Authorization: `Bearer ${token}`,
                 },
             });
 

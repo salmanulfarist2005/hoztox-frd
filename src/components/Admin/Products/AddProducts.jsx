@@ -72,7 +72,12 @@ const AddProduct = () => {
 
   const fetchCategory = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/categories/`);
+      const token = localStorage.getItem('authToken');
+      const response = await axios.get(`${BASE_URL}/products/categories/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       const category = response.data;
 
       if (Array.isArray(category)) {
@@ -94,7 +99,12 @@ const AddProduct = () => {
 
   const fetchUserTypes = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/products/usertypes_list/`);
+          const token = localStorage.getItem('authToken');
+    const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
       console.log("Full response:", response.data);
   
       const userTypesData = response.data;
@@ -210,9 +220,11 @@ const AddProduct = () => {
     });
   
     try {
+      const token = localStorage.getItem('authToken');
       const response = await axios.post(`${BASE_URL}/products/products/`, productFormData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
   

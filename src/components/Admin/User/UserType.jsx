@@ -50,7 +50,9 @@ const UserType = () => {
 
     const fetchUserTypes = async () => {
         try {
+            const token = localStorage.getItem('authToken');
             const response = await axios.get(`${BASE_URL}/products/usertypes_list/`,{
+                headers: { Authorization: `Bearer ${token}` },
                     params:{
                     is_paginated:true,
                     page:currentPage,
@@ -90,7 +92,11 @@ const UserType = () => {
     const addUserType = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${BASE_URL}/products/usertypes/`, formData);
+            await axios.post(`${BASE_URL}/products/usertypes/`, formData,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                }
+            });
 
             fetchUserTypes();
             tog_list();
@@ -110,7 +116,11 @@ const UserType = () => {
         }
 
         try {
-            await axios.put(`${BASE_URL}/products/usertypes/${currentUserType.id}/`, formData);
+            await axios.put(`${BASE_URL}/products/usertypes/${currentUserType.id}/`, formData,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                }
+            });
 
             setUserTypes((prevUserTypes) =>
                 prevUserTypes.map((userType) =>
@@ -130,7 +140,13 @@ const UserType = () => {
     const deleteUserType = async (userTypeId) => {
         if (window.confirm("Are you sure you want to delete this user type?")) {
             try {  
-                await axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`);
+                await axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    }
+                }
+                );
                 setUserTypes((prev) =>
                     prev.filter((item) => item.id !== userTypeId)
                 );
@@ -159,7 +175,11 @@ const UserType = () => {
         if (window.confirm("Are you sure you want to delete selected user types?")) {
             try {
                 await Promise.all(selectedUserTypes.map(userTypeId =>
-                    axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`)
+                    axios.delete(`${BASE_URL}/products/usertypes/${userTypeId}/`,{
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                        }
+                    })
                 ));
                 fetchUserTypes();
                 setSelectedUserTypes([]);

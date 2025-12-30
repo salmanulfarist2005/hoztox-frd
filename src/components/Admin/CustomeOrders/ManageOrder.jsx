@@ -40,7 +40,8 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${BASE_URL}/products/customized-approved/`,{
-                                params:{
+                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+                    params:{
                     is_paginated:true,
                     page:currentPage,
                     limit:10,
@@ -89,6 +90,9 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             await axios.patch(`${BASE_URL}/products/custom-orders/${selectedItem.id}/`, {
                 ordercode: editedOrderCode,
                 quantity: editedQuantity,
+            },{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
             });
 
 
@@ -205,7 +209,10 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
         const confirmed = window.confirm("Are you sure you want to delete this order?");
         if (confirmed) {
             try {
-                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`);
+                await axios.delete(`${BASE_URL}/products/custom-orders/${orderId}/delete/`,{
+                                    headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+
+                });
                 fetchOrders();
                 alert("Order deleted successfully!");
             } catch (error) {
@@ -248,7 +255,11 @@ const CustomManageOrder = ({ order, onStatusUpdate }) => {
             };
 
             try {
-                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData);
+                await axios.patch(`${BASE_URL}/products/orders/${orderId}/update-status/`, requestData, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
 
                 // Update the specific order directly in the state
                 setOrders((prevOrders) =>
