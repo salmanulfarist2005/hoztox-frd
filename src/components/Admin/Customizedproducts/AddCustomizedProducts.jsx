@@ -192,14 +192,14 @@ const AddCustomeProduct = () => {
     }
 
     // Gross weight validation - required field
-    if (!formData.gross_weight || !formData.gross_weight.trim()) {
-      newErrors.gross_weight = 'This field is required';
-    }
+    // if (!formData.gross_weight || !formData.gross_weight.trim()) {
+    //   newErrors.gross_weight = 'This field is required';
+    // }
 
-    // Net weight validation - required field
-    if (!formData.net_weight || !formData.net_weight.trim()) {
-      newErrors.net_weight = 'This field is required';
-    }
+    // // Net weight validation - required field
+    // if (!formData.net_weight || !formData.net_weight.trim()) {
+    //   newErrors.net_weight = 'This field is required';
+    // }
 
     // Product image validation - required field
     if (!formData.product_image) {
@@ -207,9 +207,9 @@ const AddCustomeProduct = () => {
     }
 
     // Description validation - required field
-    if (!formData.description || !formData.description.trim()) {
-      newErrors.description = 'This field is required';
-    }
+    // if (!formData.description || !formData.description.trim()) {
+    //   newErrors.description = 'This field is required';
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -424,7 +424,7 @@ const AddCustomeProduct = () => {
 
                       <Row className="mb-3">
                         <label htmlFor="gross_weight" className="col-md-2 col-form-label">
-                          Gross Weight (gm) <span className="text-danger">*</span>
+                          Gross Weight (gm)  
                         </label>
                         <div className="col-md-10">
                           <input
@@ -469,7 +469,7 @@ const AddCustomeProduct = () => {
 
                       <Row className="mb-3">
                         <label htmlFor="net_weight" className="col-md-2 col-form-label">
-                          Net Weight (gm) <span className="text-danger">*</span>
+                          Net Weight (gm) 
                         </label>
                         <div className="col-md-10">
                           <input
@@ -531,7 +531,7 @@ const AddCustomeProduct = () => {
 
                       <Row className="mb-3">
                         <label htmlFor="description" className="col-md-2 col-form-label">
-                          Description <span className="text-danger">*</span>
+                          Description  
                         </label>
                         <div className="col-md-10">
                           <textarea

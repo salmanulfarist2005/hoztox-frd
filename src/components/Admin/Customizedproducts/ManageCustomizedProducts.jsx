@@ -75,24 +75,7 @@ const ManageCustomProducts = () => {
     }, [debouncedValue,pagetrigger]);
 
 
-    useEffect(() => {
-        const fetchProductDetail = async () => {
-            try {
-
-                const response = await axios.get(`${BASE_URL}/products/${productId}/`);
-                const data = response.data;
-                setProducts(data);
-                console.log("Product Detail:", data);
-            } catch (error) {
-                console.error('Error fetching product detail:', error);
-            }
-        };
-
-
-        if (productId) {
-            fetchProductDetail();
-        }
-    }, [productId]);
+    
 
 
     const handleEditClick = (product) => {
@@ -377,7 +360,19 @@ const ManageCustomProducts = () => {
             if (mainImage instanceof File) {
                 formDataToSubmit.append('product_image', mainImage);
             }
+            if (!formData.diamond_weight) {
+                formDataToSubmit.append('diamond_weight', 0);
+            }
+            if (!formData.gold_weight) {
+                formDataToSubmit.append('gold_weight', 0);
+            }
+            if (!formData.gross_weight){
+                formDataToSubmit.append('gross_weight', 0);
+            }
+            if (!formData.net_weight){
+         formDataToSubmit.append('net_weight', 0);
 
+            }
             // Append any new additional images
             additionalImages.forEach((image) => {
                 formDataToSubmit.append('additional_images', image);
@@ -770,7 +765,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Gross Weight"
                                         value={formData.gross_weight}
                                         onChange={handleChange}
-                                        required
+                                         
                                     />
                                 </div>
                                 <div className="me-2 flex-grow-1">
@@ -784,7 +779,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Diamond Weight"
                                         value={formData.diamond_weight}
                                         onChange={handleChange}
-                                        required
+                                        
                                     />
                                 </div>
                                 <div className="me-2 flex-grow-1">
@@ -798,7 +793,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Colour Stones"
                                         value={formData.colour_stones}
                                         onChange={handleChange}
-                                        required
+                                      
                                     />
                                 </div>
                                 <div className="flex-grow-1">
@@ -812,7 +807,7 @@ const ManageCustomProducts = () => {
                                         placeholder="Net Weight"
                                         value={formData.net_weight}
                                         onChange={handleChange}
-                                        required
+                                         
                                     />
                                 </div>
                             </div>
@@ -874,7 +869,7 @@ const ManageCustomProducts = () => {
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows="5"
-                                    required
+                                    
                                 ></textarea>
                             </div>
                         </Row>

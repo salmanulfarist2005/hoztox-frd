@@ -19,6 +19,8 @@ const FarzaaContextProvider = ({ children }) => {
   const handleWishlistClose = () => setShowWishlist(false);
   const handleWishlistShow = () => setShowWishlist(true);
 
+  
+
   // Cart Modal
   const [showCart, setShowCart] = useState(false);
 
@@ -210,6 +212,7 @@ const FarzaaContextProvider = ({ children }) => {
   // Search Filter
   const [searchTerm, setSearchTerm] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
+  const [jeweleryCartItemCount, setjeweleryCartItemCount] = useState(0);
 
   const performSearch = (term) => {
     const filtered = allProductList.filter((product) => {
@@ -708,7 +711,7 @@ const FarzaaContextProvider = ({ children }) => {
       );
     }
   };
-  const addToJeweleryCart = async (itemId, quantity = 1, color = '') => {
+  const addToJeweleryCart = async (itemId, quantity = 1, color = '',item) => {
     console.log("Adding item with ID:", itemId, "with quantity:", quantity, "and color:", color);
   
       try {
@@ -721,45 +724,55 @@ const FarzaaContextProvider = ({ children }) => {
         const response = await axios.post(`${BASE_URL}/products/cart/add/`, {
           product_id: itemId,
           quantity: quantity,
-          color: color || '',  // Ensure it's an empty string if no color is selected
+          color: color || '',  
         }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+ 
+          try { 
+            const response = await axios.get(`${BASE_URL}/products/cart/item/count/` ,{
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setjeweleryCartItemCount(response.data?.cart_item_count);
+            
+          
+          } catch (error) {
+            console.error("Error fetching cart items:", error);
+          }
+      
+   
+        setJeweleryAddToCart((prevAddToCartItems) => { 
   
-        const updatedCartItem = response.data;
-        console.log("Cart item saved to backend:", updatedCartItem);
-        alert("Item added to cart!");
-        // setJeweleryAddToCart((prevAddToCartItems) => {
-        //   console.log("Current cart items before update:", prevAddToCartItems);
+          const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId && item.color === color);  
+          let updatedAddToCartItems;
   
-        //   const existingItemIndex = prevAddToCartItems.findIndex((item) => item.id === itemId && item.color === color);  
-        //   let updatedAddToCartItems;
+          if (existingItemIndex === -1) {
+            const newItem = {
+              ...item,
+              quantity: quantity,
+              color: color || '',  
+              total: item.price * quantity,
+            };
   
-        //   if (existingItemIndex === -1) {
-        //     const newItem = {
-        //       ...itemToAdd,
-        //       quantity: quantity,
-        //       color: color || '',  
-        //       total: itemToAdd.price * quantity,
-        //     };
+            updatedAddToCartItems = [...prevAddToCartItems, newItem];
+            console.log("New item added. Updated cart items:", updatedAddToCartItems);
+            alert("Item added to cart!");
+          } else {
+            updatedAddToCartItems = [...prevAddToCartItems];
+            updatedAddToCartItems[existingItemIndex].quantity += quantity;
+            updatedAddToCartItems[existingItemIndex].total =
+              updatedAddToCartItems[existingItemIndex].quantity * item.price;
   
-        //     updatedAddToCartItems = [...prevAddToCartItems, newItem];
-        //     console.log("New item added. Updated cart items:", updatedAddToCartItems);
-        //     alert("Item added to cart!");
-        //   } else {
-        //     updatedAddToCartItems = [...prevAddToCartItems];
-        //     updatedAddToCartItems[existingItemIndex].quantity += quantity;
-        //     updatedAddToCartItems[existingItemIndex].total =
-        //       updatedAddToCartItems[existingItemIndex].quantity * itemToAdd.price;
+            console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
+            alert("Item quantity updated in cart!");
+          }
+ 
   
-        //     console.log("Item quantity updated. Updated cart items:", updatedAddToCartItems);
-        //     alert("Item quantity updated in cart!");
-        //   }
-  
-        //   return updatedAddToCartItems;
-        // });
+          return updatedAddToCartItems;
+        });
+        
       } catch (error) {
         console.error("Error saving cart item to backend:", error);
   
@@ -770,6 +783,9 @@ const FarzaaContextProvider = ({ children }) => {
         }
       }
   };
+  
+
+  
   
 
 
@@ -1040,6 +1056,8 @@ const FarzaaContextProvider = ({ children }) => {
         jeweleryAddToCart,
         addToJeweleryCart,
         jeweleryCartItemAmount,
+        jeweleryCartItemCount,
+         setjeweleryCartItemCount,
         handleRemoveJeweleryItemWishlist,
         handleRemoveJeweleryCartItem,
         handleJeweleryCartQuantityChange,

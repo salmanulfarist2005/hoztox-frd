@@ -79,7 +79,7 @@ const BestSellerTabContent = () => {
                                     className="fz-add-to-cart-btn"
                                     onClick={() => {
                                         const selectedColor = selectedColors[product.id] || '';  
-                                        addToJeweleryCart(product.id, quantities[product.id], selectedColor);
+                                        addToJeweleryCart(product.id, quantities[product.id], selectedColor,product);
                                     }}
                                 >
                                     Add to Cart
@@ -193,7 +193,7 @@ const BestSellerTabContent = () => {
                                         onClick={() => {
                                             // Check if a color is selected for the product; if not, set it to an empty string ('')
                                             const selectedColor = selectedColors[product.id] || '';  // Set to '' if no color is selected
-                                            addToJeweleryCart(product.id, quantities[product.id], selectedColor);
+                                            addToJeweleryCart(product.id, quantities[product.id], selectedColor,product);
                                         }}
                                     >
                                         Add to Cart

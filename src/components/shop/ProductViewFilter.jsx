@@ -13,6 +13,8 @@ const ProductViewFilter = () => {
         addToJeweleryCart,
         searchTerm,
         activeCategory, 
+        jeweleryCartItemCount, 
+        setjeweleryCartItemCount
     } = useContext(FarzaaContext);
     
     const navigate = useNavigate();
@@ -64,7 +66,10 @@ useEffect(() => {
  const {categoryName} = useParams()
 
   handleCategoryFilter(categoryName);
+  
+  
  
+  
  const getQty = (productId) => quantity[productId] ?? 1;
     const fetchData = async () => {
         try {
@@ -169,7 +174,7 @@ useEffect(() => {
                                     </Link>
                                     <div className="color_text">
                                         <h5 className="fz-2-single-product-title">
-                                            <Link to={`/products/${item.id}`}>{item.SKU}</Link>
+                                            <Link to={`/products/${item.SKU}`}>{item.SKU}</Link>
                                         </h5>
                                     </div>
                                     <div className="fz-2-single-product-actions">
@@ -177,7 +182,9 @@ useEffect(() => {
                                             className="fz-add-to-cart-btn"
                                             onClick={() => {
                                                 const selectedColor = selectedColors[item.id] || '';  
-                                                addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                addToJeweleryCart(item.id, quantity[item.id], selectedColor,item);
+                                                
+
                                             }}
                                         >
                                             Add to Cart
@@ -216,7 +223,7 @@ useEffect(() => {
                                 </div>
                                 <div className="fz-2-single-product-txt">
                                     <h5 className="fz-2-single-product-title ">
-                                        <Link to={`/products/${item.id}`}>{item.category_name}</Link>
+                                        <Link to={`/products/${item.SKU}`}>{item.category_name}</Link>
                                     </h5>
 
                                     <div className="inf_gm">
@@ -292,7 +299,8 @@ useEffect(() => {
                                                 className="fz-add-to-cart-btn"
                                                 onClick={() => {
                                                     const selectedColor = selectedColors[item.id] || '';  
-                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor);
+                                                    addToJeweleryCart(item.id, quantity[item.id], selectedColor,item)
+                                                   
                                                 }}
                                             >
                                                 Add to Cart

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from '../helpers/config';
 import { useNavigate } from "react-router-dom";
+import { FarzaaContext } from "../../context/FarzaaContext";
 
 const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
   const [cart, setCart] = useState([]);
@@ -95,7 +96,11 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
     }
   };
   
-
+    const {
+         
+        jeweleryCartItemCount, 
+        setjeweleryCartItemCount
+    } = useContext(FarzaaContext);
 
 
   const handleRemoveItem = async (SKU) => {
@@ -108,6 +113,7 @@ const CartItemTable = ({ remove, quantity, additionalNotes, onNoteChange }) => {
       });
 
       alert("Item successfully removed from the cart.");
+      setjeweleryCartItemCount(pr=>pr - 1);
       setCart((prevCart) => prevCart.filter(item => item.product.SKU !== SKU));
     } catch (error) {
       console.error('Error deleting cart item:', error);

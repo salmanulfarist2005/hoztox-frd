@@ -23,7 +23,7 @@ const RelatedProductSection = () => {
                         <div className="fz-2-single-product-actions">
                             <button 
                             className="fz-add-to-cart-btn"
-                            onClick={() => addToJeweleryCart(item.id)}
+                            onClick={() => addToJeweleryCart(item.id,1,'',item)}
                             >Add to Cart</button>
                             <button 
                             className="fz-add-to-wishlist"
