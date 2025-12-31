@@ -514,7 +514,11 @@ const downloadAllOrdersCSV = () => {
                                                         <div className="order-description">
                                                             <h5>{item?.product.category_name}</h5>
                                                             <p>SKU: {item?.product.SKU}</p>
-                                                            <p>Color: {item?.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
+                                                            <p>Color: {item?.color
+                                                                        ? item.color.charAt(0).toUpperCase() + item.color.slice(1)
+                                                                        : "N/A"}
+                                                                    </p>
+
 
                                                             <p>Gross Weight: {item?.product.gross_weight} gm</p>
                                                             <p>Diamond Weight: {item?.product.diamond_weight} Ct</p>
