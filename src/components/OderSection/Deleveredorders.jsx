@@ -252,7 +252,7 @@ function DeleiverOrder() {
                                                 {order.order_items.map(item => (
                                                     <div key={item?.id} className="order-item-details normal-order-item">
                                                         <div className="order-img order-img-order">
-                                                            <img src={BASE_URL + item?.product.product_image} alt="" style={{
+                                                            <img src={  item?.product.product_image} alt="" style={{
                                                         width: '100%',
                                                         height: 'auto',
                                                         maxWidth: '200px',
@@ -262,8 +262,11 @@ function DeleiverOrder() {
                                                         <div className="order-description">
                                                             <h5>{item?.product.category_name}</h5>
                                                             <p>SKU: {item?.product.SKU}</p>
-                                                            <p>Color: {item?.color.charAt(0).toUpperCase() + item.color.slice(1)}</p>
-
+ 
+                                                            <p>Color: {item?.color
+                                                                        ? item.color.charAt(0).toUpperCase() + item.color.slice(1)
+                                                                        : "N/A"}
+                                                                    </p>
                                                             <p>Gross Weight: {item?.product.gross_weight} gm</p>
                                                             <p>Diamond Weight: {item?.product.diamond_weight} Ct</p>
                                                             <p>Net Weight: {item?.product.net_weight} gm</p>
