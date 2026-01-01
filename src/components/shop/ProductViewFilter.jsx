@@ -6,6 +6,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import useDebounce from '../../Hooks/useDebounce';
 import Pagination from '../pagination/Pagination'; 
 import { useRef } from 'react';
+import { useSearchParams } from "react-router-dom";
+
 const ProductViewFilter = () => {
     const {
         handleCategoryFilter,
@@ -31,6 +33,7 @@ const ProductViewFilter = () => {
     const [totalPages,setTotalPages] = useState();
     const [totalItems, setTotalItems] = useState(0);
     const [pageTrigger,setPageTrigger]  = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams();
 
    
     const defaultQuantity = 1;
@@ -87,6 +90,7 @@ useEffect(() => {
             });
             
             if(!response.error){
+                setError('')
             const products = response.data.message.results;
             const totalCount = response.data.message.count || 0;
             const limit = 10; 
@@ -99,7 +103,11 @@ useEffect(() => {
             }
 
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error?.response?.data?.detail == 'Invalid page.');
+            if(error?.response?.data?.detail == 'Invalid page.'){
+            handlePageChange(1)
+                
+            }
             setError('Failed to load data. Please try again later.');
         } finally {
             setLoading(false);
@@ -107,6 +115,8 @@ useEffect(() => {
     };
 
     useEffect(() => {
+        const pageFromUrl = Number(searchParams.get("page")) || 1;
+        setCurrentPage(pageFromUrl||1);
         fetchData();
     }, [activeCategory,currentPage,debouncedValue]);
 
@@ -132,7 +142,15 @@ useEffect(() => {
         setCurrentPage(newPage);
         setPageTrigger((e) => !e);
         scrollToTop();
+ 
+        setSearchParams((prev) => {
+            prev.set("page", newPage);
+            return prev;
+        });
     };
+
+ 
+
 
     const scrollToTop = () => {
         window.scrollTo({
